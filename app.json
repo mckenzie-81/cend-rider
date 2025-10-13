@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "rider-app",
-    "slug": "rider-app",
+    "name": "Cend Rider",
+    "slug": "cend-rider",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
