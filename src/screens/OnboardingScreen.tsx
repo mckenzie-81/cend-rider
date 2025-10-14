@@ -9,15 +9,15 @@ interface OnboardingScreenProps {
 const onboardingSlides = [
   {
     id: 1,
-    title: 'Onboarding',
+    title: 'Onboarding 1',
   },
   {
     id: 2,
-    title: 'Onboarding',
+    title: 'Onboarding 2',
   },
   {
     id: 3,
-    title: 'Onboarding',
+    title: 'Onboarding 3',
   },
 ];
 
