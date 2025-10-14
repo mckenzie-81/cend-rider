@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
-import { ScreenContainer, AppHeader, Spacer16, TabBar, ServiceCard, QuickActionCard } from '../components';
+import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity, Dimensions } from 'react-native';
+import { ScreenContainer, AppHeader, Spacer16, TabBar, ServiceCard, QuickActionCard, PromoCard } from '../components';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
+
+const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface HomeScreenProps {
   onTabChange: (tab: string) => void;
@@ -38,6 +40,12 @@ const HomeScreen = ({ onTabChange }: HomeScreenProps) => {
     { key: 'support', icon: 'help-circle-outline', title: 'Support' },
   ];
 
+  const promos = [
+    { key: 'promo1', title: 'Get 20% off your next ride', buttonLabel: 'Claim Now' },
+    { key: 'promo2', title: 'Free delivery on orders above ₦5000', buttonLabel: 'Order Now' },
+    { key: 'promo3', title: 'Invite friends and earn rewards', buttonLabel: 'Share Now' },
+  ];
+
   const handleServicePress = (serviceKey: string) => {
     // Handle service selection - for now just log it
     console.log('Service selected:', serviceKey);
@@ -46,6 +54,11 @@ const HomeScreen = ({ onTabChange }: HomeScreenProps) => {
   const handleQuickAction = (actionKey: string) => {
     // Handle quick action - for now just log it
     console.log('Quick action:', actionKey);
+  };
+
+  const handlePromoPress = (promoKey: string) => {
+    // Handle promo card press - for now just log it
+    console.log('Promo pressed:', promoKey);
   };
 
   return (
@@ -72,9 +85,14 @@ const HomeScreen = ({ onTabChange }: HomeScreenProps) => {
         </View>
       </AppHeader>
       
-      <View style={styles.cardsWrapper}>
-        {/* Service Cards - Horizontal Row */}
-        <View style={styles.servicesSection}>
+      <ScrollView 
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.cardsWrapper}>
+          {/* Service Cards - Horizontal Row */}
+          <View style={styles.servicesSection}>
           <ScrollView 
             horizontal 
             showsHorizontalScrollIndicator={false}
@@ -113,17 +131,33 @@ const HomeScreen = ({ onTabChange }: HomeScreenProps) => {
             ))}
           </ScrollView>
         </View>
-      </View>
 
-      <View style={styles.content}>
-        <Text variant="displaySmall" style={styles.title}>
-          Welcome to CEND
-        </Text>
-        <Spacer16 />
-        <Text variant="bodyLarge" style={styles.subtitle}>
-          Your trusted ride-hailing partner
-        </Text>
+        {/* Promo Cards - Horizontal Row */}
+        <View style={styles.promoSection}>
+          <Text variant="titleMedium" style={styles.sectionHeading}>
+            Special Offers
+          </Text>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.promoContainer}
+            snapToInterval={SCREEN_WIDTH - 24} // Snap to card width + gap
+            decelerationRate="fast"
+          >
+            {promos.map((promo) => (
+              <PromoCard
+                key={promo.key}
+                title={promo.title}
+                buttonLabel={promo.buttonLabel}
+                onPress={() => handlePromoPress(promo.key)}
+                style={styles.promoCard}
+              />
+            ))}
+          </ScrollView>
+        </View>
       </View>
+      </ScrollView>
+
       <TabBar 
         tabs={tabs}
         activeTab={activeTab}
@@ -156,6 +190,13 @@ const styles = StyleSheet.create({
   clearButton: {
     padding: 4,
     marginRight: 4,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 16, // Extra padding at bottom for better scrolling experience
   },
   cardsWrapper: {
     // No flex, just wraps the content
@@ -192,16 +233,17 @@ const styles = StyleSheet.create({
     width: 127.5, // 1.5x the width of service cards (85 * 1.5)
     height: 42.5, // Half the height of service cards (85 / 2)
   },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
+  promoSection: {
+    // Wrapper for promo cards ScrollView
   },
-  title: {
-    textAlign: 'center',
+  promoContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 16,
+    gap: 12,
   },
-  subtitle: {
-    textAlign: 'center',
+  promoCard: {
+    width: SCREEN_WIDTH - 32, // Full screen width minus 16px padding on each side
+    height: 136, // 0.8 of original 170px (85 * 2 * 0.8)
   },
 });

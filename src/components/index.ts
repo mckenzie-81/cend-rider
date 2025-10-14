@@ -20,6 +20,7 @@ export { DriverInfoCard } from './DriverInfoCard';
 export { ServiceCard } from './ServiceCard';
 export { ServiceGrid } from './ServiceGrid';
 export { QuickActionCard } from './QuickActionCard';
+export { default as PromoCard } from './PromoCard';
 
 // Feedback Components
 export { LoadingSpinner } from './LoadingSpinner';
