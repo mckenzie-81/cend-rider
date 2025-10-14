@@ -1,8 +1,18 @@
+import { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { ScreenContainer, AppHeader, Spacer16 } from '../components';
+import { ScreenContainer, AppHeader, Spacer16, TabBar } from '../components';
 import { Text } from 'react-native-paper';
 
 const HomeScreen = () => {
+  const [activeTab, setActiveTab] = useState('home');
+
+  const tabs = [
+    { key: 'home', label: 'Home', icon: 'home' },
+    { key: 'payment', label: 'Payment', icon: 'wallet' },
+    { key: 'activity', label: 'Activity', icon: 'clock-outline' },
+    { key: 'messages', label: 'Messages', icon: 'message-outline' },
+  ];
+
   return (
     <ScreenContainer safe={false} padding={0}>
       <AppHeader 
@@ -19,6 +29,11 @@ const HomeScreen = () => {
           Your trusted ride-hailing partner
         </Text>
       </View>
+      <TabBar 
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabPress={setActiveTab}
+      />
     </ScreenContainer>
   );
 };
