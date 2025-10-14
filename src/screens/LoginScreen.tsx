@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 import {
   ScreenContainer,
   PrimaryButton,
@@ -20,43 +21,62 @@ export default function LoginScreen({ onComplete, onSignup }: LoginScreenProps) 
 
   return (
     <ScreenContainer>
-      <Text variant="displaySmall" style={{ marginBottom: 8 }}>
-        Welcome Back
-      </Text>
-      <Text variant="bodyLarge" style={{ marginBottom: 32 }}>
-        Sign in to continue
-      </Text>
+      <View style={styles.content}>
+        <Text variant="displaySmall" style={styles.title}>
+          Welcome Back
+        </Text>
+        <Text variant="bodyLarge" style={styles.subtitle}>
+          Sign in to continue
+        </Text>
 
-      <TextInputField
-        label="Email"
-        placeholder="Enter your email"
-        leftIcon="email-outline"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        value={email}
-        onChangeText={setEmail}
-      />
+        <Spacer24 />
 
-      <TextInputField
-        label="Password"
-        placeholder="Enter your password"
-        leftIcon="lock-outline"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
+        <TextInputField
+          label="Email"
+          placeholder="Enter your email"
+          leftIcon="email-outline"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          value={email}
+          onChangeText={setEmail}
+        />
 
-      <Spacer24 />
+        <Spacer16 />
 
-      <PrimaryButton onPress={onComplete}>
-        Log In
-      </PrimaryButton>
+        <TextInputField
+          label="Password"
+          placeholder="Enter your password"
+          leftIcon="lock-outline"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
 
-      <Spacer16 />
+        <Spacer24 />
 
-      <SecondaryButton onPress={onSignup} variant="ghost">
-        Don't have an account? Sign Up
-      </SecondaryButton>
+        <PrimaryButton onPress={onComplete}>
+          Log In
+        </PrimaryButton>
+
+        <Spacer16 />
+
+        <SecondaryButton onPress={onSignup} variant="ghost" fullWidth>
+          Don't have an account? Sign Up
+        </SecondaryButton>
+      </View>
     </ScreenContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  title: {
+    marginBottom: 8,
+  },
+  subtitle: {
+    marginBottom: 0,
+  },
+});

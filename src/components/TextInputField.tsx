@@ -120,7 +120,7 @@ export function TextInputField({
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 16,
+    // Spacing controlled by parent (use Spacer components)
   },
   label: {
     marginBottom: 8,

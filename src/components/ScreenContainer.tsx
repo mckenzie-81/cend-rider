@@ -30,12 +30,6 @@ export function ScreenContainer({
 
   const Wrapper = safe ? SafeAreaView : View;
 
-  const containerStyle = [
-    styles.container,
-    { backgroundColor: bgColor, padding },
-    style,
-  ];
-
   if (scrollable) {
     return (
       <Wrapper style={[styles.container, { backgroundColor: bgColor }]}>
@@ -43,6 +37,7 @@ export function ScreenContainer({
           contentContainerStyle={[styles.scrollContent, { padding }]}
           showsVerticalScrollIndicator={false}
           bounces={true}
+          keyboardShouldPersistTaps="handled"
         >
           {children}
         </ScrollView>
@@ -50,7 +45,11 @@ export function ScreenContainer({
     );
   }
 
-  return <Wrapper style={containerStyle}>{children}</Wrapper>;
+  return (
+    <Wrapper style={[styles.container, { backgroundColor: bgColor, padding }, style]}>
+      {children}
+    </Wrapper>
+  );
 }
 
 const styles = StyleSheet.create({

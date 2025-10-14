@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { View, StyleSheet } from 'react-native';
 import {
   ScreenContainer,
   PrimaryButton,
@@ -22,60 +23,82 @@ export default function SignupScreen({ onComplete, onBackToLogin }: SignupScreen
 
   return (
     <ScreenContainer scrollable>
-      <Text variant="displaySmall" style={{ marginBottom: 8 }}>
-        Create Account
-      </Text>
-      <Text variant="bodyLarge" style={{ marginBottom: 32 }}>
-        Sign up to get started
-      </Text>
+      <View style={styles.content}>
+        <Text variant="displaySmall" style={styles.title}>
+          Create Account
+        </Text>
+        <Text variant="bodyLarge" style={styles.subtitle}>
+          Sign up to get started
+        </Text>
 
-      <TextInputField
-        label="Full Name"
-        placeholder="Enter your name"
-        leftIcon="account-outline"
-        value={name}
-        onChangeText={setName}
-      />
+        <Spacer24 />
 
-      <TextInputField
-        label="Email"
-        placeholder="Enter your email"
-        leftIcon="email-outline"
-        keyboardType="email-address"
-        autoCapitalize="none"
-        value={email}
-        onChangeText={setEmail}
-      />
+        <TextInputField
+          label="Full Name"
+          placeholder="Enter your name"
+          leftIcon="account-outline"
+          value={name}
+          onChangeText={setName}
+        />
 
-      <TextInputField
-        label="Phone Number"
-        placeholder="Enter your phone"
-        leftIcon="phone-outline"
-        keyboardType="phone-pad"
-        value={phone}
-        onChangeText={setPhone}
-      />
+        <Spacer16 />
 
-      <TextInputField
-        label="Password"
-        placeholder="Create a password"
-        leftIcon="lock-outline"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-      />
+        <TextInputField
+          label="Email"
+          placeholder="Enter your email"
+          leftIcon="email-outline"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          value={email}
+          onChangeText={setEmail}
+        />
 
-      <Spacer24 />
+        <Spacer16 />
 
-      <PrimaryButton onPress={onComplete}>
-        Sign Up
-      </PrimaryButton>
+        <TextInputField
+          label="Phone Number"
+          placeholder="Enter your phone"
+          leftIcon="phone-outline"
+          keyboardType="phone-pad"
+          value={phone}
+          onChangeText={setPhone}
+        />
 
-      <Spacer16 />
+        <Spacer16 />
 
-      <SecondaryButton onPress={onBackToLogin} variant="ghost">
-        Already have an account? Log In
-      </SecondaryButton>
+        <TextInputField
+          label="Password"
+          placeholder="Create a password"
+          leftIcon="lock-outline"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
+
+        <Spacer24 />
+
+        <PrimaryButton onPress={onComplete}>
+          Sign Up
+        </PrimaryButton>
+
+        <Spacer16 />
+
+        <SecondaryButton onPress={onBackToLogin} variant="ghost" fullWidth>
+          Already have an account? Log In
+        </SecondaryButton>
+      </View>
     </ScreenContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  content: {
+    paddingVertical: 24,
+  },
+  title: {
+    marginBottom: 8,
+  },
+  subtitle: {
+    marginBottom: 0,
+  },
+});
