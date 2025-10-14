@@ -8,18 +8,18 @@ export function useCustomFonts() {
     async function loadFonts() {
       try {
         await Font.loadAsync({
-          // Product Sans variants (note: file names have spaces)
+          // Product Sans - using individual font files
           'ProductSans-Regular': require('../../assets/fonts/product-sans/Product Sans Regular.ttf'),
           'ProductSans-Bold': require('../../assets/fonts/product-sans/Product Sans Bold.ttf'),
           'ProductSans-Italic': require('../../assets/fonts/product-sans/Product Sans Italic.ttf'),
           'ProductSans-BoldItalic': require('../../assets/fonts/product-sans/Product Sans Bold Italic.ttf'),
           
-          // Poppins variants
-          'Poppins-Regular': require('../../assets/fonts/Poppins/Poppins-Regular.ttf'),
-          'Poppins-Bold': require('../../assets/fonts/Poppins/Poppins-Bold.ttf'),
-          'Poppins-SemiBold': require('../../assets/fonts/Poppins/Poppins-SemiBold.ttf'),
-          'Poppins-Medium': require('../../assets/fonts/Poppins/Poppins-Medium.ttf'),
+          // Poppins - using individual font files
           'Poppins-Light': require('../../assets/fonts/Poppins/Poppins-Light.ttf'),
+          'Poppins-Regular': require('../../assets/fonts/Poppins/Poppins-Regular.ttf'),
+          'Poppins-Medium': require('../../assets/fonts/Poppins/Poppins-Medium.ttf'),
+          'Poppins-SemiBold': require('../../assets/fonts/Poppins/Poppins-SemiBold.ttf'),
+          'Poppins-Bold': require('../../assets/fonts/Poppins/Poppins-Bold.ttf'),
         });
         setFontsLoaded(true);
       } catch (error) {

@@ -28,19 +28,21 @@ export default function App() {
   const theme = scheme === 'dark' ? darkTheme : lightTheme;
   const fontsLoaded = useCustomFonts();
 
-  // Show loading while fonts are loading
-  if (!fontsLoaded) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#995FAF' }}>
-        <ActivityIndicator size="large" color="#8020A2" />
-      </View>
-    );
-  }
-
-  if (!isReady) {
+  // Show loading while fonts are loading OR before splash finishes
+  if (!fontsLoaded || !isReady) {
+    if (!fontsLoaded) {
+      // Still loading fonts - show loader
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#995FAF' }}>
+          <ActivityIndicator size="large" color="#8020A2" />
+        </View>
+      );
+    }
+    // Fonts loaded, show splash screen
     return <CustomSplashScreen onFinish={() => setIsReady(true)} />;
   }
 
+  // All screens wrapped in providers after fonts are loaded
   if (!hasCompletedOnboarding) {
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
