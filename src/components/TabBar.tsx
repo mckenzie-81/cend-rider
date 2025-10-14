@@ -48,8 +48,13 @@ export function TabBar({ tabs, activeTab, onTabPress }: TabBarProps) {
         styles.container,
         {
           backgroundColor: theme.colors.surface,
-          borderTopColor: theme.colors.outline,
           paddingBottom: Platform.OS === 'ios' ? insets.bottom : 8,
+          // Soft shadow instead of border
+          shadowColor: '#1C1B1F',
+          shadowOffset: { width: 0, height: -3 },
+          shadowOpacity: 0.08,
+          shadowRadius: 8,
+          elevation: 8,
         },
       ]}
     >
@@ -90,7 +95,6 @@ export function TabBar({ tabs, activeTab, onTabPress }: TabBarProps) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    borderTopWidth: 1,
     paddingTop: 8,
     paddingHorizontal: 8,
   },
