@@ -48,8 +48,7 @@ export function ServiceCard({
       style={[
         styles.container,
         {
-          backgroundColor: active ? theme.colors.primaryContainer : theme.colors.surface,
-          borderColor: active ? theme.colors.primary : theme.colors.outline,
+          backgroundColor: active ? theme.colors.primary : '#DAC1E3',
         },
         style,
       ]}
@@ -58,7 +57,7 @@ export function ServiceCard({
       <MaterialCommunityIcons
         name={icon as any}
         size={32}
-        color={active ? theme.colors.primary : theme.colors.onSurfaceVariant}
+        color={active ? '#FFFFFF' : '#8020A2'}
         style={styles.icon}
       />
 
@@ -67,7 +66,7 @@ export function ServiceCard({
         variant="labelLarge"
         style={[
           styles.title,
-          { color: active ? theme.colors.primary : theme.colors.onSurface },
+          { color: active ? '#FFFFFF' : '#8020A2' },
         ]}
       >
         {title}
@@ -92,14 +91,13 @@ export function ServiceCard({
 const styles = StyleSheet.create({
   container: {
     borderRadius: 12,
-    borderWidth: 1.5,
-    padding: 16,
+    borderWidth: 0,
+    padding: 8,
     alignItems: 'center',
-    minHeight: 120,
     justifyContent: 'center',
   },
   icon: {
-    marginBottom: 8,
+    marginBottom: 4,
   },
   title: {
     fontWeight: '600',
