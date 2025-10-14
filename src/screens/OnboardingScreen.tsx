@@ -1,15 +1,20 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { Button, Text } from 'react-native-paper';
+import { Text, useTheme } from 'react-native-paper';
+import { ScreenContainer, PrimaryButton, SecondaryButton } from '../components';
 
 interface OnboardingScreenProps {
   onComplete: () => void;
 }
 
 export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
+  const theme = useTheme();
   const [currentScreen, setCurrentScreen] = useState(0);
 
-  const screens = ['Welcome to CEND', 'Safe & Reliable'];
+  const screens = [
+    { title: 'Welcome to CEND', subtitle: 'Your trusted ride partner' },
+    { title: 'Safe & Reliable', subtitle: 'Verified drivers, secure rides' },
+  ];
 
   const handleNext = () => {
     if (currentScreen < screens.length - 1) {
@@ -20,71 +25,94 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
   };
 
   const isLastScreen = currentScreen === screens.length - 1;
+  const currentScreenData = screens[currentScreen];
 
   return (
-    <View style={styles.container}>
-      <Button mode="text" onPress={onComplete} style={styles.skip}>
-        Skip
-      </Button>
+    <ScreenContainer safe={false}>
+      {/* Skip Button */}
+      <View style={styles.topBar}>
+        <SecondaryButton onPress={onComplete} variant="ghost" style={styles.skipButton}>
+          Skip
+        </SecondaryButton>
+      </View>
 
+      {/* Content */}
       <View style={styles.content}>
-        <Text variant="headlineLarge" style={styles.text}>
-          {screens[currentScreen]}
+        <Text variant="displayMedium" style={styles.title}>
+          {currentScreenData.title}
+        </Text>
+        <Text variant="bodyLarge" style={[styles.subtitle, { color: theme.colors.onSurfaceVariant }]}>
+          {currentScreenData.subtitle}
         </Text>
       </View>
 
-      <View style={styles.dots}>
+      {/* Progress Dots */}
+      <View style={styles.dotsContainer}>
         {screens.map((_, index) => (
           <View
             key={index}
-            style={[styles.dot, index === currentScreen && styles.activeDot]}
+            style={[
+              styles.dot,
+              { backgroundColor: theme.colors.surfaceVariant },
+              index === currentScreen && [
+                styles.activeDot,
+                { backgroundColor: theme.colors.primary },
+              ],
+            ]}
           />
         ))}
       </View>
 
-      <Button mode="contained" onPress={handleNext} style={styles.button}>
+      {/* Next/Get Started Button */}
+      <PrimaryButton onPress={handleNext} style={styles.button}>
         {isLastScreen ? 'Get Started' : 'Next'}
-      </Button>
-    </View>
+      </PrimaryButton>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    padding: 20,
+  topBar: {
+    alignItems: 'flex-end',
+    paddingTop: 48,
+    paddingHorizontal: 20,
   },
-  skip: {
-    alignSelf: 'flex-end',
-    marginTop: 40,
+  skipButton: {
+    width: 'auto',
+    paddingHorizontal: 0,
   },
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 32,
   },
-  text: {
-    color: '#000000',
+  title: {
     textAlign: 'center',
+    marginBottom: 12,
+    fontWeight: '700',
   },
-  dots: {
+  subtitle: {
+    textAlign: 'center',
+    fontSize: 16,
+  },
+  dotsContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginBottom: 20,
+    marginBottom: 24,
     gap: 8,
+    paddingHorizontal: 20,
   },
   dot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#DAC1E3',
   },
   activeDot: {
-    backgroundColor: '#8020A2',
     width: 24,
   },
   button: {
-    marginBottom: 40,
+    marginHorizontal: 20,
+    marginBottom: 48,
   },
 });

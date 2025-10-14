@@ -1,24 +1,18 @@
-import { StyleSheet, View } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { ScreenContainer, Spacer16 } from '../components';
+import { Text } from 'react-native-paper';
 
 const HomeScreen = () => {
-  const theme = useTheme();
-
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <Text variant="headlineMedium" style={{ color: theme.colors.onBackground }}>
+    <ScreenContainer>
+      <Text variant="headlineMedium">
         This is the home screen
       </Text>
-    </View>
+      <Spacer16 />
+      <Text variant="bodyMedium">
+        Your ride-hailing experience starts here
+      </Text>
+    </ScreenContainer>
   );
 };
 
 export default HomeScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

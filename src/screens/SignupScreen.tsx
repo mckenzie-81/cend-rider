@@ -1,5 +1,13 @@
-import { StyleSheet, View } from 'react-native';
-import { Button, Text } from 'react-native-paper';
+import { useState } from 'react';
+import {
+  ScreenContainer,
+  PrimaryButton,
+  SecondaryButton,
+  TextInputField,
+  Spacer16,
+  Spacer24,
+} from '../components';
+import { Text } from 'react-native-paper';
 
 interface SignupScreenProps {
   onComplete: () => void;
@@ -7,39 +15,67 @@ interface SignupScreenProps {
 }
 
 export default function SignupScreen({ onComplete, onBackToLogin }: SignupScreenProps) {
-  return (
-    <View style={styles.container}>
-      <Text variant="headlineLarge" style={styles.text}>
-        This is the "Signup Screen"
-      </Text>
-      
-      <Button mode="contained" onPress={onComplete} style={styles.button}>
-        Sign Up
-      </Button>
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
 
-      <Button mode="text" onPress={onBackToLogin} style={styles.backButton}>
-        Back to Login
-      </Button>
-    </View>
+  return (
+    <ScreenContainer scrollable>
+      <Text variant="displaySmall" style={{ marginBottom: 8 }}>
+        Create Account
+      </Text>
+      <Text variant="bodyLarge" style={{ marginBottom: 32 }}>
+        Sign up to get started
+      </Text>
+
+      <TextInputField
+        label="Full Name"
+        placeholder="Enter your name"
+        leftIcon="account-outline"
+        value={name}
+        onChangeText={setName}
+      />
+
+      <TextInputField
+        label="Email"
+        placeholder="Enter your email"
+        leftIcon="email-outline"
+        keyboardType="email-address"
+        autoCapitalize="none"
+        value={email}
+        onChangeText={setEmail}
+      />
+
+      <TextInputField
+        label="Phone Number"
+        placeholder="Enter your phone"
+        leftIcon="phone-outline"
+        keyboardType="phone-pad"
+        value={phone}
+        onChangeText={setPhone}
+      />
+
+      <TextInputField
+        label="Password"
+        placeholder="Create a password"
+        leftIcon="lock-outline"
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
+
+      <Spacer24 />
+
+      <PrimaryButton onPress={onComplete}>
+        Sign Up
+      </PrimaryButton>
+
+      <Spacer16 />
+
+      <SecondaryButton onPress={onBackToLogin} variant="ghost">
+        Already have an account? Log In
+      </SecondaryButton>
+    </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  text: {
-    color: '#000000',
-    textAlign: 'center',
-  },
-  button: {
-    marginTop: 40,
-  },
-  backButton: {
-    marginTop: 20,
-  },
-});

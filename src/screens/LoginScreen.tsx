@@ -1,5 +1,13 @@
-import { StyleSheet, View } from 'react-native';
-import { Button, Text } from 'react-native-paper';
+import { useState } from 'react';
+import {
+  ScreenContainer,
+  PrimaryButton,
+  SecondaryButton,
+  TextInputField,
+  Spacer16,
+  Spacer24,
+} from '../components';
+import { Text } from 'react-native-paper';
 
 interface LoginScreenProps {
   onComplete: () => void;
@@ -7,39 +15,48 @@ interface LoginScreenProps {
 }
 
 export default function LoginScreen({ onComplete, onSignup }: LoginScreenProps) {
-  return (
-    <View style={styles.container}>
-      <Text variant="headlineLarge" style={styles.text}>
-        This is the "Login Screen"
-      </Text>
-      
-      <Button mode="contained" onPress={onComplete} style={styles.button}>
-        Login
-      </Button>
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-      <Button mode="text" onPress={onSignup} style={styles.signupButton}>
+  return (
+    <ScreenContainer>
+      <Text variant="displaySmall" style={{ marginBottom: 8 }}>
+        Welcome Back
+      </Text>
+      <Text variant="bodyLarge" style={{ marginBottom: 32 }}>
+        Sign in to continue
+      </Text>
+
+      <TextInputField
+        label="Email"
+        placeholder="Enter your email"
+        leftIcon="email-outline"
+        keyboardType="email-address"
+        autoCapitalize="none"
+        value={email}
+        onChangeText={setEmail}
+      />
+
+      <TextInputField
+        label="Password"
+        placeholder="Enter your password"
+        leftIcon="lock-outline"
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
+
+      <Spacer24 />
+
+      <PrimaryButton onPress={onComplete}>
+        Log In
+      </PrimaryButton>
+
+      <Spacer16 />
+
+      <SecondaryButton onPress={onSignup} variant="ghost">
         Don't have an account? Sign Up
-      </Button>
-    </View>
+      </SecondaryButton>
+    </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  text: {
-    color: '#000000',
-    textAlign: 'center',
-  },
-  button: {
-    marginTop: 40,
-  },
-  signupButton: {
-    marginTop: 20,
-  },
-});
