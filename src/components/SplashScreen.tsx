@@ -10,25 +10,28 @@ interface SplashScreenProps {
 }
 
 export default function CustomSplashScreen({ onFinish }: SplashScreenProps) {
-  const [fadeAnim] = useState(new Animated.Value(0));
+  const [fadeAnim] = useState(new Animated.Value(1));
+  const [backgroundColor, setBackgroundColor] = useState('#995FAF');
 
   useEffect(() => {
     async function prepare() {
       try {
-        // Show fade-in animation
-        Animated.timing(fadeAnim, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }).start();
+        // Hide native splash immediately, show our custom one
+        await SplashScreen.hideAsync();
 
-        // Keep splash visible for minimum 10 seconds
-        await new Promise(resolve => setTimeout(resolve, 10000));
+        // Wait 2 seconds with light purple background
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Change to deep purple
+        setBackgroundColor('#8020A2');
+
+        // Wait another 2 seconds (total 4 seconds)
+        await new Promise(resolve => setTimeout(resolve, 2000));
 
         // Fade out
         Animated.timing(fadeAnim, {
           toValue: 0,
-          duration: 2000,
+          duration: 300,
           useNativeDriver: true,
         }).start(() => {
           onFinish();
@@ -36,8 +39,6 @@ export default function CustomSplashScreen({ onFinish }: SplashScreenProps) {
       } catch (e) {
         console.warn('Splash screen error:', e);
         onFinish();
-      } finally {
-        await SplashScreen.hideAsync();
       }
     }
 
@@ -45,7 +46,7 @@ export default function CustomSplashScreen({ onFinish }: SplashScreenProps) {
   }, [fadeAnim, onFinish]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor }]}>
       <Animated.View style={[styles.logoContainer, { opacity: fadeAnim }]}>
         <Image
           source={require('../../assets/cend-logo.png')}
@@ -60,7 +61,6 @@ export default function CustomSplashScreen({ onFinish }: SplashScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#8020A2',
     alignItems: 'center',
     justifyContent: 'center',
   },

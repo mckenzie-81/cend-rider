@@ -12,6 +12,17 @@
       "resizeMode": "contain",
       "backgroundColor": "#8020A2"
     },
+    "jsEngine": "hermes",
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#8020A2",
+          "image": "./assets/cend-logo.png",
+          "imageWidth": 200
+        }
+      ]
+    ],
     "ios": {
       "supportsTablet": true
     },
