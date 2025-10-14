@@ -42,7 +42,7 @@ const HomeScreen = ({ onTabChange }: HomeScreenProps) => {
 
   const promos = [
     { key: 'promo1', title: 'Get 20% off your next ride', buttonLabel: 'Claim Now' },
-    { key: 'promo2', title: 'Free delivery on orders above ₦5000', buttonLabel: 'Order Now' },
+    { key: 'promo2', title: 'Free delivery on orders above GHc5000', buttonLabel: 'Order Now' },
     { key: 'promo3', title: 'Invite friends and earn rewards', buttonLabel: 'Share Now' },
   ];
 
