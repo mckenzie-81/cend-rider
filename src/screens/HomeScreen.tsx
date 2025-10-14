@@ -156,18 +156,25 @@ const HomeScreen = ({ onTabChange }: HomeScreenProps) => {
           </ScrollView>
         </View>
 
-        {/* Hero Image Section */}
-        <View style={styles.heroSection}>
-          <Image 
-            source={require('../../assets/woman-in-car.png')} 
-            style={styles.heroImage}
-            resizeMode="cover"
-          />
-          <View style={styles.heroOverlay}>
-            <Text variant="headlineMedium" style={styles.heroTitle}>
-              Safe. Comfortable. Reliable.
+        {/* Story Banner with Image */}
+        <View style={styles.storyBanner}>
+          <View style={styles.storyContent}>
+            <View style={styles.storyBadge}>
+              <Ionicons name="shield-checkmark" size={16} color="#8020A2" />
+              <Text variant="labelSmall" style={styles.badgeText}>Verified & Safe</Text>
+            </View>
+            <Text variant="headlineSmall" style={styles.storyTitle}>
+              Your Journey,{'\n'}Our Priority
+            </Text>
+            <Text variant="bodyMedium" style={styles.storyText}>
+              Experience comfort and reliability on every ride
             </Text>
           </View>
+          <Image 
+            source={require('../../assets/woman-in-car.png')} 
+            style={styles.storyImage}
+            resizeMode="cover"
+          />
         </View>
       </View>
       </ScrollView>
