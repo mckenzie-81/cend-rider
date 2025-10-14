@@ -8,9 +8,9 @@ const HomeScreen = () => {
 
   const tabs = [
     { key: 'home', label: 'Home', icon: 'home-outline' },
-    { key: 'payment', label: 'Payment', icon: 'wallet-outline' },
-    { key: 'activity', label: 'Activity', icon: 'time-outline' },
-    { key: 'messages', label: 'Messages', icon: 'chatbubble-outline' },
+    { key: 'services', label: 'Services', icon: 'grid-outline' },
+    { key: 'activity', label: 'Activity', icon: 'receipt-outline' },
+    { key: 'account', label: 'Account', icon: 'person-outline' },
   ];
 
   const services = [
