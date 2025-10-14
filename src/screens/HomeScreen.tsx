@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity, Dimensions } from 'react-native';
+import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity, Dimensions, Image } from 'react-native';
 import { ScreenContainer, AppHeader, Spacer16, TabBar, ServiceCard, QuickActionCard, PromoCard } from '../components';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
@@ -30,7 +30,7 @@ const HomeScreen = ({ onTabChange }: HomeScreenProps) => {
     { key: 'ride', icon: 'car-outline', title: 'Ride' },
     { key: 'dispatch', icon: 'cube-outline', title: 'Dispatch' },
     { key: 'okada', icon: 'bicycle-outline', title: 'Okada' },
-    { key: 'food', icon: 'restaurant-outline', title: 'Food' },
+    { key: 'reserve', icon: 'calendar-outline', title: 'Reserve' },
   ];
 
   const quickActions = [
@@ -155,6 +155,20 @@ const HomeScreen = ({ onTabChange }: HomeScreenProps) => {
             ))}
           </ScrollView>
         </View>
+
+        {/* Hero Image Section */}
+        <View style={styles.heroSection}>
+          <Image 
+            source={require('../../assets/woman-in-car.png')} 
+            style={styles.heroImage}
+            resizeMode="cover"
+          />
+          <View style={styles.heroOverlay}>
+            <Text variant="headlineMedium" style={styles.heroTitle}>
+              Safe. Comfortable. Reliable.
+            </Text>
+          </View>
+        </View>
       </View>
       </ScrollView>
 
@@ -245,5 +259,46 @@ const styles = StyleSheet.create({
   promoCard: {
     width: SCREEN_WIDTH - 32, // Full screen width minus 16px padding on each side
     height: 150, // Increased by 10% from 136px (136 * 1.1 ≈ 150)
+  },
+  storyBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 20,
+    paddingVertical: 24,
+    marginTop: 16,
+  },
+  storyContent: {
+    flex: 1,
+    paddingRight: 16,
+  },
+  storyBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#F2D7FC',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    alignSelf: 'flex-start',
+    marginBottom: 12,
+  },
+  badgeText: {
+    color: '#8020A2',
+    fontWeight: '600',
+  },
+  storyTitle: {
+    color: '#1C1B1F',
+    marginBottom: 8,
+    lineHeight: 32,
+  },
+  storyText: {
+    color: '#6B6B6B',
+    lineHeight: 22,
+  },
+  storyImage: {
+    width: 180,
+    height: 180,
+    borderRadius: 90,
   },
 });
