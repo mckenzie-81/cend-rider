@@ -9,6 +9,7 @@ const brandColors = {
   paleLavender: '#DAC1E3',      // Pale lavender - accents/containers
   peach: '#F9D2AA',             // Peach - secondary/highlights
   white: '#FFFFFF',             // Pure white
+  charcoal: '#1C1B1F',          // Soft black for text (more comfortable than pure black)
 };
 
 // Custom font configuration
@@ -156,19 +157,19 @@ const createTheme = (mode: ThemeMode): MD3Theme => {
       
       // Surface colors
       background: isDark ? '#121212' : brandColors.white,
-      onBackground: isDark ? brandColors.white : '#000000',
+      onBackground: isDark ? brandColors.white : brandColors.charcoal,
       surface: isDark ? '#1A1A1A' : brandColors.white,
-      onSurface: isDark ? brandColors.white : '#000000',
+      onSurface: isDark ? brandColors.white : brandColors.charcoal,
       surfaceVariant: isDark ? '#2D2D2D' : brandColors.paleLavender,
-      onSurfaceVariant: isDark ? brandColors.white : '#000000',
+      onSurfaceVariant: isDark ? brandColors.white : brandColors.charcoal,
       
       // Utility colors
       outline: isDark ? brandColors.lightPurple : brandColors.primaryPurple,
       outlineVariant: isDark ? '#4D4D4D' : brandColors.paleLavender,
       inverseSurface: isDark ? brandColors.white : '#1A1A1A',
-      inverseOnSurface: isDark ? '#000000' : brandColors.white,
+      inverseOnSurface: isDark ? brandColors.charcoal : brandColors.white,
       inversePrimary: isDark ? brandColors.primaryPurple : brandColors.lightPurple,
-      shadow: '#000000',
+      shadow: brandColors.charcoal,
       surfaceDisabled: 'rgba(128, 32, 162, 0.12)',
       onSurfaceDisabled: 'rgba(128, 32, 162, 0.38)',
       backdrop: isDark ? 'rgba(153, 95, 175, 0.4)' : 'rgba(128, 32, 162, 0.4)',
