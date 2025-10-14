@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export interface TabItem {
@@ -9,7 +9,7 @@ export interface TabItem {
   key: string;
   /** Tab label */
   label: string;
-  /** Icon name (Material Community Icons) */
+  /** Icon name (Ionicons) */
   icon: string;
 }
 
@@ -29,10 +29,10 @@ interface TabBarProps {
  * @example
  * <TabBar
  *   tabs={[
- *     { key: 'home', label: 'Home', icon: 'home' },
- *     { key: 'payment', label: 'Payment', icon: 'wallet' },
- *     { key: 'activity', label: 'Activity', icon: 'clock-outline' },
- *     { key: 'messages', label: 'Messages', icon: 'message-outline' }
+ *     { key: 'home', label: 'Home', icon: 'home-outline' },
+ *     { key: 'payment', label: 'Payment', icon: 'wallet-outline' },
+ *     { key: 'activity', label: 'Activity', icon: 'time-outline' },
+ *     { key: 'messages', label: 'Messages', icon: 'chatbubble-outline' }
  *   ]}
  *   activeTab={activeTab}
  *   onTabPress={setActiveTab}
@@ -68,7 +68,7 @@ export function TabBar({ tabs, activeTab, onTabPress }: TabBarProps) {
             style={styles.tab}
             activeOpacity={0.7}
           >
-            <MaterialCommunityIcons
+            <Ionicons
               name={tab.icon as any}
               size={24}
               color={isActive ? theme.colors.primary : theme.colors.onSurfaceVariant}

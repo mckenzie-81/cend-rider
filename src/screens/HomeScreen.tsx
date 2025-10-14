@@ -7,17 +7,17 @@ const HomeScreen = () => {
   const [activeTab, setActiveTab] = useState('home');
 
   const tabs = [
-    { key: 'home', label: 'Home', icon: 'home' },
-    { key: 'payment', label: 'Payment', icon: 'wallet' },
-    { key: 'activity', label: 'Activity', icon: 'clock-outline' },
-    { key: 'messages', label: 'Messages', icon: 'message-outline' },
+    { key: 'home', label: 'Home', icon: 'home-outline' },
+    { key: 'payment', label: 'Payment', icon: 'wallet-outline' },
+    { key: 'activity', label: 'Activity', icon: 'time-outline' },
+    { key: 'messages', label: 'Messages', icon: 'chatbubble-outline' },
   ];
 
   const services = [
-    { key: 'bike', icon: 'bike', title: 'Bike' },
-    { key: 'car', icon: 'car', title: 'Car' },
-    { key: 'food', icon: 'food', title: 'Food' },
-    { key: 'package', icon: 'package-variant', title: 'Package' },
+    { key: 'bike', icon: 'bicycle-outline', title: 'Bike' },
+    { key: 'car', icon: 'car-outline', title: 'Car' },
+    { key: 'food', icon: 'restaurant-outline', title: 'Food' },
+    { key: 'package', icon: 'cube-outline', title: 'Package' },
   ];
 
   const handleServicePress = (serviceKey: string) => {

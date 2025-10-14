@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 interface ServiceCardProps {
-  /** Service icon name (Material Community Icons) */
+  /** Service icon name (Ionicons) */
   icon: string;
   /** Service title */
   title: string;
@@ -22,7 +22,7 @@ interface ServiceCardProps {
  * 
  * @example
  * <ServiceCard
- *   icon="bike"
+ *   icon="bicycle-outline"
  *   title="Bike"
  *   subtitle="Fast & Affordable"
  *   onPress={handleBikeSelect}
@@ -50,7 +50,7 @@ export function ServiceCard({
       ]}
     >
       {/* Icon */}
-      <MaterialCommunityIcons
+      <Ionicons
         name={icon as any}
         size={32}
         color='#8020A2' // Deep purple
