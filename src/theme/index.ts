@@ -1,4 +1,4 @@
-import { MD3DarkTheme, MD3LightTheme, MD3Theme } from 'react-native-paper';
+import { MD3DarkTheme, MD3LightTheme, MD3Theme, configureFonts } from 'react-native-paper';
 
 type ThemeMode = 'light' | 'dark';
 
@@ -11,12 +11,123 @@ const brandColors = {
   white: '#FFFFFF',             // Pure white
 };
 
+// Custom font configuration
+// Product Sans for headers/titles, Poppins for body text
+const fontConfig = {
+  displayLarge: {
+    fontFamily: 'ProductSans-Bold',
+    fontSize: 57,
+    fontWeight: '400' as const,
+    letterSpacing: 0,
+    lineHeight: 64,
+  },
+  displayMedium: {
+    fontFamily: 'ProductSans-Bold',
+    fontSize: 45,
+    fontWeight: '400' as const,
+    letterSpacing: 0,
+    lineHeight: 52,
+  },
+  displaySmall: {
+    fontFamily: 'ProductSans-Bold',
+    fontSize: 36,
+    fontWeight: '400' as const,
+    letterSpacing: 0,
+    lineHeight: 44,
+  },
+  headlineLarge: {
+    fontFamily: 'ProductSans-Bold',
+    fontSize: 32,
+    fontWeight: '400' as const,
+    letterSpacing: 0,
+    lineHeight: 40,
+  },
+  headlineMedium: {
+    fontFamily: 'ProductSans-Regular',
+    fontSize: 28,
+    fontWeight: '400' as const,
+    letterSpacing: 0,
+    lineHeight: 36,
+  },
+  headlineSmall: {
+    fontFamily: 'ProductSans-Regular',
+    fontSize: 24,
+    fontWeight: '400' as const,
+    letterSpacing: 0,
+    lineHeight: 32,
+  },
+  titleLarge: {
+    fontFamily: 'ProductSans-Regular',
+    fontSize: 22,
+    fontWeight: '400' as const,
+    letterSpacing: 0,
+    lineHeight: 28,
+  },
+  titleMedium: {
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 16,
+    fontWeight: '500' as const,
+    letterSpacing: 0.15,
+    lineHeight: 24,
+  },
+  titleSmall: {
+    fontFamily: 'Poppins-SemiBold',
+    fontSize: 14,
+    fontWeight: '500' as const,
+    letterSpacing: 0.1,
+    lineHeight: 20,
+  },
+  bodyLarge: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 16,
+    fontWeight: '400' as const,
+    letterSpacing: 0.5,
+    lineHeight: 24,
+  },
+  bodyMedium: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 14,
+    fontWeight: '400' as const,
+    letterSpacing: 0.25,
+    lineHeight: 20,
+  },
+  bodySmall: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 12,
+    fontWeight: '400' as const,
+    letterSpacing: 0.4,
+    lineHeight: 16,
+  },
+  labelLarge: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 14,
+    fontWeight: '500' as const,
+    letterSpacing: 0.1,
+    lineHeight: 20,
+  },
+  labelMedium: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 12,
+    fontWeight: '500' as const,
+    letterSpacing: 0.5,
+    lineHeight: 16,
+  },
+  labelSmall: {
+    fontFamily: 'Poppins-Medium',
+    fontSize: 11,
+    fontWeight: '500' as const,
+    letterSpacing: 0.5,
+    lineHeight: 16,
+  },
+} as const;
+
 const createTheme = (mode: ThemeMode): MD3Theme => {
   const isDark = mode === 'dark';
 
   return {
     ...(isDark ? MD3DarkTheme : MD3LightTheme),
     dark: isDark,
+    fonts: configureFonts({ config: fontConfig }),
     colors: {
       ...(isDark ? MD3DarkTheme.colors : MD3LightTheme.colors),
       // Primary colors
