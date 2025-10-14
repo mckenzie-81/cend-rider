@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -12,8 +12,6 @@ interface ServiceCardProps {
   subtitle?: string;
   /** Press handler */
   onPress: () => void;
-  /** Active/selected state */
-  active?: boolean;
   /** Custom container style */
   style?: ViewStyle;
 }
@@ -28,7 +26,6 @@ interface ServiceCardProps {
  *   title="Bike"
  *   subtitle="Fast & Affordable"
  *   onPress={handleBikeSelect}
- *   active={selectedService === 'bike'}
  * />
  */
 export function ServiceCard({
@@ -36,7 +33,6 @@ export function ServiceCard({
   title,
   subtitle,
   onPress,
-  active = false,
   style,
 }: ServiceCardProps) {
   const theme = useTheme();
@@ -48,7 +44,7 @@ export function ServiceCard({
       style={[
         styles.container,
         {
-          backgroundColor: active ? theme.colors.primary : '#F2D7FC',
+          backgroundColor: '#F2D7FC', // Light lavender - always this color
         },
         style,
       ]}
@@ -57,7 +53,7 @@ export function ServiceCard({
       <MaterialCommunityIcons
         name={icon as any}
         size={32}
-        color={active ? '#FFFFFF' : '#8020A2'}
+        color='#8020A2' // Deep purple
         style={styles.icon}
       />
 
@@ -66,7 +62,7 @@ export function ServiceCard({
         variant="labelSmall"
         style={[
           styles.title,
-          { color: active ? '#FFFFFF' : '#8020A2' },
+          { color: '#8020A2' }, // Deep purple
         ]}
       >
         {title}

@@ -5,7 +5,6 @@ import { Text } from 'react-native-paper';
 
 const HomeScreen = () => {
   const [activeTab, setActiveTab] = useState('home');
-  const [selectedService, setSelectedService] = useState<string | null>(null);
 
   const tabs = [
     { key: 'home', label: 'Home', icon: 'home' },
@@ -20,6 +19,11 @@ const HomeScreen = () => {
     { key: 'food', icon: 'food', title: 'Food' },
     { key: 'package', icon: 'package-variant', title: 'Package' },
   ];
+
+  const handleServicePress = (serviceKey: string) => {
+    // Handle service selection - for now just log it
+    console.log('Service selected:', serviceKey);
+  };
 
   return (
     <ScreenContainer safe={false} padding={0}>
@@ -40,8 +44,7 @@ const HomeScreen = () => {
             key={service.key}
             icon={service.icon}
             title={service.title}
-            onPress={() => setSelectedService(service.key)}
-            active={selectedService === service.key}
+            onPress={() => handleServicePress(service.key)}
             style={styles.serviceCard}
           />
         ))}
