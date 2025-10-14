@@ -20,7 +20,7 @@ export default function LoginScreen({ onComplete, onSignup }: LoginScreenProps) 
   const [password, setPassword] = useState('');
 
   return (
-    <ScreenContainer>
+    <ScreenContainer scrollable>
       <View style={styles.content}>
         <Text variant="displaySmall" style={styles.title}>
           Welcome Back
@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     justifyContent: 'center',
+    minHeight: 500, // Ensures content can be centered on larger screens
   },
   title: {
     marginBottom: 8,
