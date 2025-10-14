@@ -3,8 +3,17 @@ import { View, StyleSheet, ScrollView } from 'react-native';
 import { ScreenContainer, AppHeader, Spacer16, TabBar, ServiceCard } from '../components';
 import { Text } from 'react-native-paper';
 
-const HomeScreen = () => {
+interface HomeScreenProps {
+  onTabChange: (tab: string) => void;
+}
+
+const HomeScreen = ({ onTabChange }: HomeScreenProps) => {
   const [activeTab, setActiveTab] = useState('home');
+
+  const handleTabPress = (tab: string) => {
+    setActiveTab(tab);
+    onTabChange(tab);
+  };
 
   const tabs = [
     { key: 'home', label: 'Home', icon: 'home-outline' },
@@ -62,7 +71,7 @@ const HomeScreen = () => {
       <TabBar 
         tabs={tabs}
         activeTab={activeTab}
-        onTabPress={setActiveTab}
+        onTabPress={handleTabPress}
       />
     </ScreenContainer>
   );
