@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
 import { ScreenContainer, AppHeader, Spacer16, TabBar, ServiceCard } from '../components';
 import { Text } from 'react-native-paper';
+import { Ionicons } from '@expo/vector-icons';
 
 interface HomeScreenProps {
   onTabChange: (tab: string) => void;
@@ -9,6 +10,7 @@ interface HomeScreenProps {
 
 const HomeScreen = ({ onTabChange }: HomeScreenProps) => {
   const [activeTab, setActiveTab] = useState('home');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleTabPress = (tab: string) => {
     setActiveTab(tab);
@@ -40,7 +42,23 @@ const HomeScreen = ({ onTabChange }: HomeScreenProps) => {
         // title="Home" 
         gradientColors={['#8020A2', '#995FAF']}
         elevated={false}
-      />
+      >
+        <View style={styles.compactSearchContainer}>
+          <Ionicons name="search-outline" size={24} color="#FFFFFF" style={styles.searchIconOutside} />
+          <TextInput
+            style={styles.compactSearchInput}
+            placeholder="Search the Cend App"
+            placeholderTextColor="rgba(255, 255, 255, 0.7)"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.clearButton}>
+              <Ionicons name="close-circle" size={20} color="rgba(255, 255, 255, 0.7)" />
+            </TouchableOpacity>
+          )}
+        </View>
+      </AppHeader>
       
       {/* Service Cards - Horizontal Row */}
       <ScrollView 
@@ -80,6 +98,27 @@ const HomeScreen = ({ onTabChange }: HomeScreenProps) => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
+  compactSearchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  searchIconOutside: {
+    marginLeft: 4,
+  },
+  compactSearchInput: {
+    flex: 1,
+    height: 36,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 18,
+    paddingHorizontal: 16,
+    color: '#FFFFFF',
+    fontSize: 14,
+  },
+  clearButton: {
+    padding: 4,
+    marginRight: 4,
+  },
   servicesContainer: {
     paddingHorizontal: 16,
     paddingVertical: 16,

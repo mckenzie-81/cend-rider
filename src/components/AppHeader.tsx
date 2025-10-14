@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Appbar, useTheme } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -22,6 +22,8 @@ interface AppHeaderProps {
   gradientColors?: [string, string];
   /** Elevated style with shadow */
   elevated?: boolean;
+  /** Custom content to render inside header (e.g., SearchBar) */
+  children?: ReactNode;
 }
 
 /**
@@ -55,6 +57,7 @@ export function AppHeader({
   backgroundColor,
   gradientColors,
   elevated = true,
+  children,
 }: AppHeaderProps) {
   const theme = useTheme();
   const bgColor = backgroundColor || theme.colors.surface;
@@ -65,8 +68,14 @@ export function AppHeader({
         <Appbar.BackAction onPress={onBackPress} color={gradientColors ? '#FFFFFF' : undefined} />
       )}
       
-      {title && (
+      {!children && title && (
         <Appbar.Content title={title} titleStyle={[styles.title, gradientColors && { color: '#FFFFFF' }]} />
+      )}
+
+      {children && (
+        <View style={styles.childrenContent}>
+          {children}
+        </View>
       )}
 
       {actions.map((action, index) => (
@@ -83,7 +92,7 @@ export function AppHeader({
 
   if (gradientColors) {
     return (
-      <View style={[styles.header, elevated && styles.elevated]}>
+      <View style={[styles.headerContainer, elevated && styles.elevated]}>
         <LinearGradient
           colors={gradientColors}
           start={{ x: 0, y: 0 }}
@@ -101,19 +110,23 @@ export function AppHeader({
   }
 
   return (
-    <Appbar.Header
-      style={[
-        styles.header,
-        { backgroundColor: bgColor },
-        elevated && styles.elevated,
-      ]}
-    >
-      {headerContent}
-    </Appbar.Header>
+    <View style={[styles.headerContainer, elevated && styles.elevated]}>
+      <Appbar.Header
+        style={[
+          styles.header,
+          { backgroundColor: bgColor },
+        ]}
+      >
+        {headerContent}
+      </Appbar.Header>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  headerContainer: {
+    elevation: 0,
+  },
   header: {
     elevation: 0,
   },
@@ -126,6 +139,15 @@ const styles = StyleSheet.create({
   },
   gradient: {
     width: '100%',
+  },
+  childrenContent: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: 8,
+  },
+  childrenContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 16,
   },
   title: {
     fontWeight: '600',
