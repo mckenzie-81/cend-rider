@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
-import { ScreenContainer, PrimaryButton, SecondaryButton } from '../components';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { PrimaryButton, SecondaryButton } from '../components';
 
 interface OnboardingScreenProps {
   onComplete: () => void;
@@ -28,7 +29,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
   const currentScreenData = screens[currentScreen];
 
   return (
-    <ScreenContainer safe={false}>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]} edges={['top', 'bottom']}>
       {/* Skip Button */}
       <View style={styles.topBar}>
         <SecondaryButton onPress={onComplete} variant="ghost" style={styles.skipButton}>
@@ -64,17 +65,22 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
       </View>
 
       {/* Next/Get Started Button */}
-      <PrimaryButton onPress={handleNext} style={styles.button}>
-        {isLastScreen ? 'Get Started' : 'Next'}
-      </PrimaryButton>
-    </ScreenContainer>
+      <View style={styles.buttonContainer}>
+        <PrimaryButton onPress={handleNext}>
+          {isLastScreen ? 'Get Started' : 'Next'}
+        </PrimaryButton>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   topBar: {
     alignItems: 'flex-end',
-    paddingTop: 48,
+    paddingTop: 16,
     paddingHorizontal: 20,
   },
   skipButton: {
@@ -101,7 +107,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: 24,
     gap: 8,
-    paddingHorizontal: 20,
   },
   dot: {
     width: 8,
@@ -111,8 +116,8 @@ const styles = StyleSheet.create({
   activeDot: {
     width: 24,
   },
-  button: {
-    marginHorizontal: 20,
-    marginBottom: 48,
+  buttonContainer: {
+    paddingHorizontal: 20,
+    paddingBottom: 16,
   },
 });
