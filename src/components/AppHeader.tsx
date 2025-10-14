@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Appbar, useTheme } from 'react-native-paper';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface AppHeaderProps {
   /** Title text for the header */
@@ -17,6 +18,8 @@ interface AppHeaderProps {
   }>;
   /** Custom background color */
   backgroundColor?: string;
+  /** Gradient colors [start, end] */
+  gradientColors?: [string, string];
   /** Elevated style with shadow */
   elevated?: boolean;
 }
@@ -31,6 +34,9 @@ interface AppHeaderProps {
  * 
  * // Header with back button
  * <AppHeader title="Profile" showBack onBackPress={() => navigation.goBack()} />
+ * 
+ * // Header with gradient
+ * <AppHeader gradientColors={['#8020A2', '#7F23FF']} />
  * 
  * // Header with actions
  * <AppHeader 
@@ -47,10 +53,52 @@ export function AppHeader({
   onBackPress,
   actions = [],
   backgroundColor,
+  gradientColors,
   elevated = true,
 }: AppHeaderProps) {
   const theme = useTheme();
   const bgColor = backgroundColor || theme.colors.surface;
+
+  const headerContent = (
+    <>
+      {showBack && (
+        <Appbar.BackAction onPress={onBackPress} color={gradientColors ? '#FFFFFF' : undefined} />
+      )}
+      
+      {title && (
+        <Appbar.Content title={title} titleStyle={[styles.title, gradientColors && { color: '#FFFFFF' }]} />
+      )}
+
+      {actions.map((action, index) => (
+        <Appbar.Action
+          key={index}
+          icon={action.icon}
+          onPress={action.onPress}
+          accessibilityLabel={action.label}
+          color={gradientColors ? '#FFFFFF' : undefined}
+        />
+      ))}
+    </>
+  );
+
+  if (gradientColors) {
+    return (
+      <View style={[styles.header, elevated && styles.elevated]}>
+        <LinearGradient
+          colors={gradientColors}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.gradient}
+        >
+          <Appbar.Header
+            style={[styles.header, { backgroundColor: 'transparent' }]}
+          >
+            {headerContent}
+          </Appbar.Header>
+        </LinearGradient>
+      </View>
+    );
+  }
 
   return (
     <Appbar.Header
@@ -60,22 +108,7 @@ export function AppHeader({
         elevated && styles.elevated,
       ]}
     >
-      {showBack && (
-        <Appbar.BackAction onPress={onBackPress} />
-      )}
-      
-      {title && (
-        <Appbar.Content title={title} titleStyle={styles.title} />
-      )}
-
-      {actions.map((action, index) => (
-        <Appbar.Action
-          key={index}
-          icon={action.icon}
-          onPress={action.onPress}
-          accessibilityLabel={action.label}
-        />
-      ))}
+      {headerContent}
     </Appbar.Header>
   );
 }
@@ -90,6 +123,9 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+  },
+  gradient: {
+    width: '100%',
   },
   title: {
     fontWeight: '600',

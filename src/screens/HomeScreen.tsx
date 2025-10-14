@@ -29,7 +29,7 @@ const HomeScreen = () => {
     <ScreenContainer safe={false} padding={0}>
       <AppHeader 
         // title="Home" 
-        backgroundColor="#8020A2"
+        gradientColors={['#8020A2', '#995FAF']}
         elevated={false}
       />
       
