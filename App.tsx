@@ -13,12 +13,14 @@ import { darkTheme, lightTheme } from './src/theme';
 import CustomSplashScreen from './src/components/SplashScreen';
 import OnboardingScreen from './src/screens/OnboardingScreen';
 import LoginScreen from './src/screens/LoginScreen';
+import SignupScreen from './src/screens/SignupScreen';
 import './src/theme/nativewind';
 
 export default function App() {
   const [isReady, setIsReady] = useState(false);
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
   const scheme = useColorScheme();
   const theme = scheme === 'dark' ? darkTheme : lightTheme;
 
@@ -43,6 +45,25 @@ export default function App() {
   }
 
   if (!isAuthenticated) {
+    if (showSignup) {
+      return (
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <SafeAreaProvider>
+            <PaperProvider
+              theme={theme}
+              settings={{ icon: (props) => <MaterialCommunityIcons {...props} /> }}
+            >
+              <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+              <SignupScreen 
+                onComplete={() => setIsAuthenticated(true)} 
+                onBackToLogin={() => setShowSignup(false)}
+              />
+            </PaperProvider>
+          </SafeAreaProvider>
+        </GestureHandlerRootView>
+      );
+    }
+
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
         <SafeAreaProvider>
@@ -51,7 +72,10 @@ export default function App() {
             settings={{ icon: (props) => <MaterialCommunityIcons {...props} /> }}
           >
             <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
-            <LoginScreen onComplete={() => setIsAuthenticated(true)} />
+            <LoginScreen 
+              onComplete={() => setIsAuthenticated(true)} 
+              onSignup={() => setShowSignup(true)}
+            />
           </PaperProvider>
         </SafeAreaProvider>
       </GestureHandlerRootView>

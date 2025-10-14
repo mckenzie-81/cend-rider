@@ -1,24 +1,24 @@
 import { StyleSheet, View } from 'react-native';
 import { Button, Text } from 'react-native-paper';
 
-interface LoginScreenProps {
+interface SignupScreenProps {
   onComplete: () => void;
-  onSignup: () => void;
+  onBackToLogin: () => void;
 }
 
-export default function LoginScreen({ onComplete, onSignup }: LoginScreenProps) {
+export default function SignupScreen({ onComplete, onBackToLogin }: SignupScreenProps) {
   return (
     <View style={styles.container}>
       <Text variant="headlineLarge" style={styles.text}>
-        This is the "Login Screen"
+        This is the "Signup Screen"
       </Text>
       
       <Button mode="contained" onPress={onComplete} style={styles.button}>
-        Login
+        Sign Up
       </Button>
 
-      <Button mode="text" onPress={onSignup} style={styles.signupButton}>
-        Don't have an account? Sign Up
+      <Button mode="text" onPress={onBackToLogin} style={styles.backButton}>
+        Back to Login
       </Button>
     </View>
   );
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 40,
   },
-  signupButton: {
+  backButton: {
     marginTop: 20,
   },
 });
