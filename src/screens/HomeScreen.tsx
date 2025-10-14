@@ -1,10 +1,15 @@
 import { View, StyleSheet } from 'react-native';
-import { ScreenContainer, Spacer16 } from '../components';
+import { ScreenContainer, AppHeader, Spacer16 } from '../components';
 import { Text } from 'react-native-paper';
 
 const HomeScreen = () => {
   return (
-    <ScreenContainer>
+    <ScreenContainer safe={false} padding={0}>
+      <AppHeader 
+        title="Home" 
+        backgroundColor="#8020A2"
+        elevated={false}
+      />
       <View style={styles.content}>
         <Text variant="displaySmall" style={styles.title}>
           Welcome to CEND
@@ -25,6 +30,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 20,
   },
   title: {
     textAlign: 'center',
