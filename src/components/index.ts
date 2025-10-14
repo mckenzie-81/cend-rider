@@ -19,6 +19,7 @@ export { RideRequestCard } from './RideRequestCard';
 export { DriverInfoCard } from './DriverInfoCard';
 export { ServiceCard } from './ServiceCard';
 export { ServiceGrid } from './ServiceGrid';
+export { QuickActionCard } from './QuickActionCard';
 
 // Feedback Components
 export { LoadingSpinner } from './LoadingSpinner';

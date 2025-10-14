@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
-import { ScreenContainer, AppHeader, Spacer16, TabBar, ServiceCard } from '../components';
+import { ScreenContainer, AppHeader, Spacer16, TabBar, ServiceCard, QuickActionCard } from '../components';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -31,9 +31,21 @@ const HomeScreen = ({ onTabChange }: HomeScreenProps) => {
     { key: 'food', icon: 'restaurant-outline', title: 'Food' },
   ];
 
+  const quickActions = [
+    { key: 'schedule', icon: 'time-outline', title: 'Schedule' },
+    { key: 'promo', icon: 'pricetag-outline', title: 'Promo' },
+    { key: 'wallet', icon: 'wallet-outline', title: 'Wallet' },
+    { key: 'support', icon: 'help-circle-outline', title: 'Support' },
+  ];
+
   const handleServicePress = (serviceKey: string) => {
     // Handle service selection - for now just log it
     console.log('Service selected:', serviceKey);
+  };
+
+  const handleQuickAction = (actionKey: string) => {
+    // Handle quick action - for now just log it
+    console.log('Quick action:', actionKey);
   };
 
   return (
@@ -60,22 +72,48 @@ const HomeScreen = ({ onTabChange }: HomeScreenProps) => {
         </View>
       </AppHeader>
       
-      {/* Service Cards - Horizontal Row */}
-      <ScrollView 
-        horizontal 
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.servicesContainer}
-      >
-        {services.map((service) => (
-          <ServiceCard
-            key={service.key}
-            icon={service.icon}
-            title={service.title}
-            onPress={() => handleServicePress(service.key)}
-            style={styles.serviceCard}
-          />
-        ))}
-      </ScrollView>
+      <View style={styles.cardsWrapper}>
+        {/* Service Cards - Horizontal Row */}
+        <View style={styles.servicesSection}>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.servicesContainer}
+          >
+            {services.map((service) => (
+              <ServiceCard
+                key={service.key}
+                icon={service.icon}
+                title={service.title}
+                onPress={() => handleServicePress(service.key)}
+                style={styles.serviceCard}
+              />
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* Quick Action Cards - Horizontal Row */}
+        <View style={styles.quickActionsSection}>
+          <Text variant="titleMedium" style={styles.sectionHeading}>
+            Quick Actions
+          </Text>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.quickActionsContainer}
+          >
+            {quickActions.map((action) => (
+              <QuickActionCard
+                key={action.key}
+                icon={action.icon}
+                title={action.title}
+                onPress={() => handleQuickAction(action.key)}
+                style={styles.quickActionCard}
+              />
+            ))}
+          </ScrollView>
+        </View>
+      </View>
 
       <View style={styles.content}>
         <Text variant="displaySmall" style={styles.title}>
@@ -119,14 +157,40 @@ const styles = StyleSheet.create({
     padding: 4,
     marginRight: 4,
   },
+  cardsWrapper: {
+    // No flex, just wraps the content
+  },
+  servicesSection: {
+    // Wrapper for services ScrollView
+  },
   servicesContainer: {
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingTop: 16,
+    paddingBottom: 8,
     gap: 12,
   },
   serviceCard: {
     width: 85,
     height: 85,
+  },
+  quickActionsSection: {
+    // Wrapper for quick actions ScrollView
+  },
+  sectionHeading: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 8,
+    color: '#1C1B1F',
+  },
+  quickActionsContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 16,
+    gap: 12,
+  },
+  quickActionCard: {
+    width: 127.5, // 1.5x the width of service cards (85 * 1.5)
+    height: 42.5, // Half the height of service cards (85 / 2)
   },
   content: {
     flex: 1,
