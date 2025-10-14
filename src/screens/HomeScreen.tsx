@@ -14,10 +14,10 @@ const HomeScreen = () => {
   ];
 
   const services = [
-    { key: 'bike', icon: 'bicycle-outline', title: 'Bike' },
-    { key: 'car', icon: 'car-outline', title: 'Car' },
+    { key: 'ride', icon: 'car-outline', title: 'Ride' },
+    { key: 'dispatch', icon: 'cube-outline', title: 'Dispatch' },
+    { key: 'okada', icon: 'bicycle-outline', title: 'Okada' },
     { key: 'food', icon: 'restaurant-outline', title: 'Food' },
-    { key: 'package', icon: 'cube-outline', title: 'Package' },
   ];
 
   const handleServicePress = (serviceKey: string) => {

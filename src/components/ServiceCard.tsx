@@ -53,7 +53,7 @@ export function ServiceCard({
       <Ionicons
         name={icon as any}
         size={32}
-        color='#8020A2' // Deep purple
+        color='#8020A2' // Primary purple
         style={styles.icon}
       />
 
@@ -62,7 +62,7 @@ export function ServiceCard({
         variant="labelSmall"
         style={[
           styles.title,
-          { color: '#8020A2' }, // Deep purple
+          { color: '#1C1B1F' }, // Charcoal
         ]}
       >
         {title}
