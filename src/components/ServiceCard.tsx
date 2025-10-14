@@ -48,7 +48,7 @@ export function ServiceCard({
       style={[
         styles.container,
         {
-          backgroundColor: active ? theme.colors.primary : '#DAC1E3',
+          backgroundColor: active ? theme.colors.primary : '#F2D7FC',
         },
         style,
       ]}
@@ -63,7 +63,7 @@ export function ServiceCard({
 
       {/* Title */}
       <Text
-        variant="labelLarge"
+        variant="labelSmall"
         style={[
           styles.title,
           { color: active ? '#FFFFFF' : '#8020A2' },
