@@ -86,7 +86,7 @@ export function SecondaryButton({
 const styles = StyleSheet.create({
   button: {
     height: 56,
-    borderRadius: 12,
+    borderRadius: 28, // Fully rounded (pill shape)
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 24,
