@@ -16,10 +16,11 @@ interface SignupScreenProps {
 }
 
 export default function SignupScreen({ onComplete, onBackToLogin }: SignupScreenProps) {
-  const [name, setName] = useState('');
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <ScreenContainer scrollable>
@@ -33,46 +34,49 @@ export default function SignupScreen({ onComplete, onBackToLogin }: SignupScreen
 
         <Spacer24 />
 
-        <TextInputField
+                <TextInputField
           label="Full Name"
-          placeholder="Enter your name"
-          leftIcon="account-outline"
-          value={name}
-          onChangeText={setName}
+          placeholder="eg.John Doe"
+          leftIcon="person-outline"
+          value={fullName}
+          onChangeText={setFullName}
+          autoCapitalize="words"
         />
 
         <Spacer16 />
 
         <TextInputField
           label="Email"
-          placeholder="Enter your email"
-          leftIcon="email-outline"
-          keyboardType="email-address"
-          autoCapitalize="none"
+          placeholder="eg.johndoe@email.com"
+          leftIcon="mail-outline"
           value={email}
           onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
         />
 
         <Spacer16 />
 
         <TextInputField
           label="Phone Number"
-          placeholder="Enter your phone"
-          leftIcon="phone-outline"
+          placeholder="eg.+234 800 000 0000"
+          leftIcon="call-outline"
+          value={phoneNumber}
+          onChangeText={setPhoneNumber}
           keyboardType="phone-pad"
-          value={phone}
-          onChangeText={setPhone}
         />
 
         <Spacer16 />
 
-        <TextInputField
+                <TextInputField
           label="Password"
-          placeholder="Create a password"
-          leftIcon="lock-outline"
-          secureTextEntry
+          placeholder="Enter your password"
+          leftIcon="lock-closed-outline"
+          rightIcon={showPassword ? 'eye-outline' : 'eye-off-outline'}
+          onRightIconPress={() => setShowPassword(!showPassword)}
           value={password}
           onChangeText={setPassword}
+          secureTextEntry={!showPassword}
         />
 
         <Spacer24 />

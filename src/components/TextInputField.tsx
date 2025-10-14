@@ -8,17 +8,17 @@ import {
   TextInputProps as RNTextInputProps,
 } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
 
 interface TextInputFieldProps extends Omit<RNTextInputProps, 'style'> {
   /** Input label */
   label?: string;
   /** Error message */
   error?: string;
-  /** Left icon name (Material Community Icons) */
-  leftIcon?: string;
-  /** Right icon name (Material Community Icons) */
-  rightIcon?: string;
+  /** Left icon name (Ionicons) */
+  leftIcon?: keyof typeof Ionicons.glyphMap;
+  /** Right icon name (Ionicons) */
+  rightIcon?: keyof typeof Ionicons.glyphMap;
   /** Right icon press handler */
   onRightIconPress?: () => void;
   /** Custom container style */
@@ -27,13 +27,13 @@ interface TextInputFieldProps extends Omit<RNTextInputProps, 'style'> {
 
 /**
  * TextInputField - Clean, professional text input for forms
- * Apple/Google inspired design with floating label and minimal styling
+ * Matches Figma design with proper states and behavior
  * 
  * @example
  * <TextInputField
  *   label="Email"
- *   placeholder="Enter your email"
- *   leftIcon="email-outline"
+ *   placeholder="eg.Placeholder"
+ *   leftIcon="mail-outline"
  *   value={email}
  *   onChangeText={setEmail}
  *   error={emailError}
@@ -50,18 +50,25 @@ export function TextInputField({
 }: TextInputFieldProps) {
   const theme = useTheme();
   const [isFocused, setIsFocused] = useState(false);
+  const hasValue = !!props.value || !!props.defaultValue;
 
   const hasError = !!error;
+  
+  // Active state: purple border (1.5px)
+  // Inactive state: light gray border (1.5px)
+  // Error state: red border
   const borderColor = hasError
     ? theme.colors.error
     : isFocused
-    ? theme.colors.primary
-    : theme.colors.outline;
+    ? '#8020A2' // Purple for active state
+    : 'rgba(0, 0, 0, 0.12)'; // Light gray for inactive state
+
+  const borderWidth = 1.5;
 
   return (
     <View style={[styles.container, style]}>
       {label && (
-        <Text variant="labelMedium" style={[styles.label, { color: theme.colors.onSurfaceVariant }]}>
+        <Text variant="labelMedium" style={styles.label}>
           {label}
         </Text>
       )}
@@ -71,15 +78,16 @@ export function TextInputField({
           styles.inputContainer,
           {
             borderColor,
-            backgroundColor: theme.colors.surface,
+            borderWidth,
+            backgroundColor: isFocused ? '#FFFFFF' : '#F5F5F5', // White when focused, light gray when not
           },
         ]}
       >
         {leftIcon && (
-          <MaterialCommunityIcons
-            name={leftIcon as any}
+          <Ionicons
+            name={leftIcon}
             size={20}
-            color={theme.colors.onSurfaceVariant}
+            color={isFocused ? '#8020A2' : 'rgba(0, 0, 0, 0.4)'} // Purple when focused, gray when not
             style={styles.leftIcon}
           />
         )}
@@ -88,10 +96,10 @@ export function TextInputField({
           style={[
             styles.input,
             {
-              color: theme.colors.onSurface,
+              color: '#1C1B1F', // Charcoal text color
             },
           ]}
-          placeholderTextColor={theme.colors.onSurfaceVariant}
+          placeholderTextColor="rgba(0, 0, 0, 0.4)" // Gray placeholder
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           {...props}
@@ -99,10 +107,10 @@ export function TextInputField({
 
         {rightIcon && (
           <TouchableOpacity onPress={onRightIconPress} disabled={!onRightIconPress}>
-            <MaterialCommunityIcons
-              name={rightIcon as any}
+            <Ionicons
+              name={rightIcon}
               size={20}
-              color={theme.colors.onSurfaceVariant}
+              color={isFocused ? '#8020A2' : 'rgba(0, 0, 0, 0.4)'}
               style={styles.rightIcon}
             />
           </TouchableOpacity>
@@ -120,18 +128,20 @@ export function TextInputField({
 
 const styles = StyleSheet.create({
   container: {
-    // Spacing controlled by parent (use Spacer components)
+    width: '100%',
   },
   label: {
     marginBottom: 8,
     fontWeight: '500',
+    fontSize: 14,
+    color: '#1C1B1F', // Charcoal for label
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     height: 56,
     borderWidth: 1.5,
-    borderRadius: 12,
+    borderRadius: 24, // Rounded corners but not fully rounded (matching Figma)
     paddingHorizontal: 16,
   },
   input: {
@@ -139,6 +149,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: 'Poppins-Regular',
     paddingVertical: 0,
+    height: '100%',
   },
   leftIcon: {
     marginRight: 12,
@@ -147,7 +158,7 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   error: {
-    marginTop: 4,
+    marginTop: 6,
     marginLeft: 4,
   },
 });

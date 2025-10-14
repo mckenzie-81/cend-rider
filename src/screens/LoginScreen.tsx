@@ -33,8 +33,8 @@ export default function LoginScreen({ onComplete, onSignup }: LoginScreenProps) 
 
         <TextInputField
           label="Email"
-          placeholder="Enter your email"
-          leftIcon="email-outline"
+          placeholder="eg.johndoe@email.com"
+          leftIcon="mail-outline"
           keyboardType="email-address"
           autoCapitalize="none"
           value={email}
@@ -46,7 +46,7 @@ export default function LoginScreen({ onComplete, onSignup }: LoginScreenProps) 
         <TextInputField
           label="Password"
           placeholder="Enter your password"
-          leftIcon="lock-outline"
+          leftIcon="lock-closed-outline"
           secureTextEntry
           value={password}
           onChangeText={setPassword}
