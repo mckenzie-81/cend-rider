@@ -14,6 +14,7 @@ import CustomSplashScreen from './src/components/SplashScreen';
 import OnboardingScreen from './src/screens/OnboardingScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import SignupScreen from './src/screens/SignupScreen';
+import VerificationScreen from './src/screens/VerificationScreen';
 import { useCustomFonts } from './src/hooks/useFonts';
 import './src/theme/nativewind';
 
@@ -22,6 +23,7 @@ export default function App() {
   const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
+  const [needsVerification, setNeedsVerification] = useState(false);
   const scheme = useColorScheme();
   const theme = scheme === 'dark' ? darkTheme : lightTheme;
   const fontsLoaded = useCustomFonts();
@@ -56,6 +58,27 @@ export default function App() {
   }
 
   if (!isAuthenticated) {
+    // Show verification screen after signup
+    if (needsVerification) {
+      return (
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <SafeAreaProvider>
+            <PaperProvider
+              theme={theme}
+              settings={{ icon: (props) => <MaterialCommunityIcons {...props} /> }}
+            >
+              <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
+              <VerificationScreen 
+                onComplete={() => setIsAuthenticated(true)}
+                onResendCode={() => console.log('Resend code')}
+              />
+            </PaperProvider>
+          </SafeAreaProvider>
+        </GestureHandlerRootView>
+      );
+    }
+
+    // Show signup screen
     if (showSignup) {
       return (
         <GestureHandlerRootView style={{ flex: 1 }}>
@@ -66,7 +89,10 @@ export default function App() {
             >
               <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
               <SignupScreen 
-                onComplete={() => setIsAuthenticated(true)} 
+                onComplete={() => {
+                  setShowSignup(false);
+                  setNeedsVerification(true);
+                }}
                 onBackToLogin={() => setShowSignup(false)}
               />
             </PaperProvider>
@@ -75,6 +101,7 @@ export default function App() {
       );
     }
 
+    // Show login screen
     return (
       <GestureHandlerRootView style={{ flex: 1 }}>
         <SafeAreaProvider>
