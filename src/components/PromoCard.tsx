@@ -48,7 +48,7 @@ export default PromoCard;
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row', // Horizontal layout
-    backgroundColor: '#F1F1FF',
+    backgroundColor: '#D9D9D9',
     borderRadius: 16,
     overflow: 'hidden',
     shadowColor: '#1C1B1F',
@@ -58,13 +58,13 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   content: {
-    flex: 2.7, // Takes more space (about 73% of card width)
-    padding: 14,
+    flex: 2, // Takes 2/3 of card width
+    padding: 16,
     justifyContent: 'space-between',
   },
   title: {
     color: '#1C1B1F',
-    marginBottom: 6,
+    marginBottom: 8,
   },
   button: {
     flexDirection: 'row',
@@ -72,9 +72,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 6,
     backgroundColor: '#8020A2',
-    paddingVertical: 7,
-    paddingHorizontal: 14,
-    borderRadius: 18,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
     alignSelf: 'flex-start',
   },
   buttonText: {
@@ -82,7 +82,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   imageContainer: {
-    flex: 0.8, // Takes less space (about 27% of card width - 0.8/3)
+    flex: 1, // Takes 1/3 of card width
     overflow: 'hidden',
   },
   imagePlaceholder: {

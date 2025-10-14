@@ -244,6 +244,6 @@ const styles = StyleSheet.create({
   },
   promoCard: {
     width: SCREEN_WIDTH - 32, // Full screen width minus 16px padding on each side
-    height: 136, // 0.8 of original 170px (85 * 2 * 0.8)
+    height: 150, // Increased by 10% from 136px (136 * 1.1 ≈ 150)
   },
 });
