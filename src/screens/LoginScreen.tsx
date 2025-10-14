@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import {
   ScreenContainer,
   PrimaryButton,
@@ -21,6 +21,13 @@ export default function LoginScreen({ onComplete, onSignup }: LoginScreenProps) 
 
   return (
     <ScreenContainer scrollable>
+      <View style={styles.header}>
+        <Image 
+          source={require('../../assets/cend-noise.png')} 
+          style={styles.decorativeImage}
+          resizeMode="contain"
+        />
+      </View>
       <View style={styles.content}>
         <Text variant="displaySmall" style={styles.title}>
           Welcome Back
@@ -69,10 +76,18 @@ export default function LoginScreen({ onComplete, onSignup }: LoginScreenProps) 
 }
 
 const styles = StyleSheet.create({
+  header: {
+    alignItems: 'center',
+    paddingTop: 24,
+    paddingBottom: 8,
+  },
+  decorativeImage: {
+    width: 100,
+    height: 100,
+    opacity: 0.7,
+  },
   content: {
-    flex: 1,
-    justifyContent: 'center',
-    minHeight: 500, // Ensures content can be centered on larger screens
+    paddingTop: 24,
   },
   title: {
     marginBottom: 8,

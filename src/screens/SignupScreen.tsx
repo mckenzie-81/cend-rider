@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image } from 'react-native';
 import {
   ScreenContainer,
   PrimaryButton,
@@ -24,6 +24,13 @@ export default function SignupScreen({ onComplete, onBackToLogin }: SignupScreen
 
   return (
     <ScreenContainer scrollable>
+      <View style={styles.header}>
+        <Image 
+          source={require('../../assets/cend-noise.png')} 
+          style={styles.decorativeImage}
+          resizeMode="contain"
+        />
+      </View>
       <View style={styles.content}>
         <Text variant="displaySmall" style={styles.title}>
           Create Account
@@ -96,6 +103,16 @@ export default function SignupScreen({ onComplete, onBackToLogin }: SignupScreen
 }
 
 const styles = StyleSheet.create({
+  header: {
+    alignItems: 'center',
+    paddingTop: 24,
+    paddingBottom: 8,
+  },
+  decorativeImage: {
+    width: 100,
+    height: 100,
+    opacity: 0.7,
+  },
   content: {
     paddingVertical: 24,
   },
