@@ -2,24 +2,13 @@ import { MD3DarkTheme, MD3LightTheme, MD3Theme } from 'react-native-paper';
 
 type ThemeMode = 'light' | 'dark';
 
-const basePalette = {
-  primary: '#6750A4',
-  onPrimary: '#FFFFFF',
-  primaryContainer: '#EADDFF',
-  onPrimaryContainer: '#21005D',
-  secondary: '#625B71',
-  onSecondary: '#FFFFFF',
-  secondaryContainer: '#E8DEF8',
-  onSecondaryContainer: '#1D192B',
-  tertiary: '#7D5260',
-  onTertiary: '#FFFFFF',
-  tertiaryContainer: '#FFD8E4',
-  onTertiaryContainer: '#31111D',
-  error: '#B3261E',
-  onError: '#FFFFFF',
-  errorContainer: '#F9DEDC',
-  onErrorContainer: '#410E0B',
-  outline: '#7A757F',
+// CEND Brand Palette
+const brandColors = {
+  primaryPurple: '#8020A2',     // Deep purple - primary brand color
+  lightPurple: '#995FAF',       // Light purple variant
+  paleLavender: '#DAC1E3',      // Pale lavender - accents/containers
+  peach: '#F9D2AA',             // Peach - secondary/highlights
+  white: '#FFFFFF',             // Pure white
 };
 
 const createTheme = (mode: ThemeMode): MD3Theme => {
@@ -30,34 +19,48 @@ const createTheme = (mode: ThemeMode): MD3Theme => {
     dark: isDark,
     colors: {
       ...(isDark ? MD3DarkTheme.colors : MD3LightTheme.colors),
-      ...basePalette,
-      primary: isDark ? '#D0BCFF' : basePalette.primary,
-      onPrimary: isDark ? '#381E72' : basePalette.onPrimary,
-      primaryContainer: isDark ? '#4F378B' : basePalette.primaryContainer,
-      onPrimaryContainer: isDark ? '#EADDFF' : basePalette.onPrimaryContainer,
-      secondary: isDark ? '#CCC2DC' : basePalette.secondary,
-      onSecondary: isDark ? '#332D41' : basePalette.onSecondary,
-      secondaryContainer: isDark ? '#4A4458' : basePalette.secondaryContainer,
-      onSecondaryContainer: isDark ? '#E8DEF8' : basePalette.onSecondaryContainer,
-      tertiary: isDark ? '#EFB8C8' : basePalette.tertiary,
-      onTertiary: isDark ? '#492532' : basePalette.onTertiary,
-      tertiaryContainer: isDark ? '#633B48' : basePalette.tertiaryContainer,
-      onTertiaryContainer: isDark ? '#FFD8E4' : basePalette.onTertiaryContainer,
-      background: isDark ? '#1D1B20' : '#F7F2FA',
-      onBackground: isDark ? '#E6E1E6' : '#1D1B20',
-      surface: isDark ? '#1D1B20' : '#FFFBFE',
-      onSurface: isDark ? '#E6E1E6' : '#1D1B20',
-      surfaceVariant: isDark ? '#49454F' : '#E7E0EC',
-      onSurfaceVariant: isDark ? '#CAC4D0' : '#4A4458',
-      outline: isDark ? '#948F99' : basePalette.outline,
-      outlineVariant: isDark ? '#49454F' : '#CAC4D0',
-      inverseSurface: isDark ? '#E6E1E6' : '#313033',
-      inverseOnSurface: isDark ? '#313033' : '#F4EFF4',
-      inversePrimary: isDark ? basePalette.primary : '#D0BCFF',
+      // Primary colors
+      primary: isDark ? brandColors.lightPurple : brandColors.primaryPurple,
+      onPrimary: brandColors.white,
+      primaryContainer: isDark ? brandColors.primaryPurple : brandColors.paleLavender,
+      onPrimaryContainer: isDark ? brandColors.paleLavender : brandColors.primaryPurple,
+      
+      // Secondary colors
+      secondary: brandColors.peach,
+      onSecondary: brandColors.primaryPurple,
+      secondaryContainer: isDark ? '#B5956B' : brandColors.peach,
+      onSecondaryContainer: isDark ? brandColors.white : brandColors.primaryPurple,
+      
+      // Tertiary colors
+      tertiary: brandColors.lightPurple,
+      onTertiary: brandColors.white,
+      tertiaryContainer: brandColors.paleLavender,
+      onTertiaryContainer: brandColors.primaryPurple,
+      
+      // Error colors (keep standard for accessibility)
+      error: '#B3261E',
+      onError: brandColors.white,
+      errorContainer: '#F9DEDC',
+      onErrorContainer: '#410E0B',
+      
+      // Surface colors
+      background: isDark ? '#121212' : brandColors.white,
+      onBackground: isDark ? brandColors.white : '#000000',
+      surface: isDark ? '#1A1A1A' : brandColors.white,
+      onSurface: isDark ? brandColors.white : '#000000',
+      surfaceVariant: isDark ? '#2D2D2D' : brandColors.paleLavender,
+      onSurfaceVariant: isDark ? brandColors.white : '#000000',
+      
+      // Utility colors
+      outline: isDark ? brandColors.lightPurple : brandColors.primaryPurple,
+      outlineVariant: isDark ? '#4D4D4D' : brandColors.paleLavender,
+      inverseSurface: isDark ? brandColors.white : '#1A1A1A',
+      inverseOnSurface: isDark ? '#000000' : brandColors.white,
+      inversePrimary: isDark ? brandColors.primaryPurple : brandColors.lightPurple,
       shadow: '#000000',
-      surfaceDisabled: 'rgba(26, 28, 30, 0.12)',
-      onSurfaceDisabled: 'rgba(26, 28, 30, 0.38)',
-      backdrop: 'rgba(50, 47, 55, 0.4)',
+      surfaceDisabled: 'rgba(128, 32, 162, 0.12)',
+      onSurfaceDisabled: 'rgba(128, 32, 162, 0.38)',
+      backdrop: isDark ? 'rgba(153, 95, 175, 0.4)' : 'rgba(128, 32, 162, 0.4)',
     },
   };
 };
