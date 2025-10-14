@@ -6,7 +6,7 @@ const HomeScreen = () => {
   return (
     <ScreenContainer safe={false} padding={0}>
       <AppHeader 
-        title="Home" 
+        // title="Home" 
         backgroundColor="#8020A2"
         elevated={false}
       />
