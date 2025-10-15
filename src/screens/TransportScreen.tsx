@@ -1,50 +1,81 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
-import { ScreenContainer } from '../components';
+import { ScreenContainer, AppHeader } from '../components';
 
 interface TransportScreenProps {
   onBack: () => void;
 }
 
 export function TransportScreen({ onBack }: TransportScreenProps) {
+  const handleMapPress = () => {
+    console.log('Map pressed');
+  };
+
   return (
-    <ScreenContainer>
-      {/* Back button */}
-      <TouchableOpacity onPress={onBack} style={styles.backButton}>
-        <Ionicons name="arrow-back" size={24} color="#8020A2" />
-      </TouchableOpacity>
+    <ScreenContainer safe={false} padding={0}>
+      <AppHeader 
+        title="Transport"
+        subtitle="Let us take you to your destination!"
+        showBack
+        onBackPress={onBack}
+        gradientColors={['#8020A2', '#995FAF']}
+        height={232}
+        customActions={
+          <TouchableOpacity 
+            style={styles.mapButton}
+            onPress={handleMapPress}
+            activeOpacity={0.7}
+          >
+            <Ionicons name="map-outline" size={16} color="#8020A2" />
+            <Text style={styles.mapText}>Map</Text>
+          </TouchableOpacity>
+        }
+      >
+        {/* Illustration image at the bottom of header */}
+        <View style={styles.illustrationContainer}>
+          <Image 
+            source={require('../../assets/woman-in-car.png')}
+            style={styles.illustration}
+            resizeMode="contain"
+          />
+        </View>
+      </AppHeader>
 
       <View style={styles.container}>
-        <Text variant="displayMedium" style={styles.title}>
-          Transport Screen
-        </Text>
-        <Text variant="bodyLarge" style={styles.subtitle}>
-          Temporary placeholder
-        </Text>
+        {/* Content goes here */}
       </View>
     </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  backButton: {
-    padding: 16,
-    alignSelf: 'flex-start',
-  },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     padding: 24,
   },
-  title: {
-    marginBottom: 8,
-    textAlign: 'center',
+  mapButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    gap: 4,
+    marginRight: 8,
   },
-  subtitle: {
-    textAlign: 'center',
-    color: '#666',
+  mapText: {
+    color: '#8020A2',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  illustrationContainer: {
+    alignItems: 'flex-end',
+    paddingRight: 8,
+  },
+  illustration: {
+    width: 180,
+    height: 100,
   },
 });
