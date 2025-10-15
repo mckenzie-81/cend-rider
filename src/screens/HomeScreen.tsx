@@ -8,9 +8,10 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface HomeScreenProps {
   onTabChange: (tab: string) => void;
+  onNavigate: (screen: string) => void;
 }
 
-const HomeScreen = ({ onTabChange }: HomeScreenProps) => {
+const HomeScreen = ({ onTabChange, onNavigate }: HomeScreenProps) => {
   const [activeTab, setActiveTab] = useState('home');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -47,8 +48,13 @@ const HomeScreen = ({ onTabChange }: HomeScreenProps) => {
   ];
 
   const handleServicePress = (serviceKey: string) => {
-    // Handle service selection - for now just log it
-    console.log('Service selected:', serviceKey);
+    // Navigate to transport screen for ride and okada
+    if (serviceKey === 'ride' || serviceKey === 'okada') {
+      onNavigate('transport');
+    } else {
+      // Handle other services - for now just log it
+      console.log('Service selected:', serviceKey);
+    }
   };
 
   const handleQuickAction = (actionKey: string) => {
