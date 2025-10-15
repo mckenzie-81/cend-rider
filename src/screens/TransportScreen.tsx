@@ -2,7 +2,13 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, TextInput, Keyboard, ScrollView } from 'react-native';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
-import { ScreenContainer, AppHeader } from '../components';
+import { ScreenContainer, AppHeader, TransportModeCard } from '../components';
+
+// Transport mode options
+const TRANSPORT_MODES = [
+  { id: 'ride', label: 'Ride', icon: 'car' as const },
+  { id: 'okada', label: 'Okada', icon: 'okada' as const },
+];
 
 interface TransportScreenProps {
   onBack: () => void;
@@ -10,9 +16,15 @@ interface TransportScreenProps {
 
 export function TransportScreen({ onBack }: TransportScreenProps) {
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedMode, setSelectedMode] = useState<'ride' | 'okada'>('ride');
   
   const handleMapPress = () => {
     console.log('Map pressed');
+  };
+
+  const handleModeSelect = (mode: 'ride' | 'okada') => {
+    setSelectedMode(mode);
+    console.log('Selected mode:', mode);
   };
 
   return (
@@ -65,8 +77,21 @@ export function TransportScreen({ onBack }: TransportScreenProps) {
             style={styles.container}
             keyboardShouldPersistTaps="handled"
             keyboardDismissMode="on-drag"
+            showsVerticalScrollIndicator={false}
           >
-            {/* Content goes here */}
+            {/* Transport Mode Selection Cards */}
+            <View style={styles.modesContainer}>
+              {TRANSPORT_MODES.map((mode) => (
+                <TransportModeCard
+                  key={mode.id}
+                  mode={mode.id}
+                  label={mode.label}
+                  icon={mode.icon}
+                  isSelected={selectedMode === mode.id}
+                  onPress={() => handleModeSelect(mode.id as 'ride' | 'okada')}
+                />
+              ))}
+            </View>
           </ScrollView>
       </View>
     </ScreenContainer>
@@ -76,8 +101,13 @@ export function TransportScreen({ onBack }: TransportScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 24,
-    paddingTop: 48,
+    paddingHorizontal: 16,
+    paddingTop: 40,
+  },
+  modesContainer: {
+    flexDirection: 'row',
+    gap: 12,
+    marginTop: 8,
   },
   searchContainer: {
     position: 'absolute',
