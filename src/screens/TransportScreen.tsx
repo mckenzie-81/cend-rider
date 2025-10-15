@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, TextInput, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { ScreenContainer, AppHeader } from '../components';
@@ -17,51 +17,55 @@ export function TransportScreen({ onBack }: TransportScreenProps) {
 
   return (
     <ScreenContainer safe={false} padding={0}>
-      <AppHeader 
-        title="Transport"
-        subtitle={`Wherever you're going, let's\nget you there!`}
-        showBack
-        onBackPress={onBack}
-        gradientColors={['#8020A2', '#995FAF']}
-        height={232}
-        customActions={
-          <TouchableOpacity 
-            style={styles.mapButton}
-            onPress={handleMapPress}
-            activeOpacity={0.7}
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={{ flex: 1 }}>
+          <AppHeader 
+            title="Transport"
+            subtitle={`Wherever you're going, let's\nget you there!`}
+            showBack
+            onBackPress={onBack}
+            gradientColors={['#8020A2', '#995FAF']}
+            height={232}
+            customActions={
+              <TouchableOpacity 
+                style={styles.mapButton}
+                onPress={handleMapPress}
+                activeOpacity={0.7}
+              >
+                <Ionicons name="map-outline" size={16} color="#8020A2" />
+                <Text style={styles.mapText}>Map</Text>
+              </TouchableOpacity>
+            }
           >
-            <Ionicons name="map-outline" size={16} color="#8020A2" />
-            <Text style={styles.mapText}>Map</Text>
-          </TouchableOpacity>
-        }
-      >
-        {/* Illustration image at the bottom of header */}
-        <View style={styles.illustrationContainer}>
-          <Image 
-            source={require('../../assets/illustrations/transport-head.png')}
-            style={styles.illustration}
-            resizeMode="contain"
-          />
-        </View>
-      </AppHeader>
+            {/* Illustration image at the bottom of header */}
+            <View style={styles.illustrationContainer}>
+              <Image 
+                source={require('../../assets/illustrations/transport-head.png')}
+                style={styles.illustration}
+                resizeMode="contain"
+              />
+            </View>
+          </AppHeader>
 
-      {/* Search Box - Overlapping header and content */}
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBox}>
-          <Ionicons name="search-outline" size={20} color="#666" style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="where to?"
-            placeholderTextColor="#999"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-          />
-        </View>
-      </View>
+          {/* Search Box - Overlapping header and content */}
+          <View style={styles.searchContainer}>
+            <View style={styles.searchBox}>
+              <Ionicons name="search-outline" size={20} color="#666" style={styles.searchIcon} />
+              <TextInput
+                style={styles.searchInput}
+                placeholder="where to?"
+                placeholderTextColor="#999"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+              />
+            </View>
+          </View>
 
-      <View style={styles.container}>
-        {/* Content goes here */}
-      </View>
+          <View style={styles.container}>
+            {/* Content goes here */}
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
     </ScreenContainer>
   );
 }

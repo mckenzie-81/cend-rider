@@ -2,6 +2,7 @@
 export { ScreenContainer } from './ScreenContainer';
 export { Spacer, Spacer4, Spacer8, Spacer12, Spacer16, Spacer24, Spacer32 } from './Spacer';
 export { AppHeader } from './AppHeader';
+export { SwipeableCard } from './SwipeableCard';
 
 // Icon Components
 export { CustomIcon } from './CustomIcon';
