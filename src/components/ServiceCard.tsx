@@ -44,7 +44,7 @@ export function ServiceCard({
       style={[
         styles.container,
         {
-          backgroundColor: '#F2D7FC', // Light lavender - always this color
+          backgroundColor: '#F8E5FF', // Light lavender - always this color
         },
         style,
       ]}
@@ -52,7 +52,7 @@ export function ServiceCard({
       {/* Icon */}
       <CustomIcon
         name={icon}
-        size={32}
+        size={46}
         color='#8020A2' // Primary purple
       />
 

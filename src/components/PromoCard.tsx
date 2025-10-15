@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   placeholderBackground: {
-    backgroundColor: '#F2D7FC',
+    backgroundColor: '#F8E5FF',
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,

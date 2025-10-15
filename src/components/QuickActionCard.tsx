@@ -41,7 +41,7 @@ export function QuickActionCard({
         styles.container,
         {
           backgroundColor: '#FFFFFF', // White background
-          borderColor: '#F2D7FC', // Light lavender border
+          borderColor: '#F8E5FF', // Light lavender border
         },
         style,
       ]}
