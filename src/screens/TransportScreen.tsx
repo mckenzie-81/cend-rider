@@ -36,7 +36,7 @@ export function TransportScreen({ onBack }: TransportScreenProps) {
         {/* Illustration image at the bottom of header */}
         <View style={styles.illustrationContainer}>
           <Image 
-            source={require('../../assets/woman-in-car.png')}
+            source={require('../../assets/illustrations/transport-head.png')}
             style={styles.illustration}
             resizeMode="contain"
           />
@@ -63,19 +63,19 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 20,
     gap: 4,
-    marginRight: 16,
+    marginRight: 20,
   },
   mapText: {
-    color: '#8020A2',
+    color: '#1C1B1F',
     fontSize: 14,
     fontWeight: '600',
   },
   illustrationContainer: {
     alignItems: 'flex-end',
-    paddingRight: 16,
+    paddingRight: 0,
   },
   illustration: {
-    width: 180,
+    width: 220,
     height: 100,
   },
 });
