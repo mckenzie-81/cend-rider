@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { View, StyleSheet, Image, TouchableOpacity, TextInput } from 'react-native';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { ScreenContainer, AppHeader } from '../components';
@@ -9,6 +9,8 @@ interface TransportScreenProps {
 }
 
 export function TransportScreen({ onBack }: TransportScreenProps) {
+  const [searchQuery, setSearchQuery] = useState('');
+  
   const handleMapPress = () => {
     console.log('Map pressed');
   };
@@ -43,6 +45,20 @@ export function TransportScreen({ onBack }: TransportScreenProps) {
         </View>
       </AppHeader>
 
+      {/* Search Box */}
+      <View style={styles.searchContainer}>
+        <View style={styles.searchBox}>
+          <Ionicons name="search-outline" size={20} color="#666" style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="where to?"
+            placeholderTextColor="#999"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
+      </View>
+
       <View style={styles.container}>
         {/* Content goes here */}
       </View>
@@ -54,6 +70,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
+  },
+  searchContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    backgroundColor: '#FFFFFF',
+  },
+  searchBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    paddingVertical: 14,
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  searchIcon: {
+    marginRight: 12,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: '#1C1B1F',
   },
   mapButton: {
     flexDirection: 'row',
