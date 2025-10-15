@@ -45,7 +45,7 @@ export function TransportScreen({ onBack }: TransportScreenProps) {
         </View>
       </AppHeader>
 
-      {/* Search Box */}
+      {/* Search Box - Overlapping header and content */}
       <View style={styles.searchContainer}>
         <View style={styles.searchBox}>
           <Ionicons name="search-outline" size={20} color="#666" style={styles.searchIcon} />
@@ -70,21 +70,27 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 24,
+    paddingTop: 48,
   },
   searchContainer: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    backgroundColor: '#FFFFFF',
+    position: 'absolute',
+    top: 232 - 20,
+    left: 16,
+    right: 16,
+    zIndex: 10,
   },
   searchBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#FFFFFF',
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 14,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
   },
   searchIcon: {
     marginRight: 12,
