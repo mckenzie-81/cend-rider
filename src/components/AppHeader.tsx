@@ -243,8 +243,8 @@ const styles = StyleSheet.create({
   },
   subtitleContainer: {
     paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 20,
+    paddingTop: 4,
+    paddingBottom: 16,
   },
   customTitle: {
     fontWeight: '700',

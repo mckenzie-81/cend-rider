@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 20,
     gap: 4,
-    marginRight: 8,
+    marginRight: 16,
   },
   mapText: {
     color: '#8020A2',
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
   },
   illustrationContainer: {
     alignItems: 'flex-end',
-    paddingRight: 8,
+    paddingRight: 16,
   },
   illustration: {
     width: 180,
