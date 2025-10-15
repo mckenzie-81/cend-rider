@@ -30,7 +30,7 @@ const HomeScreen = ({ onTabChange }: HomeScreenProps) => {
     { key: 'ride', icon: 'car', title: 'Ride' },
     { key: 'dispatch', icon: 'dispatch', title: 'Dispatch' },
     { key: 'okada', icon: 'okada', title: 'Okada' },
-    { key: 'reserve', icon: 'calendar-outline', title: 'Reserve' }, // Using Ionicons until we get the SVG
+    { key: 'reserve', icon: 'reserve', title: 'Reserve' }, // Using Ionicons until we get the SVG
   ];
 
   const quickActions: Array<{ key: string; icon: IconName; title: string }> = [

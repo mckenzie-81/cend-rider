@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import CarIcon from '../../assets/icons/car-icon.svg';
 import DispatchIcon from '../../assets/icons/dispatch-icon.svg';
 import OkadaIcon from '../../assets/icons/okada-icon.svg';
+import ReserveIcon from '../../assets/icons/calendar-icon.svg';
 
 /**
  * Icon mapping - Maps friendly names to SVG components
@@ -21,6 +22,7 @@ const iconMap = {
   car: CarIcon,
   dispatch: DispatchIcon,
   okada: OkadaIcon,
+  reserve: ReserveIcon
   
   // Add more as you get them - import and add here:
   // reserve: ReserveIcon,
