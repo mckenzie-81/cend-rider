@@ -17,7 +17,7 @@ export function TransportScreen({ onBack }: TransportScreenProps) {
     <ScreenContainer safe={false} padding={0}>
       <AppHeader 
         title="Transport"
-        subtitle="Let us take you to your destination!"
+        subtitle={`Wherever you're going, let's\nget you there!`}
         showBack
         onBackPress={onBack}
         gradientColors={['#8020A2', '#995FAF']}
@@ -71,11 +71,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   illustrationContainer: {
-    alignItems: 'flex-end',
-    paddingRight: 0,
+    position: 'absolute',
+    right: -24,
+    bottom: -44,
+    width: 220,
+    height: 140,
   },
   illustration: {
-    width: 220,
-    height: 100,
+    width: 240,
+    height: 140,
   },
 });
