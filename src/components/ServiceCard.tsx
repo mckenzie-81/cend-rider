@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
-import { Ionicons } from '@expo/vector-icons';
+import { CustomIcon, IconName } from './CustomIcon';
 
 interface ServiceCardProps {
-  /** Service icon name (Ionicons) */
-  icon: string;
+  /** Service icon name (custom SVG or Ionicons) */
+  icon: IconName;
   /** Service title */
   title: string;
   /** Optional subtitle/description */
@@ -22,10 +22,10 @@ interface ServiceCardProps {
  * 
  * @example
  * <ServiceCard
- *   icon="bicycle-outline"
- *   title="Bike"
+ *   icon="car"
+ *   title="Ride"
  *   subtitle="Fast & Affordable"
- *   onPress={handleBikeSelect}
+ *   onPress={handleRideSelect}
  * />
  */
 export function ServiceCard({
@@ -50,11 +50,10 @@ export function ServiceCard({
       ]}
     >
       {/* Icon */}
-      <Ionicons
-        name={icon as any}
+      <CustomIcon
+        name={icon}
         size={32}
         color='#8020A2' // Primary purple
-        style={styles.icon}
       />
 
       {/* Title */}
@@ -92,12 +91,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  icon: {
-    marginBottom: 4,
-  },
   title: {
     fontWeight: '600',
     textAlign: 'center',
+    marginTop: 4,
     marginBottom: 4,
   },
   subtitle: {

@@ -3,6 +3,10 @@ export { ScreenContainer } from './ScreenContainer';
 export { Spacer, Spacer4, Spacer8, Spacer12, Spacer16, Spacer24, Spacer32 } from './Spacer';
 export { AppHeader } from './AppHeader';
 
+// Icon Components
+export { CustomIcon } from './CustomIcon';
+export type { IconName, CustomIconName } from './CustomIcon';
+
 // Navigation Components
 export { TabBar } from './TabBar';
 export type { TabItem } from './TabBar';

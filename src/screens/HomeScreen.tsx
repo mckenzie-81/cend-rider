@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity, Dimensions, Image } from 'react-native';
-import { ScreenContainer, AppHeader, Spacer16, TabBar, ServiceCard, QuickActionCard, PromoCard } from '../components';
+import { ScreenContainer, AppHeader, Spacer16, TabBar, ServiceCard, QuickActionCard, PromoCard, IconName } from '../components';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -26,14 +26,14 @@ const HomeScreen = ({ onTabChange }: HomeScreenProps) => {
     { key: 'account', label: 'Account', icon: 'person-outline' },
   ];
 
-  const services = [
-    { key: 'ride', icon: 'car-outline', title: 'Ride' },
-    { key: 'dispatch', icon: 'cube-outline', title: 'Dispatch' },
-    { key: 'okada', icon: 'bicycle-outline', title: 'Okada' },
-    { key: 'reserve', icon: 'calendar-outline', title: 'Reserve' },
+  const services: Array<{ key: string; icon: IconName; title: string }> = [
+    { key: 'ride', icon: 'car', title: 'Ride' },
+    { key: 'dispatch', icon: 'dispatch', title: 'Dispatch' },
+    { key: 'okada', icon: 'okada', title: 'Okada' },
+    { key: 'reserve', icon: 'calendar-outline', title: 'Reserve' }, // Using Ionicons until we get the SVG
   ];
 
-  const quickActions = [
+  const quickActions: Array<{ key: string; icon: IconName; title: string }> = [
     { key: 'schedule', icon: 'time-outline', title: 'Schedule' },
     { key: 'promo', icon: 'pricetag-outline', title: 'Promo' },
     { key: 'wallet', icon: 'wallet-outline', title: 'Wallet' },
