@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, TextInput, Keyboard, TouchableWithoutFeedback } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, TextInput, Keyboard, ScrollView } from 'react-native';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { ScreenContainer, AppHeader } from '../components';
@@ -17,15 +17,14 @@ export function TransportScreen({ onBack }: TransportScreenProps) {
 
   return (
     <ScreenContainer safe={false} padding={0}>
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{ flex: 1 }}>
-          <AppHeader 
-            title="Transport"
-            subtitle={`Wherever you're going, let's\nget you there!`}
-            showBack
-            onBackPress={onBack}
-            gradientColors={['#8020A2', '#995FAF']}
-            height={232}
+      <View style={{ flex: 1 }}>
+        <AppHeader 
+          title="Transport"
+          subtitle={`Wherever you're going, let's\nget you there!`}
+          showBack
+          onBackPress={onBack}
+          gradientColors={['#8020A2', '#995FAF']}
+          height={232}
             customActions={
               <TouchableOpacity 
                 style={styles.mapButton}
@@ -57,15 +56,19 @@ export function TransportScreen({ onBack }: TransportScreenProps) {
                 placeholderTextColor="#999"
                 value={searchQuery}
                 onChangeText={setSearchQuery}
+                onBlur={() => Keyboard.dismiss()}
               />
             </View>
           </View>
 
-          <View style={styles.container}>
+          <ScrollView 
+            style={styles.container}
+            keyboardShouldPersistTaps="handled"
+            keyboardDismissMode="on-drag"
+          >
             {/* Content goes here */}
-          </View>
-        </View>
-      </TouchableWithoutFeedback>
+          </ScrollView>
+      </View>
     </ScreenContainer>
   );
 }
