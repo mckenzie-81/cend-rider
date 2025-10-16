@@ -27,6 +27,7 @@ export { ServiceGrid } from './ServiceGrid';
 export { QuickActionCard } from './QuickActionCard';
 export { TransportModeCard } from './TransportModeCard';
 export { default as PromoCard } from './PromoCard';
+export { default as DriverPromoCard } from './DriverPromoCard';
 
 // Feedback Components
 export { LoadingSpinner } from './LoadingSpinner';

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { ScreenContainer, AppHeader, TabBar } from '../components';
+import { View, StyleSheet, ScrollView } from 'react-native';
+import { ScreenContainer, AppHeader, TabBar, DriverPromoCard } from '../components';
 import { Text } from 'react-native-paper';
 
 interface ServicesScreenProps {
@@ -15,6 +15,11 @@ const ServicesScreen = ({ onTabChange }: ServicesScreenProps) => {
     onTabChange(tab);
   };
 
+  const handleDriverPromoPress = () => {
+    console.log('Become a driver pressed');
+    // TODO: Navigate to driver signup or more info
+  };
+
   const tabs = [
     { key: 'home', label: 'Home', icon: 'home-outline' },
     { key: 'services', label: 'Services', icon: 'grid-outline' },
@@ -25,15 +30,30 @@ const ServicesScreen = ({ onTabChange }: ServicesScreenProps) => {
   return (
     <ScreenContainer safe={false} padding={0}>
       <AppHeader 
-        // title="Services" 
-        gradientColors={['#8020A2', '#995FAF']}
+        title="Services" 
+        backgroundColor="#FFFFFF"
         elevated={false}
       />
-      <View style={styles.content}>
-        <Text variant="displaySmall" style={styles.text}>
-          This is the Services page
-        </Text>
-      </View>
+      
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Driver Promo Card */}
+        <DriverPromoCard 
+          onPress={handleDriverPromoPress}
+          style={styles.promoCard}
+        />
+
+        {/* Rest of content */}
+        <View style={styles.content}>
+          <Text variant="displaySmall" style={styles.text}>
+            This is the Services page
+          </Text>
+        </View>
+      </ScrollView>
+
       <TabBar 
         tabs={tabs}
         activeTab={activeTab}
@@ -46,11 +66,23 @@ const ServicesScreen = ({ onTabChange }: ServicesScreenProps) => {
 export default ServicesScreen;
 
 const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+  },
+  promoCard: {
+    marginHorizontal: 16,
+    marginTop: 16,
+    marginBottom: 8,
+  },
   content: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 20,
+    paddingVertical: 20,
   },
   text: {
     textAlign: 'center',

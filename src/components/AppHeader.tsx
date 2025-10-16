@@ -222,7 +222,8 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   title: {
-    fontWeight: '600',
+    fontWeight: '900',
+    marginLeft: 24,
   },
   customHeader: {
     justifyContent: 'flex-start',
