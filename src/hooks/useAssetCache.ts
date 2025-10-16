@@ -22,6 +22,8 @@ export function useAssetCache() {
           require('../../assets/splash-icon.png'),
           require('../../assets/woman-in-car.png'),
           require('../../assets/illustrations/transport-head.png'),
+          require('../../assets/illustrations/onboarding1.png'),
+          require('../../assets/illustrations/onboarding2.png'),
         ];
 
         const cacheImages = imageAssets.map((image) => {

@@ -6,7 +6,11 @@ import AccountScreen from './screens/AccountScreen';
 import { TransportScreen } from './screens/TransportScreen';
 import { RideOptionsScreen } from './screens/RideOptionsScreen';
 
-const AppNavigator = () => {
+interface AppNavigatorProps {
+  onRestartFlow?: () => void;
+}
+
+const AppNavigator = ({ onRestartFlow }: AppNavigatorProps) => {
   const [currentScreen, setCurrentScreen] = useState('home');
   const [transportMode, setTransportMode] = useState<'ride' | 'okada'>('ride');
   const [rideDetails, setRideDetails] = useState<{
@@ -35,7 +39,7 @@ const AppNavigator = () => {
       case 'activity':
         return <ActivitiesScreen onTabChange={setCurrentScreen} />;
       case 'account':
-        return <AccountScreen onTabChange={setCurrentScreen} />;
+        return <AccountScreen onTabChange={setCurrentScreen} onRestartFlow={onRestartFlow} />;
       case 'transport':
         return (
           <TransportScreen

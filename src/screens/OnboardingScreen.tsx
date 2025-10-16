@@ -118,7 +118,9 @@ const styles = StyleSheet.create({
   },
   skipButton: {
     width: 'auto',
-    paddingHorizontal: 0,
+    height: 40,
+    paddingHorizontal: 16,
+    minWidth: 70,
   },
   skipButtonText: {
     color: '#FFFFFF',

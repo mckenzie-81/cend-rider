@@ -24,22 +24,32 @@ export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
   const [needsVerification, setNeedsVerification] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
   const scheme = useColorScheme();
   const theme = scheme === 'dark' ? darkTheme : lightTheme;
   const assetsLoaded = useAssetCache();
 
-  // Show loading while assets are loading OR before splash finishes
-  if (!assetsLoaded || !isReady) {
-    if (!assetsLoaded) {
-      // Still loading assets - show loader
-      return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#995FAF' }}>
-          <ActivityIndicator size="large" color="#8020A2" />
-        </View>
-      );
-    }
-    // Assets loaded, show splash screen
-    return <CustomSplashScreen onFinish={() => setIsReady(true)} />;
+  // Handle restart flow for demo purposes
+  const handleRestartFlow = () => {
+    setShowSplash(true);
+    setHasCompletedOnboarding(false);
+    setIsAuthenticated(false);
+    setShowSignup(false);
+    setNeedsVerification(false);
+  };
+
+  // Show loading while assets are loading
+  if (!assetsLoaded) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#995FAF' }}>
+        <ActivityIndicator size="large" color="#8020A2" />
+      </View>
+    );
+  }
+
+  // Show splash screen
+  if (showSplash) {
+    return <CustomSplashScreen onFinish={() => setShowSplash(false)} />;
   }
 
   // All screens wrapped in providers after fonts are loaded
@@ -130,7 +140,7 @@ export default function App() {
           settings={{ icon: (props) => <MaterialCommunityIcons {...props} /> }}
         >
           <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
-          <AppNavigator />
+          <AppNavigator onRestartFlow={handleRestartFlow} />
         </PaperProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
