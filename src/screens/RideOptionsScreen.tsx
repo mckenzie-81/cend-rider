@@ -101,27 +101,15 @@ export function RideOptionsScreen({
   return (
     <ScreenContainer safe={false} padding={0}>
       <View style={styles.container}>
-        {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity onPress={onBack} style={styles.backButton}>
+        {/* Full Screen Map */}
+        <View style={styles.mapContainer}>
+          {/* Floating Back Button */}
+          <TouchableOpacity onPress={onBack} style={styles.floatingBackButton}>
             <Ionicons name="arrow-back" size={24} color="#1C1B1F" />
           </TouchableOpacity>
-          <View style={styles.headerContent}>
-            <Text variant="titleMedium" style={styles.headerTitle}>
-              Choose a ride
-            </Text>
-            <View style={styles.routeInfo}>
-              <Ionicons name="ellipse" size={8} color="#8020A2" />
-              <Text variant="bodySmall" style={styles.routeText} numberOfLines={1}>
-                {pickup}
-              </Text>
-            </View>
-          </View>
-        </View>
 
-        {/* Map Placeholder */}
-        <View style={styles.mapPlaceholder}>
-          <View style={styles.mapOverlay}>
+          {/* Distance Info Badge */}
+          <View style={styles.distanceInfoContainer}>
             <View style={styles.distanceInfo}>
               <Ionicons name="time-outline" size={16} color="#1C1B1F" />
               <Text variant="bodyMedium" style={styles.distanceText}>
@@ -221,51 +209,34 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    paddingTop: 60,
-    backgroundColor: '#FFFFFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#F5F5F5',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 20,
-    backgroundColor: '#F5F5F5',
-    marginRight: 12,
-  },
-  headerContent: {
-    flex: 1,
-  },
-  headerTitle: {
-    color: '#1C1B1F',
-    fontWeight: '700',
-    marginBottom: 4,
-  },
-  routeInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  routeText: {
-    color: '#666',
-    flex: 1,
-  },
-  mapPlaceholder: {
-    height: 200,
+  mapContainer: {
+    height: 300,
     backgroundColor: '#E8F5E9',
     position: 'relative',
   },
-  mapOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'flex-end',
-    padding: 16,
+  floatingBackButton: {
+    position: 'absolute',
+    top: 60,
+    left: 16,
+    width: 44,
+    height: 44,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 22,
+    backgroundColor: '#FFFFFF',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 5,
+    zIndex: 10,
+  },
+  distanceInfoContainer: {
+    position: 'absolute',
+    bottom: 16,
+    left: 16,
+    right: 16,
+    alignItems: 'flex-start',
   },
   distanceInfo: {
     flexDirection: 'row',
