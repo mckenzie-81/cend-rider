@@ -3,27 +3,26 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 
-export interface RideOption {
+export interface OkadaOption {
   id: string;
   name: string;
   type: string;
   time: string;
-  capacity: number;
   price: string;
   icon: string;
 }
 
-interface RideOptionCardProps {
-  option: RideOption;
+interface OkadaOptionCardProps {
+  option: OkadaOption;
   isSelected: boolean;
   onSelect: (id: string) => void;
 }
 
 /**
- * RideOptionCard - Premium card component for ride options
- * Clean, minimal design with subtle interactions
+ * OkadaOptionCard - Premium card component for motorcycle/okada options
+ * Clean, minimal design matching RideOptionCard
  */
-export function RideOptionCard({ option, isSelected, onSelect }: RideOptionCardProps) {
+export function OkadaOptionCard({ option, isSelected, onSelect }: OkadaOptionCardProps) {
   return (
     <TouchableOpacity
       style={[
@@ -33,7 +32,7 @@ export function RideOptionCard({ option, isSelected, onSelect }: RideOptionCardP
       onPress={() => onSelect(option.id)}
       activeOpacity={0.7}
     >
-      {/* Vehicle Icon */}
+      {/* Motorcycle Icon */}
       <Ionicons name={option.icon as any} size={36} color="#1C1B1F" />
 
       {/* Option Details */}
@@ -48,12 +47,9 @@ export function RideOptionCard({ option, isSelected, onSelect }: RideOptionCardP
               {option.time}
             </Text>
           </View>
-          <View style={styles.capacityContainer}>
-            <Ionicons name="person-outline" size={12} color="#666" />
-            <Text variant="bodySmall" style={styles.meta}>
-              {option.capacity}
-            </Text>
-          </View>
+          <Text variant="bodySmall" style={styles.type}>
+            {option.type}
+          </Text>
         </View>
       </View>
 
@@ -100,10 +96,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
   },
-  capacityContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
+  type: {
+    color: '#666',
   },
   meta: {
     color: '#666',

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
-import { ScreenContainer, PrimaryButton, RideOptionCard, RideOption } from '../components';
+import { ScreenContainer, PrimaryButton, RideOptionCard, RideOption, OkadaOptionCard, OkadaOption } from '../components';
 
 interface RideOptionsScreenProps {
   onBack: () => void;
@@ -18,59 +18,77 @@ export function RideOptionsScreen({
   mode,
 }: RideOptionsScreenProps) {
   // Mock ride options data
-  const rideOptions: RideOption[] = mode === 'ride' 
-    ? [
-        {
-          id: 'standard',
-          name: 'Standard',
-          type: 'Affordable rides',
-          time: '2 mins',
-          capacity: 4,
-          price: 'GH₵20.00',
-          icon: 'car-outline',
-        },
-        {
-          id: 'basic',
-          name: 'Basic',
-          type: 'Everyday rides',
-          time: '3 mins',
-          capacity: 4,
-          price: 'GH₵30.00',
-          icon: 'car',
-        },
-        {
-          id: 'comfort',
-          name: 'Comfort',
-          type: 'Premium comfort',
-          time: '5 mins',
-          capacity: 4,
-          price: 'GH₵35.00',
-          icon: 'car-sport',
-        },
-        {
-          id: 'luxury',
-          name: 'Luxury',
-          type: 'Top-tier experience',
-          time: '8 mins',
-          capacity: 3,
-          price: 'GH₵40.00',
-          icon: 'diamond',
-        },
-      ]
-    : [
-        {
-          id: 'okada-standard',
-          name: 'Okada',
-          type: 'Quick & affordable',
-          time: '2 mins',
-          capacity: 1,
-          price: 'GH₵15.00',
-          icon: 'bicycle',
-        },
-      ];
+  const rideOptions: RideOption[] = [
+    {
+      id: 'standard',
+      name: 'Standard',
+      type: 'Affordable rides',
+      time: '2 mins',
+      capacity: 4,
+      price: 'GH₵20.00',
+      icon: 'car-outline',
+    },
+    {
+      id: 'basic',
+      name: 'Basic',
+      type: 'Everyday rides',
+      time: '3 mins',
+      capacity: 4,
+      price: 'GH₵30.00',
+      icon: 'car',
+    },
+    {
+      id: 'comfort',
+      name: 'Comfort',
+      type: 'Premium comfort',
+      time: '5 mins',
+      capacity: 4,
+      price: 'GH₵35.00',
+      icon: 'car-sport',
+    },
+    {
+      id: 'luxury',
+      name: 'Luxury',
+      type: 'Top-tier experience',
+      time: '8 mins',
+      capacity: 3,
+      price: 'GH₵40.00',
+      icon: 'diamond',
+    },
+  ];
+
+  // Mock okada/motorcycle options data
+  const okadaOptions: OkadaOption[] = [
+    {
+      id: 'okada-standard',
+      name: 'Standard Okada',
+      type: 'Quick & affordable',
+      time: '2 mins',
+      price: 'GH₵10.00',
+      icon: 'bicycle',
+    },
+    {
+      id: 'okada-sport',
+      name: 'Sport Bike',
+      type: 'Faster rides',
+      time: '1 min',
+      price: 'GH₵15.00',
+      icon: 'speedometer',
+    },
+    {
+      id: 'okada-delivery',
+      name: 'Delivery Bike',
+      type: 'Extra storage',
+      time: '3 mins',
+      price: 'GH₵12.00',
+      icon: 'cube-outline',
+    },
+  ];
 
   // Pre-select first option by default
-  const [selectedOption, setSelectedOption] = useState<string>(rideOptions[0].id);
+  const [selectedOption, setSelectedOption] = useState<string>(
+    mode === 'ride' ? rideOptions[0].id : okadaOptions[0].id
+  );
 
   const handleSelectOption = (optionId: string) => {
     setSelectedOption(optionId);
@@ -117,7 +135,7 @@ export function RideOptionsScreen({
           {/* Sheet Header */}
           <View style={styles.sheetHeader}>
             <Text variant="titleLarge" style={styles.sheetTitle}>
-              Choose a ride
+              {mode === 'ride' ? 'Choose a ride' : 'Choose an okada'}
             </Text>
             <View style={styles.routeInfo}>
               <Ionicons name="ellipse" size={8} color="#8020A2" />
@@ -127,25 +145,38 @@ export function RideOptionsScreen({
             </View>
           </View>
 
-          {/* Ride Options List */}
+          {/* Options List */}
           <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.optionsScroll}
           >
-            {rideOptions.map((option) => (
-              <RideOptionCard
-                key={option.id}
-                option={option}
-                isSelected={selectedOption === option.id}
-                onSelect={handleSelectOption}
-              />
-            ))}
+            {mode === 'ride' 
+              ? rideOptions.map((option) => (
+                  <RideOptionCard
+                    key={option.id}
+                    option={option}
+                    isSelected={selectedOption === option.id}
+                    onSelect={handleSelectOption}
+                  />
+                ))
+              : okadaOptions.map((option) => (
+                  <OkadaOptionCard
+                    key={option.id}
+                    option={option}
+                    isSelected={selectedOption === option.id}
+                    onSelect={handleSelectOption}
+                  />
+                ))
+            }
           </ScrollView>
 
           {/* Confirm Button */}
           <View style={styles.buttonContainer}>
             <PrimaryButton onPress={handleConfirm}>
-              {`Confirm ${rideOptions.find((o) => o.id === selectedOption)?.name || 'Ride'}`}
+              {mode === 'ride' 
+                ? `Confirm ${rideOptions.find((o) => o.id === selectedOption)?.name || 'Ride'}`
+                : `Confirm ${okadaOptions.find((o) => o.id === selectedOption)?.name || 'Okada'}`
+              }
             </PrimaryButton>
           </View>
         </View>

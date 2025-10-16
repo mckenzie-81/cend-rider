@@ -28,6 +28,8 @@ export { QuickActionCard } from './QuickActionCard';
 export { TransportModeCard } from './TransportModeCard';
 export { RideOptionCard } from './RideOptionCard';
 export type { RideOption } from './RideOptionCard';
+export { OkadaOptionCard } from './OkadaOptionCard';
+export type { OkadaOption } from './OkadaOptionCard';
 export { default as PromoCard } from './PromoCard';
 export { default as DriverPromoCard } from './DriverPromoCard';
 export { default as RecentTripCard } from './RecentTripCard';
