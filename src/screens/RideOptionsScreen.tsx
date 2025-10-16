@@ -28,8 +28,6 @@ export function RideOptionsScreen({
   dropoff,
   mode,
 }: RideOptionsScreenProps) {
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-
   // Mock ride options data
   const rideOptions: RideOption[] = mode === 'ride' 
     ? [
@@ -82,6 +80,9 @@ export function RideOptionsScreen({
         },
       ];
 
+  // Pre-select first option by default
+  const [selectedOption, setSelectedOption] = useState<string>(rideOptions[0].id);
+
   const handleSelectOption = (optionId: string) => {
     setSelectedOption(optionId);
   };
@@ -119,8 +120,25 @@ export function RideOptionsScreen({
           </View>
         </View>
 
-        {/* Ride Options List */}
-        <View style={styles.optionsContainer}>
+        {/* Bottom Sheet Modal for Ride Options */}
+        <View style={styles.bottomSheet}>
+          {/* Handle Bar */}
+          <View style={styles.handleBar} />
+          
+          {/* Sheet Header */}
+          <View style={styles.sheetHeader}>
+            <Text variant="titleLarge" style={styles.sheetTitle}>
+              Choose a ride
+            </Text>
+            <View style={styles.routeInfo}>
+              <Ionicons name="ellipse" size={8} color="#8020A2" />
+              <Text variant="bodySmall" style={styles.routeText} numberOfLines={1}>
+                {pickup} → {dropoff}
+              </Text>
+            </View>
+          </View>
+
+          {/* Ride Options List */}
           <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.optionsScroll}
@@ -175,10 +193,8 @@ export function RideOptionsScreen({
               </TouchableOpacity>
             ))}
           </ScrollView>
-        </View>
 
-        {/* Confirm Button */}
-        {selectedOption && (
+          {/* Confirm Button */}
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={styles.confirmButton}
@@ -198,7 +214,7 @@ export function RideOptionsScreen({
               </LinearGradient>
             </TouchableOpacity>
           </View>
-        )}
+        </View>
       </View>
     </ScreenContainer>
   );
@@ -257,12 +273,50 @@ const styles = StyleSheet.create({
     color: '#1C1B1F',
     fontWeight: '600',
   },
-  optionsContainer: {
-    flex: 1,
+  bottomSheet: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: '50%',
     backgroundColor: '#FFFFFF',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingTop: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 10,
+  },
+  handleBar: {
+    width: 40,
+    height: 4,
+    backgroundColor: '#E0E0E0',
+    borderRadius: 2,
+    alignSelf: 'center',
+    marginBottom: 16,
+  },
+  sheetHeader: {
+    paddingHorizontal: 20,
+    marginBottom: 16,
+  },
+  sheetTitle: {
+    color: '#1C1B1F',
+    fontWeight: '700',
+    marginBottom: 8,
+  },
+  routeInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  routeText: {
+    color: '#666',
+    flex: 1,
   },
   optionsScroll: {
-    padding: 16,
+    paddingHorizontal: 16,
     paddingBottom: 100,
   },
   optionCard: {
@@ -328,10 +382,6 @@ const styles = StyleSheet.create({
     right: 8,
   },
   buttonContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
     padding: 20,
     paddingBottom: 30,
     backgroundColor: '#FFFFFF',
