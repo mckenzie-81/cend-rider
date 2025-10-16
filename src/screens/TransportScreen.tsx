@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, Image, TouchableOpacity, TextInput, Keyboard, ScrollView } from 'react-native';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
-import { ScreenContainer, AppHeader, TransportModeCard, RecentTripCard } from '../components';
+import { ScreenContainer, AppHeader, TransportModeCard, RecentTripCard, RideBookingModal } from '../components';
 
 // Transport mode options
 const TRANSPORT_MODES = [
@@ -45,6 +45,7 @@ interface TransportScreenProps {
 export function TransportScreen({ onBack }: TransportScreenProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMode, setSelectedMode] = useState<'ride' | 'okada'>('ride');
+  const [showBookingModal, setShowBookingModal] = useState(false);
   
   const handleMapPress = () => {
     console.log('Map pressed');
@@ -62,6 +63,10 @@ export function TransportScreen({ onBack }: TransportScreenProps) {
   const handleRideAgain = (tripId: string) => {
     console.log('Ride again:', tripId);
     // TODO: Pre-fill search with this trip's locations
+  };
+
+  const handleSearchPress = () => {
+    setShowBookingModal(true);
   };
 
   return (
@@ -97,17 +102,14 @@ export function TransportScreen({ onBack }: TransportScreenProps) {
 
           {/* Search Box - Overlapping header and content */}
           <View style={styles.searchContainer}>
-            <View style={styles.searchBox}>
+            <TouchableOpacity
+              style={styles.searchBox}
+              onPress={handleSearchPress}
+              activeOpacity={0.7}
+            >
               <Ionicons name="search-outline" size={20} color="#666" style={styles.searchIcon} />
-              <TextInput
-                style={styles.searchInput}
-                placeholder="where to?"
-                placeholderTextColor="#999"
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                onBlur={() => Keyboard.dismiss()}
-              />
-            </View>
+              <Text style={styles.searchPlaceholder}>where to?</Text>
+            </TouchableOpacity>
           </View>
 
           <ScrollView 
@@ -151,6 +153,13 @@ export function TransportScreen({ onBack }: TransportScreenProps) {
             </View>
           </ScrollView>
       </View>
+
+      {/* Ride Booking Modal */}
+      <RideBookingModal
+        visible={showBookingModal}
+        onClose={() => setShowBookingModal(false)}
+        initialPickup="Current Location"
+      />
     </ScreenContainer>
   );
 }
@@ -198,10 +207,10 @@ const styles = StyleSheet.create({
   searchIcon: {
     marginRight: 12,
   },
-  searchInput: {
+  searchPlaceholder: {
     flex: 1,
     fontSize: 16,
-    color: '#1C1B1F',
+    color: '#999',
   },
   mapButton: {
     flexDirection: 'row',

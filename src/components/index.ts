@@ -30,6 +30,9 @@ export { default as PromoCard } from './PromoCard';
 export { default as DriverPromoCard } from './DriverPromoCard';
 export { default as RecentTripCard } from './RecentTripCard';
 
+// Modal Components
+export { RideBookingModal } from './RideBookingModal';
+
 // Feedback Components
 export { LoadingSpinner } from './LoadingSpinner';
 export { EmptyState } from './EmptyState';
