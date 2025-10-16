@@ -159,6 +159,7 @@ export function TransportScreen({ onBack }: TransportScreenProps) {
         visible={showBookingModal}
         onClose={() => setShowBookingModal(false)}
         initialPickup="Current Location"
+        selectedMode={selectedMode}
       />
     </ScreenContainer>
   );

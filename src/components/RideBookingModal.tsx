@@ -26,12 +26,14 @@ interface RideBookingModalProps {
   visible: boolean;
   onClose: () => void;
   initialPickup?: string;
+  selectedMode?: 'ride' | 'okada';
 }
 
 export function RideBookingModal({
   visible,
   onClose,
   initialPickup = '',
+  selectedMode = 'ride',
 }: RideBookingModalProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [pickup, setPickup] = useState(initialPickup);
@@ -132,6 +134,18 @@ export function RideBookingModal({
             <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
               <Ionicons name="close" size={24} color="#1C1B1F" />
             </TouchableOpacity>
+          </View>
+
+          {/* Mode Indicator */}
+          <View style={styles.modeIndicator}>
+            <Ionicons 
+              name={selectedMode === 'ride' ? 'car' : 'bicycle'} 
+              size={16} 
+              color="#666" 
+            />
+            <Text variant="bodySmall" style={styles.modeText}>
+              {selectedMode === 'ride' ? 'Car Ride' : 'Okada Ride'}
+            </Text>
           </View>
 
           {/* Location Inputs */}
@@ -282,7 +296,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 20,
-    marginBottom: 20,
+    marginBottom: 16,
   },
   headerTitle: {
     color: '#1C1B1F',
@@ -295,6 +309,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 20,
     backgroundColor: '#F5F5F5',
+  },
+  modeIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    marginBottom: 16,
+    gap: 6,
+  },
+  modeText: {
+    color: '#666',
+    fontSize: 13,
   },
   inputsContainer: {
     paddingHorizontal: 20,
