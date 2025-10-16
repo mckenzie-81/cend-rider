@@ -28,6 +28,7 @@ export { QuickActionCard } from './QuickActionCard';
 export { TransportModeCard } from './TransportModeCard';
 export { default as PromoCard } from './PromoCard';
 export { default as DriverPromoCard } from './DriverPromoCard';
+export { default as RecentTripCard } from './RecentTripCard';
 
 // Feedback Components
 export { LoadingSpinner } from './LoadingSpinner';
