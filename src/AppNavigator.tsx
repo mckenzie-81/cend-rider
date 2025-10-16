@@ -4,16 +4,26 @@ import ServicesScreen from './screens/ServicesScreen';
 import ActivitiesScreen from './screens/ActivitiesScreen';
 import AccountScreen from './screens/AccountScreen';
 import { TransportScreen } from './screens/TransportScreen';
+import { RideOptionsScreen } from './screens/RideOptionsScreen';
 
 const AppNavigator = () => {
   const [currentScreen, setCurrentScreen] = useState('home');
   const [transportMode, setTransportMode] = useState<'ride' | 'okada'>('ride');
+  const [rideDetails, setRideDetails] = useState<{
+    pickup: string;
+    dropoff: string;
+  } | null>(null);
 
   const handleNavigate = (screen: string, params?: { mode?: 'ride' | 'okada' }) => {
     if (screen === 'transport' && params?.mode) {
       setTransportMode(params.mode);
     }
     setCurrentScreen(screen);
+  };
+
+  const handleRideOptionsNavigate = (pickup: string, dropoff: string) => {
+    setRideDetails({ pickup, dropoff });
+    setCurrentScreen('ride-options');
   };
 
   const renderScreen = () => {
@@ -27,7 +37,22 @@ const AppNavigator = () => {
       case 'account':
         return <AccountScreen onTabChange={setCurrentScreen} />;
       case 'transport':
-        return <TransportScreen onBack={() => setCurrentScreen('home')} initialMode={transportMode} />;
+        return (
+          <TransportScreen
+            onBack={() => setCurrentScreen('home')}
+            initialMode={transportMode}
+            onConfirmLocations={handleRideOptionsNavigate}
+          />
+        );
+      case 'ride-options':
+        return (
+          <RideOptionsScreen
+            onBack={() => setCurrentScreen('transport')}
+            pickup={rideDetails?.pickup || ''}
+            dropoff={rideDetails?.dropoff || ''}
+            mode={transportMode}
+          />
+        );
       default:
         return <HomeScreen onTabChange={setCurrentScreen} onNavigate={handleNavigate} />;
     }

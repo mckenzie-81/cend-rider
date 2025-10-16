@@ -41,9 +41,10 @@ const RECENT_TRIPS = [
 interface TransportScreenProps {
   onBack: () => void;
   initialMode?: 'ride' | 'okada';
+  onConfirmLocations?: (pickup: string, dropoff: string) => void;
 }
 
-export function TransportScreen({ onBack, initialMode = 'ride' }: TransportScreenProps) {
+export function TransportScreen({ onBack, initialMode = 'ride', onConfirmLocations }: TransportScreenProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMode, setSelectedMode] = useState<'ride' | 'okada'>(initialMode);
   const [showBookingModal, setShowBookingModal] = useState(false);
@@ -161,6 +162,11 @@ export function TransportScreen({ onBack, initialMode = 'ride' }: TransportScree
         onClose={() => setShowBookingModal(false)}
         initialPickup="Current Location"
         selectedMode={selectedMode}
+        onConfirm={(pickup, dropoff) => {
+          if (onConfirmLocations) {
+            onConfirmLocations(pickup, dropoff);
+          }
+        }}
       />
     </ScreenContainer>
   );

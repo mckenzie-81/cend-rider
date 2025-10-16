@@ -27,6 +27,7 @@ interface RideBookingModalProps {
   onClose: () => void;
   initialPickup?: string;
   selectedMode?: 'ride' | 'okada';
+  onConfirm?: (pickup: string, dropoff: string) => void;
 }
 
 export function RideBookingModal({
@@ -34,6 +35,7 @@ export function RideBookingModal({
   onClose,
   initialPickup = '',
   selectedMode = 'ride',
+  onConfirm,
 }: RideBookingModalProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [pickup, setPickup] = useState(initialPickup);
@@ -234,8 +236,10 @@ export function RideBookingModal({
               <TouchableOpacity
                 style={styles.confirmButton}
                 onPress={() => {
-                  console.log('Confirm ride:', { pickup, dropoff });
-                  // TODO: Navigate to ride options screen
+                  if (onConfirm) {
+                    onConfirm(pickup, dropoff);
+                  }
+                  handleClose();
                 }}
                 activeOpacity={0.8}
               >
