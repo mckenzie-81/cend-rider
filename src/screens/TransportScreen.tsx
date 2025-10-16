@@ -40,11 +40,12 @@ const RECENT_TRIPS = [
 
 interface TransportScreenProps {
   onBack: () => void;
+  initialMode?: 'ride' | 'okada';
 }
 
-export function TransportScreen({ onBack }: TransportScreenProps) {
+export function TransportScreen({ onBack, initialMode = 'ride' }: TransportScreenProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedMode, setSelectedMode] = useState<'ride' | 'okada'>('ride');
+  const [selectedMode, setSelectedMode] = useState<'ride' | 'okada'>(initialMode);
   const [showBookingModal, setShowBookingModal] = useState(false);
   
   const handleMapPress = () => {

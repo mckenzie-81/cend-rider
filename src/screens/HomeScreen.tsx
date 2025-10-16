@@ -8,7 +8,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface HomeScreenProps {
   onTabChange: (tab: string) => void;
-  onNavigate: (screen: string) => void;
+  onNavigate: (screen: string, params?: { mode?: 'ride' | 'okada' }) => void;
 }
 
 const HomeScreen = ({ onTabChange, onNavigate }: HomeScreenProps) => {
@@ -49,8 +49,10 @@ const HomeScreen = ({ onTabChange, onNavigate }: HomeScreenProps) => {
 
   const handleServicePress = (serviceKey: string) => {
     // Navigate to transport screen for ride and okada
-    if (serviceKey === 'ride' || serviceKey === 'okada') {
-      onNavigate('transport');
+    if (serviceKey === 'ride') {
+      onNavigate('transport', { mode: 'ride' });
+    } else if (serviceKey === 'okada') {
+      onNavigate('transport', { mode: 'okada' });
     } else {
       // Handle other services - for now just log it
       console.log('Service selected:', serviceKey);
