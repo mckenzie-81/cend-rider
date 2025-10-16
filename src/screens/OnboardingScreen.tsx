@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { StyleSheet, View, Image, Dimensions } from 'react-native';
+import { StyleSheet, View, Image, Dimensions, TouchableOpacity } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { PrimaryButton, SecondaryButton } from '../components';
+import { PrimaryButton } from '../components';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -47,16 +47,21 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
         colors={currentScreenData.gradient}
         style={styles.gradientBackground}
       >
-        {/* Skip Button */}
-        <View style={styles.topBar}>
-          <SecondaryButton 
-            onPress={onComplete} 
-            variant="ghost" 
+        {/* Skip Button - Higher z-index */}
+        <View style={styles.topBar} pointerEvents="box-none">
+          <TouchableOpacity 
+            onPress={() => {
+              console.log('Skip button pressed!');
+              onComplete();
+            }}
             style={styles.skipButton}
-            textStyle={styles.skipButtonText}
+            activeOpacity={0.7}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            Skip
-          </SecondaryButton>
+            <Text variant="labelLarge" style={styles.skipButtonText}>
+              Skip
+            </Text>
+          </TouchableOpacity>
         </View>
 
         {/* Illustration */}
@@ -115,23 +120,26 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingHorizontal: 24,
     marginBottom: 20,
+    zIndex: 100,
+    position: 'relative',
   },
   skipButton: {
-    width: 'auto',
-    height: 40,
-    paddingHorizontal: 16,
-    minWidth: 70,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    minWidth: 80,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    borderRadius: 20,
   },
   skipButtonText: {
     color: '#FFFFFF',
-    opacity: 0.8,
+    fontWeight: '600',
   },
   illustrationContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 32,
-    marginBottom: 0,
+    marginBottom: -10,
   },
   illustration: {
     width: SCREEN_WIDTH * 1,
