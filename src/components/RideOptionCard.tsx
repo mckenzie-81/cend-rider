@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -21,7 +21,7 @@ interface RideOptionCardProps {
 
 /**
  * RideOptionCard - Premium card component for ride options
- * Clean, Apple/Google-inspired design with smooth interactions
+ * Clean, minimal design with subtle interactions
  */
 export function RideOptionCard({ option, isSelected, onSelect }: RideOptionCardProps) {
   return (
@@ -34,33 +34,18 @@ export function RideOptionCard({ option, isSelected, onSelect }: RideOptionCardP
       activeOpacity={0.7}
     >
       {/* Vehicle Icon */}
-      <View style={styles.iconContainer}>
-        <Ionicons name={option.icon as any} size={28} color="#1C1B1F" />
-      </View>
+      <Ionicons name={option.icon as any} size={36} color="#1C1B1F" />
 
       {/* Option Details */}
       <View style={styles.details}>
-        <View style={styles.header}>
-          <Text variant="titleMedium" style={styles.name}>
-            {option.name}
+        <Text variant="titleMedium" style={styles.name}>
+          {option.name}
+        </Text>
+        <View style={styles.timeContainer}>
+          <Ionicons name="time-outline" size={12} color="#666" />
+          <Text variant="bodySmall" style={styles.time}>
+            {option.time}
           </Text>
-          <View style={styles.timeContainer}>
-            <Ionicons name="time-outline" size={12} color="#666" />
-            <Text variant="bodySmall" style={styles.time}>
-              {option.time}
-            </Text>
-          </View>
-        </View>
-        <View style={styles.meta}>
-          <Text variant="bodySmall" style={styles.type}>
-            {option.type}
-          </Text>
-          <View style={styles.capacityContainer}>
-            <Ionicons name="person-outline" size={12} color="#666" />
-            <Text variant="bodySmall" style={styles.capacity}>
-              {option.capacity}
-            </Text>
-          </View>
         </View>
       </View>
 
@@ -68,13 +53,6 @@ export function RideOptionCard({ option, isSelected, onSelect }: RideOptionCardP
       <Text variant="titleMedium" style={styles.price}>
         {option.price}
       </Text>
-
-      {/* Selection Indicator */}
-      {isSelected && (
-        <View style={styles.selectedIndicator}>
-          <Ionicons name="checkmark-circle" size={24} color="#8020A2" />
-        </View>
-      )}
     </TouchableOpacity>
   );
 }
@@ -86,51 +64,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     borderRadius: 16,
     padding: 16,
+    paddingLeft: 20,
     marginBottom: 12,
-    position: 'relative',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 2,
-      },
-      android: {
-        elevation: 1,
-      },
-    }),
+    gap: 16,
+    borderWidth: 2,
+    borderColor: 'transparent',
   },
   cardSelected: {
-    backgroundColor: '#F9F5FB',
-    ...Platform.select({
-      ios: {
-        shadowColor: '#8020A2',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.12,
-        shadowRadius: 8,
-      },
-      android: {
-        elevation: 3,
-      },
-    }),
-  },
-  iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
     backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
+    borderColor: '#B794C3',
   },
   details: {
     flex: 1,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 4,
+    gap: 4,
   },
   name: {
     color: '#1C1B1F',
@@ -144,30 +90,8 @@ const styles = StyleSheet.create({
   time: {
     color: '#666',
   },
-  meta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  type: {
-    color: '#666',
-  },
-  capacityContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  capacity: {
-    color: '#666',
-  },
   price: {
     color: '#1C1B1F',
     fontWeight: '700',
-    marginLeft: 12,
-  },
-  selectedIndicator: {
-    position: 'absolute',
-    top: 16,
-    right: 16,
   },
 });
