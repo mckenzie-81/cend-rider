@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -48,7 +48,7 @@ export function TabBar({ tabs, activeTab, onTabPress }: TabBarProps) {
         styles.container,
         {
           backgroundColor: theme.colors.surface,
-          paddingBottom: Platform.OS === 'ios' ? insets.bottom : 8,
+          paddingBottom: Math.max(insets.bottom, 8),
           // Soft shadow instead of border
           shadowColor: '#1C1B1F',
           shadowOffset: { width: 0, height: -3 },
