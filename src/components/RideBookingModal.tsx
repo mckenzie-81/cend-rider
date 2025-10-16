@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
+import { PrimaryButton } from './PrimaryButton';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -233,28 +233,16 @@ export function RideBookingModal({
           {/* Confirm Button */}
           {canProceed && (
             <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={styles.confirmButton}
+              <PrimaryButton
                 onPress={() => {
                   if (onConfirm) {
                     onConfirm(pickup, dropoff);
                   }
                   handleClose();
                 }}
-                activeOpacity={0.8}
               >
-                <LinearGradient
-                  colors={['#8020A2', '#995FAF']}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.confirmButtonGradient}
-                >
-                  <Text variant="titleMedium" style={styles.confirmButtonText}>
-                    Confirm Locations
-                  </Text>
-                  <Ionicons name="arrow-forward" size={20} color="#FFFFFF" />
-                </LinearGradient>
-              </TouchableOpacity>
+                Confirm Locations
+              </PrimaryButton>
             </View>
           )}
         </Animated.View>
@@ -412,23 +400,5 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 30,
     backgroundColor: '#FFFFFF',
-    borderTopWidth: 1,
-    borderTopColor: '#F5F5F5',
-  },
-  confirmButton: {
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  confirmButtonGradient: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    gap: 8,
-  },
-  confirmButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '700',
   },
 });

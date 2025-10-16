@@ -1,18 +1,8 @@
 import { useState } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
-import { ScreenContainer, PrimaryButton } from '../components';
-
-interface RideOption {
-  id: string;
-  name: string;
-  type: string;
-  time: string;
-  capacity: number;
-  price: string;
-  icon: string; // For now using icon names, can be replaced with images
-}
+import { ScreenContainer, PrimaryButton, RideOptionCard, RideOption } from '../components';
 
 interface RideOptionsScreenProps {
   onBack: () => void;
@@ -143,53 +133,12 @@ export function RideOptionsScreen({
             contentContainerStyle={styles.optionsScroll}
           >
             {rideOptions.map((option) => (
-              <TouchableOpacity
+              <RideOptionCard
                 key={option.id}
-                style={[
-                  styles.optionCard,
-                  selectedOption === option.id && styles.optionCardSelected,
-                ]}
-                onPress={() => handleSelectOption(option.id)}
-                activeOpacity={0.7}
-              >
-                {/* Vehicle Icon */}
-                <View style={styles.optionIcon}>
-                  <Ionicons name={option.icon as any} size={32} color="#1C1B1F" />
-                </View>
-
-                {/* Option Details */}
-                <View style={styles.optionDetails}>
-                  <View style={styles.optionHeader}>
-                    <Text variant="titleMedium" style={styles.optionName}>
-                      {option.name}
-                    </Text>
-                    <Text variant="bodySmall" style={styles.optionTime}>
-                      <Ionicons name="time-outline" size={12} color="#666" /> {option.time}
-                    </Text>
-                  </View>
-                  <View style={styles.optionMeta}>
-                    <Text variant="bodySmall" style={styles.optionType}>
-                      {option.type}
-                    </Text>
-                    <Ionicons name="person-outline" size={12} color="#666" />
-                    <Text variant="bodySmall" style={styles.optionCapacity}>
-                      {option.capacity}
-                    </Text>
-                  </View>
-                </View>
-
-                {/* Price */}
-                <Text variant="titleMedium" style={styles.optionPrice}>
-                  {option.price}
-                </Text>
-
-                {/* Selection Indicator */}
-                {selectedOption === option.id && (
-                  <View style={styles.selectedIndicator}>
-                    <Ionicons name="checkmark-circle" size={24} color="#8020A2" />
-                  </View>
-                )}
-              </TouchableOpacity>
+                option={option}
+                isSelected={selectedOption === option.id}
+                onSelect={handleSelectOption}
+              />
             ))}
           </ScrollView>
 
@@ -301,71 +250,6 @@ const styles = StyleSheet.create({
   optionsScroll: {
     paddingHorizontal: 16,
     paddingBottom: 100,
-  },
-  optionCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 12,
-    position: 'relative',
-  },
-  optionCardSelected: {
-    backgroundColor: '#F9F5FB',
-    shadowColor: '#8020A2',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 4,
-  },
-  optionIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  optionDetails: {
-    flex: 1,
-  },
-  optionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 4,
-  },
-  optionName: {
-    color: '#1C1B1F',
-    fontWeight: '700',
-  },
-  optionTime: {
-    color: '#666',
-    fontSize: 12,
-  },
-  optionMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  optionType: {
-    color: '#666',
-    marginRight: 8,
-  },
-  optionCapacity: {
-    color: '#666',
-  },
-  optionPrice: {
-    color: '#1C1B1F',
-    fontWeight: '700',
-    marginLeft: 12,
-  },
-  selectedIndicator: {
-    position: 'absolute',
-    top: 16,
-    right: 16,
   },
   buttonContainer: {
     padding: 20,
