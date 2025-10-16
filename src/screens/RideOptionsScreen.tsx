@@ -226,7 +226,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   mapContainer: {
-    height: 300,
+    flex: 1,
     backgroundColor: '#E8F5E9',
     position: 'relative',
   },
@@ -249,10 +249,8 @@ const styles = StyleSheet.create({
   },
   distanceInfoContainer: {
     position: 'absolute',
-    bottom: 16,
+    bottom: 24,
     left: 16,
-    right: 16,
-    alignItems: 'flex-start',
   },
   distanceInfo: {
     flexDirection: 'row',
