@@ -90,7 +90,9 @@ export function AppHeader({
             {/* Top bar with back button, title, and actions */}
             <View style={styles.topBar}>
               {showBack && (
-                <Appbar.BackAction onPress={onBackPress} color={gradientColors ? '#FFFFFF' : undefined} />
+                <View style={styles.backButtonContainer}>
+                  <Appbar.BackAction onPress={onBackPress} color={gradientColors ? '#FFFFFF' : undefined} />
+                </View>
               )}
               {title && (
                 <Text variant="titleLarge" style={[styles.topBarTitle, gradientColors && { color: '#FFFFFF' }]}>
@@ -232,6 +234,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     minHeight: 56,
+    zIndex: 10,
+  },
+  backButtonContainer: {
+    zIndex: 20,
   },
   topBarTitle: {
     fontWeight: '600',

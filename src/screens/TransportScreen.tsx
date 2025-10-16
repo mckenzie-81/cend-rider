@@ -224,6 +224,7 @@ const styles = StyleSheet.create({
     bottom: -44,
     width: 220,
     height: 140,
+    zIndex: 1,
   },
   illustration: {
     width: 240,

@@ -15,7 +15,7 @@ import OnboardingScreen from './src/screens/OnboardingScreen';
 import LoginScreen from './src/screens/LoginScreen';
 import SignupScreen from './src/screens/SignupScreen';
 import VerificationScreen from './src/screens/VerificationScreen';
-import { useCustomFonts } from './src/hooks/useFonts';
+import { useAssetCache } from './src/hooks/useAssetCache';
 import './src/theme/nativewind';
 
 export default function App() {
@@ -26,19 +26,19 @@ export default function App() {
   const [needsVerification, setNeedsVerification] = useState(false);
   const scheme = useColorScheme();
   const theme = scheme === 'dark' ? darkTheme : lightTheme;
-  const fontsLoaded = useCustomFonts();
+  const assetsLoaded = useAssetCache();
 
-  // Show loading while fonts are loading OR before splash finishes
-  if (!fontsLoaded || !isReady) {
-    if (!fontsLoaded) {
-      // Still loading fonts - show loader
+  // Show loading while assets are loading OR before splash finishes
+  if (!assetsLoaded || !isReady) {
+    if (!assetsLoaded) {
+      // Still loading assets - show loader
       return (
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#995FAF' }}>
           <ActivityIndicator size="large" color="#8020A2" />
         </View>
       );
     }
-    // Fonts loaded, show splash screen
+    // Assets loaded, show splash screen
     return <CustomSplashScreen onFinish={() => setIsReady(true)} />;
   }
 
