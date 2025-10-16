@@ -2,8 +2,7 @@ import { useState } from 'react';
 import { View, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
-import { ScreenContainer } from '../components';
+import { ScreenContainer, PrimaryButton } from '../components';
 
 interface RideOption {
   id: string;
@@ -196,23 +195,9 @@ export function RideOptionsScreen({
 
           {/* Confirm Button */}
           <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.confirmButton}
-              onPress={handleConfirm}
-              activeOpacity={0.8}
-            >
-              <LinearGradient
-                colors={['#8020A2', '#995FAF']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 0 }}
-                style={styles.confirmButtonGradient}
-              >
-                <Text variant="titleMedium" style={styles.confirmButtonText}>
-                  Select {rideOptions.find((o) => o.id === selectedOption)?.name}
-                </Text>
-                <Ionicons name="arrow-forward" size={20} color="#FFFFFF" />
-              </LinearGradient>
-            </TouchableOpacity>
+            <PrimaryButton onPress={handleConfirm}>
+              {`Confirm ${rideOptions.find((o) => o.id === selectedOption)?.name || 'Ride'}`}
+            </PrimaryButton>
           </View>
         </View>
       </View>
@@ -302,7 +287,7 @@ const styles = StyleSheet.create({
   sheetTitle: {
     color: '#1C1B1F',
     fontWeight: '700',
-    marginBottom: 8,
+    marginBottom: 4,
   },
   routeInfo: {
     flexDirection: 'row',
@@ -327,14 +312,17 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   optionCardSelected: {
-    backgroundColor: '#F5F0F7',
-    borderWidth: 2,
-    borderColor: '#8020A2',
+    backgroundColor: '#F9F5FB',
+    shadowColor: '#8020A2',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+    elevation: 4,
   },
   optionIcon: {
-    width: 56,
-    height: 56,
-    borderRadius: 12,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
@@ -376,30 +364,12 @@ const styles = StyleSheet.create({
   },
   selectedIndicator: {
     position: 'absolute',
-    top: 8,
-    right: 8,
+    top: 16,
+    right: 16,
   },
   buttonContainer: {
     padding: 20,
     paddingBottom: 30,
     backgroundColor: '#FFFFFF',
-    borderTopWidth: 1,
-    borderTopColor: '#F5F5F5',
-  },
-  confirmButton: {
-    borderRadius: 12,
-    overflow: 'hidden',
-  },
-  confirmButtonGradient: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    gap: 8,
-  },
-  confirmButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '700',
   },
 });

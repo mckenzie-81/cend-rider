@@ -6,7 +6,8 @@ import {
   ViewStyle,
   TextStyle,
 } from 'react-native';
-import { Text, useTheme } from 'react-native-paper';
+import { Text } from 'react-native-paper';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface PrimaryButtonProps {
   /** Button text */
@@ -43,37 +44,38 @@ export function PrimaryButton({
   style,
   textStyle,
 }: PrimaryButtonProps) {
-  const theme = useTheme();
-
   return (
     <TouchableOpacity
       onPress={onPress}
       disabled={disabled || loading}
-      activeOpacity={0.7}
+      activeOpacity={0.8}
       style={[
         styles.button,
-        {
-          backgroundColor: theme.colors.primary,
-          opacity: disabled ? 0.5 : 1,
-        },
+        { opacity: disabled ? 0.5 : 1 },
         fullWidth && styles.fullWidth,
         style,
       ]}
     >
-      {loading ? (
-        <ActivityIndicator size="small" color={theme.colors.onPrimary} />
-      ) : (
-        <Text
-          variant="labelLarge"
-          style={[
-            styles.text,
-            { color: theme.colors.onPrimary },
-            textStyle,
-          ]}
-        >
-          {children}
-        </Text>
-      )}
+      <LinearGradient
+        colors={['#8020A2', '#995FAF']}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 0 }}
+        style={styles.gradient}
+      >
+        {loading ? (
+          <ActivityIndicator size="small" color="#FFFFFF" />
+        ) : (
+          <Text
+            variant="labelLarge"
+            style={[
+              styles.text,
+              textStyle,
+            ]}
+          >
+            {children}
+          </Text>
+        )}
+      </LinearGradient>
     </TouchableOpacity>
   );
 }
@@ -82,14 +84,19 @@ const styles = StyleSheet.create({
   button: {
     height: 56,
     borderRadius: 28, // Fully rounded (pill shape)
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 24,
+    overflow: 'hidden',
   },
   fullWidth: {
     width: '100%',
   },
+  gradient: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+  },
   text: {
+    color: '#FFFFFF',
     fontWeight: '600',
     letterSpacing: 0.2,
   },
