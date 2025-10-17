@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { StyleSheet, View, Image, Dimensions, TouchableOpacity } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { PrimaryButton } from '../components';
 
@@ -13,12 +13,13 @@ interface OnboardingScreenProps {
 
 export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const [currentScreen, setCurrentScreen] = useState(0);
 
   const screens = [
     {
       title: "Your Ride,\nYour Way",
-      subtitle: "From quick okada trips to comfortable car rides,\nwe've got every journey covered",
+      subtitle: "From quick okada trips to comfy car rides,\nwe've got every journey covered",
       image: require('../../assets/illustrations/onboarding1.png'),
       gradient: ['#8020A2', '#995FAF'] as const,
     },
@@ -42,7 +43,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
   const currentScreenData = screens[currentScreen];
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: currentScreenData.gradient[0] }]} edges={['top', 'bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: currentScreenData.gradient[0] }]} edges={['top']}>
       <LinearGradient
         colors={currentScreenData.gradient}
         style={styles.gradientBackground}
@@ -74,7 +75,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
         </View>
 
         {/* Content Card */}
-        <View style={styles.contentCard}>
+        <View style={[styles.contentCard, { paddingBottom: Math.max(insets.bottom, 24) }]}>
           {/* Progress Dots */}
           <View style={styles.dotsContainer}>
             {screens.map((_, index) => (
@@ -151,8 +152,8 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 32,
     paddingTop: 32,
     paddingHorizontal: 24,
-    paddingBottom: 24,
     minHeight: SCREEN_HEIGHT * 0.40,
+    paddingBottom: 24, // Will be overridden by inline style with safe area
   },
   dotsContainer: {
     flexDirection: 'row',
