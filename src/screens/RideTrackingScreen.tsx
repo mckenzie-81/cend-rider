@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { useState, useEffect, useRef } from 'react';
+import { View, StyleSheet, TouchableOpacity, Dimensions, Image, Animated } from 'react-native';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { ScreenContainer, PrimaryButton, LoadingSpinner } from '../components';
@@ -40,6 +40,57 @@ export function RideTrackingScreen({
 }: RideTrackingScreenProps) {
   const [rideState, setRideState] = useState<RideState>('searching');
   const [driverETA, setDriverETA] = useState(5);
+  
+  // Ripple animation for searching state
+  const rippleAnim1 = useRef(new Animated.Value(0)).current;
+  const rippleAnim2 = useRef(new Animated.Value(0)).current;
+  const rippleOpacity1 = useRef(new Animated.Value(1)).current;
+  const rippleOpacity2 = useRef(new Animated.Value(1)).current;
+
+  // Start ripple animation when in searching state
+  useEffect(() => {
+    if (rideState === 'searching') {
+      const ripple1 = Animated.loop(
+        Animated.parallel([
+          Animated.timing(rippleAnim1, {
+            toValue: 1,
+            duration: 2000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(rippleOpacity1, {
+            toValue: 0,
+            duration: 2000,
+            useNativeDriver: true,
+          }),
+        ])
+      );
+
+      const ripple2 = Animated.loop(
+        Animated.parallel([
+          Animated.timing(rippleAnim2, {
+            toValue: 1,
+            duration: 2000,
+            delay: 1000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(rippleOpacity2, {
+            toValue: 0,
+            duration: 2000,
+            delay: 1000,
+            useNativeDriver: true,
+          }),
+        ])
+      );
+
+      ripple1.start();
+      ripple2.start();
+
+      return () => {
+        ripple1.stop();
+        ripple2.stop();
+      };
+    }
+  }, [rideState]);
 
   // Simulate ride state progression
   useEffect(() => {
@@ -97,39 +148,54 @@ export function RideTrackingScreen({
     switch (rideState) {
       case 'searching':
         return (
-          <View style={styles.stateContainer}>
-            <LoadingSpinner size="large" />
-            <Text variant="headlineSmall" style={styles.stateTitle}>
-              Finding you a driver...
-            </Text>
-            <Text variant="bodyMedium" style={styles.stateSubtitle}>
-              This usually takes less than a minute
-            </Text>
-
-            {/* Trip Details */}
-            <View style={styles.tripDetailsCard}>
-              <View style={styles.tripDetailRow}>
-                <Ionicons name="ellipse" size={12} color="#8020A2" />
-                <Text variant="bodyMedium" style={styles.tripDetailText} numberOfLines={1}>
-                  {pickup}
-                </Text>
-              </View>
-              <View style={styles.tripDetailRow}>
-                <Ionicons name="location" size={12} color="#FF6B6B" />
-                <Text variant="bodyMedium" style={styles.tripDetailText} numberOfLines={1}>
-                  {dropoff}
-                </Text>
-              </View>
-              <View style={styles.divider} />
-              <View style={styles.tripMetaRow}>
-                <Text variant="bodySmall" style={styles.tripMetaText}>
-                  {vehicleType}
-                </Text>
-                <Text variant="bodySmall" style={styles.tripMetaPrice}>
-                  {estimatedPrice}
-                </Text>
+          <View style={styles.searchingContainer}>
+            {/* Ripple Circles */}
+            <View style={styles.rippleContainer}>
+              <Animated.View
+                style={[
+                  styles.rippleCircle,
+                  styles.rippleOuter,
+                  {
+                    transform: [{
+                      scale: rippleAnim1.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [1, 1.8],
+                      }),
+                    }],
+                    opacity: rippleOpacity1,
+                  },
+                ]}
+              />
+              <Animated.View
+                style={[
+                  styles.rippleCircle,
+                  styles.rippleInner,
+                  {
+                    transform: [{
+                      scale: rippleAnim2.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [1, 1.5],
+                      }),
+                    }],
+                    opacity: rippleOpacity2,
+                  },
+                ]}
+              />
+              <View style={styles.carContainer}>
+                <Image
+                  source={require('../../assets/illustrations/car-on-map.png')}
+                  style={styles.carImage}
+                  resizeMode="contain"
+                />
               </View>
             </View>
+
+            <Text variant="titleLarge" style={styles.searchingTitle}>
+              Searching for a Driver...
+            </Text>
+            <Text variant="bodyMedium" style={styles.searchingSubtitle}>
+              This may takes a few seconds
+            </Text>
           </View>
         );
 
@@ -272,7 +338,7 @@ export function RideTrackingScreen({
           {rideState !== 'completed' && (
             <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
               <Text variant="labelLarge" style={styles.cancelButtonText}>
-                Cancel Ride
+                {rideState === 'searching' ? 'Cancel Search' : 'Cancel Ride'}
               </Text>
             </TouchableOpacity>
           )}
@@ -338,6 +404,55 @@ const styles = StyleSheet.create({
   iconContainer: {
     marginBottom: 16,
   },
+  // Searching state styles
+  searchingContainer: {
+    alignItems: 'center',
+    paddingVertical: 40,
+  },
+  rippleContainer: {
+    width: 220,
+    height: 220,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 32,
+  },
+  rippleCircle: {
+    position: 'absolute',
+    borderRadius: 110,
+    backgroundColor: '#B794C3',
+  },
+  rippleOuter: {
+    width: 220,
+    height: 220,
+  },
+  rippleInner: {
+    width: 180,
+    height: 180,
+  },
+  carContainer: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    backgroundColor: '#8020A2',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  carImage: {
+    width: 80,
+    height: 80,
+  },
+  searchingTitle: {
+    color: '#1C1B1F',
+    fontWeight: '700',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  searchingSubtitle: {
+    color: '#666',
+    textAlign: 'center',
+  },
+  // Other state styles
   stateTitle: {
     color: '#1C1B1F',
     fontWeight: '700',
@@ -506,13 +621,14 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     marginTop: 16,
-    paddingVertical: 14,
+    paddingVertical: 16,
     alignItems: 'center',
-    borderRadius: 12,
-    backgroundColor: '#FFE5E5',
+    borderRadius: 24,
+    backgroundColor: '#D9BFE8',
   },
   cancelButtonText: {
-    color: '#D32F2F',
+    color: '#1C1B1F',
     fontWeight: '600',
+    fontSize: 16,
   },
 });
