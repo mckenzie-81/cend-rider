@@ -1,23 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, TouchableOpacity, Dimensions, Image, Animated } from 'react-native';
-import { Text } from 'react-native-paper';
+import { View, StyleSheet, TouchableOpacity, Dimensions, Image, Animated, Linking, Alert, ScrollView } from 'react-native';
+import { Text, useTheme } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { Asset } from 'expo-asset';
-import { ScreenContainer, PrimaryButton, LoadingSpinner } from '../components';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ScreenContainer, PrimaryButton, LoadingSpinner, Spacer16, Spacer12, DriverInfoCard } from '../components';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 // Ride tracking states
 type RideState = 'searching' | 'driver-found' | 'driver-arriving' | 'driver-arrived' | 'in-transit' | 'completed';
-
-interface RideTrackingScreenProps {
-  onBack: () => void;
-  onComplete?: () => void;
-  pickup: string;
-  dropoff: string;
-  vehicleType: string;
-  estimatedPrice: string;
-}
 
 // Mock driver data
 const MOCK_DRIVER = {
@@ -28,8 +20,17 @@ const MOCK_DRIVER = {
   vehiclePlate: 'GN 2341-23',
   vehicleColor: 'Silver',
   phone: '+233 24 123 4567',
-  photo: null, // Can add driver photo later
+  photo: undefined, // Can add driver photo later
 };
+
+interface RideTrackingScreenProps {
+  onBack: () => void;
+  onComplete?: () => void;
+  pickup: string;
+  dropoff: string;
+  vehicleType: string;
+  estimatedPrice: string;
+}
 
 export function RideTrackingScreen({
   onBack,
@@ -39,6 +40,8 @@ export function RideTrackingScreen({
   vehicleType,
   estimatedPrice,
 }: RideTrackingScreenProps) {
+  const theme = useTheme();
+  const insets = useSafeAreaInsets();
   const [rideState, setRideState] = useState<RideState>('searching');
   const [driverETA, setDriverETA] = useState(5);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -112,18 +115,18 @@ export function RideTrackingScreen({
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
 
-    // Searching → Driver Found (15 seconds)
+    // Searching → Driver Found (10 seconds)
     if (rideState === 'searching') {
       timers.push(setTimeout(() => {
         setRideState('driver-found');
-      }, 15000));
+      }, 10000));
     }
 
-    // Driver Found → Driver Arriving (15 seconds to show driver info)
+    // Driver Found → Driver Arriving (10 seconds to show driver info)
     if (rideState === 'driver-found') {
       timers.push(setTimeout(() => {
         setRideState('driver-arriving');
-      }, 15000));
+      }, 10000));
     }
 
     // Driver Arriving → Update ETA countdown
@@ -150,14 +153,26 @@ export function RideTrackingScreen({
     onBack();
   };
 
-  const handleCall = () => {
-    console.log('Calling driver:', MOCK_DRIVER.phone);
-    // TODO: Implement phone call
+  const handleCall = async () => {
+    const phoneNumber = MOCK_DRIVER.phone;
+    const phoneUrl = `tel:${phoneNumber}`;
+    
+    try {
+      const supported = await Linking.canOpenURL(phoneUrl);
+      if (supported) {
+        await Linking.openURL(phoneUrl);
+      } else {
+        Alert.alert('Error', 'Phone calling is not available on this device');
+      }
+    } catch (error) {
+      console.error('Error making phone call:', error);
+      Alert.alert('Error', 'Could not initiate phone call');
+    }
   };
 
   const handleMessage = () => {
-    console.log('Messaging driver');
-    // TODO: Implement messaging
+    // Chat feature not implemented yet
+    Alert.alert('Coming Soon', 'In-app messaging will be available soon');
   };
 
   const renderContent = () => {
@@ -228,95 +243,124 @@ export function RideTrackingScreen({
         const isArrived = rideState === 'driver-arrived';
         return (
           <View style={styles.contentFull}>
-            {/* Driver Info Card */}
-            <View style={styles.driverCard}>
-              <View style={styles.driverHeader}>
-                <View style={styles.driverAvatar}>
-                  <Ionicons name="person" size={32} color="#8020A2" />
-                </View>
-                <View style={styles.driverInfo}>
-                  <Text variant="titleMedium" style={styles.driverName}>
-                    {MOCK_DRIVER.name}
-                  </Text>
-                  <View style={styles.driverMeta}>
-                    <Ionicons name="star" size={14} color="#FFB800" />
-                    <Text variant="bodySmall" style={styles.driverRating}>
-                      {MOCK_DRIVER.rating} • {MOCK_DRIVER.totalTrips} trips
-                    </Text>
-                  </View>
-                </View>
-                <View style={styles.driverActions}>
-                  <TouchableOpacity style={styles.actionButton} onPress={handleCall}>
-                    <Ionicons name="call" size={20} color="#8020A2" />
-                  </TouchableOpacity>
-                  <TouchableOpacity style={styles.actionButton} onPress={handleMessage}>
-                    <Ionicons name="chatbubble" size={20} color="#8020A2" />
-                  </TouchableOpacity>
-                </View>
-              </View>
+            {/* ETA Header */}
+            <Text variant="titleLarge" style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>
+              {isArrived ? 'Driver has arrived!' : `Arriving in ${driverETA} min`}
+            </Text>
 
-              {/* Vehicle Info */}
-              <View style={styles.vehicleInfo}>
-                <View style={styles.vehicleDetail}>
-                  <Ionicons name="car" size={16} color="#666" />
-                  <Text variant="bodySmall" style={styles.vehicleText}>
-                    {MOCK_DRIVER.vehicleModel}
-                  </Text>
-                </View>
-                <View style={styles.vehicleDetail}>
-                  <Ionicons name="card" size={16} color="#666" />
-                  <Text variant="bodySmall" style={styles.vehicleText}>
-                    {MOCK_DRIVER.vehiclePlate}
-                  </Text>
-                </View>
-                <View style={styles.vehicleDetail}>
-                  <View style={[styles.colorDot, { backgroundColor: '#C0C0C0' }]} />
-                  <Text variant="bodySmall" style={styles.vehicleText}>
-                    {MOCK_DRIVER.vehicleColor}
-                  </Text>
-                </View>
-              </View>
+            <Spacer12 />
+
+            {/* Driver Info Card - Using Project Component */}
+            <DriverInfoCard
+              name={MOCK_DRIVER.name}
+              photo={MOCK_DRIVER.photo}
+              rating={MOCK_DRIVER.rating}
+              vehicle={MOCK_DRIVER.vehicleModel}
+              vehicleColor={MOCK_DRIVER.vehicleColor}
+              licensePlate={MOCK_DRIVER.vehiclePlate}
+              tripCount={MOCK_DRIVER.totalTrips}
+            />
+
+            <Spacer16 />
+
+            {/* Action Buttons - Call is Primary */}
+            <View style={styles.actionRow}>
+              {/* Icon-only chat button - Secondary */}
+              <TouchableOpacity 
+                accessible={true}
+                accessibilityLabel="Chat with driver"
+                accessibilityHint="Opens chat to message your driver"
+                accessibilityRole="button"
+                style={[styles.iconButton, { 
+                  backgroundColor: theme.colors.surfaceVariant,
+                  borderColor: theme.colors.outline 
+                }]}
+                onPress={handleMessage}
+              >
+                <Ionicons name="chatbubble-outline" size={22} color={theme.colors.onSurfaceVariant} />
+              </TouchableOpacity>
+              
+              {/* Full-width call button - Primary */}
+              <TouchableOpacity 
+                accessible={true}
+                accessibilityLabel="Call driver"
+                accessibilityHint="Opens phone dialer to call your driver"
+                accessibilityRole="button"
+                style={[styles.callButtonPrimary, { backgroundColor: theme.colors.primary }]}
+                onPress={handleCall}
+              >
+                <Ionicons name="call" size={20} color="#FFFFFF" />
+                <Text variant="labelLarge" style={styles.callButtonText}>
+                  Call Driver
+                </Text>
+              </TouchableOpacity>
             </View>
 
-            {/* ETA Card */}
-            <View style={[styles.etaCard, isArrived && styles.arrivedCard]}>
-              {isArrived ? (
-                <>
-                  <Ionicons name="checkmark-circle" size={32} color="#4CAF50" />
-                  <Text variant="titleLarge" style={styles.arrivedText}>
-                    Driver has arrived!
-                  </Text>
-                  <Text variant="bodyMedium" style={styles.arrivedSubtext}>
-                    Your driver is waiting for you
-                  </Text>
-                </>
-              ) : (
-                <>
-                  <Text variant="displaySmall" style={styles.etaTime}>
-                    {driverETA} min
-                  </Text>
-                  <Text variant="bodyMedium" style={styles.etaText}>
-                    Driver is arriving
-                  </Text>
-                </>
-              )}
-            </View>
+            <Spacer16 />
 
-            {/* Trip Route */}
-            <View style={styles.tripRoute}>
-              <View style={styles.routeRow}>
-                <Ionicons name="ellipse" size={12} color="#8020A2" />
-                <Text variant="bodyMedium" style={styles.routeText} numberOfLines={1}>
+            {/* Trip Information Section */}
+            <View style={[styles.infoSection, { backgroundColor: theme.colors.surfaceVariant }]}>
+              <Text variant="titleMedium" style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>
+                Trip Information
+              </Text>
+              
+              <Spacer12 />
+              
+              <View style={styles.infoRow}>
+                <Ionicons name="location" size={20} color={theme.colors.primary} />
+                <Text variant="bodyMedium" style={[styles.infoText, { color: theme.colors.onSurface }]} numberOfLines={1}>
                   {pickup}
                 </Text>
               </View>
-              <View style={styles.routeLine} />
-              <View style={styles.routeRow}>
-                <Ionicons name="location" size={12} color="#FF6B6B" />
-                <Text variant="bodyMedium" style={styles.routeText} numberOfLines={1}>
+
+              <Spacer12 />
+
+              <View style={styles.infoRow}>
+                <Ionicons name="navigate" size={20} color={theme.colors.onSurfaceVariant} />
+                <Text variant="bodyMedium" style={[styles.infoText, { color: theme.colors.onSurface }]} numberOfLines={1}>
                   {dropoff}
                 </Text>
               </View>
+            </View>
+
+            <Spacer16 />
+
+            {/* Payment Method Section */}
+            <View style={[styles.infoSection, { backgroundColor: theme.colors.surfaceVariant }]}>
+              <Text variant="titleMedium" style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>
+                Payment Method
+              </Text>
+              
+              <Spacer12 />
+              
+              <View style={styles.infoRow}>
+                <Ionicons name="cash-outline" size={20} color="#4CAF50" />
+                <Text variant="bodyMedium" style={[styles.infoText, { color: theme.colors.onSurface }]}>
+                  Cash
+                </Text>
+                <Text variant="bodyMedium" style={[styles.paymentAmount, { color: theme.colors.onSurface }]}>
+                  {estimatedPrice}
+                </Text>
+              </View>
+            </View>
+
+            <Spacer16 />
+
+            {/* More Actions Section */}
+            <View style={[styles.infoSection, { backgroundColor: theme.colors.surfaceVariant }]}>
+              <Text variant="titleMedium" style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>
+                More Actions
+              </Text>
+              
+              <Spacer12 />
+              
+              <TouchableOpacity style={styles.moreActionRow}>
+                <Ionicons name="share-social-outline" size={20} color={theme.colors.onSurfaceVariant} />
+                <Text variant="bodyMedium" style={[styles.infoText, { color: theme.colors.onSurface }]}>
+                  Share my ride details
+                </Text>
+                <Ionicons name="chevron-forward" size={20} color={theme.colors.onSurfaceVariant} />
+              </TouchableOpacity>
             </View>
           </View>
         );
@@ -376,22 +420,42 @@ export function RideTrackingScreen({
           )}
           
           {/* Back Button */}
-          <TouchableOpacity onPress={onBack} style={styles.floatingBackButton}>
+          <TouchableOpacity 
+            accessible={true}
+            accessibilityLabel="Go back"
+            accessibilityRole="button"
+            onPress={onBack} 
+            style={styles.floatingBackButton}
+          >
             <Ionicons name="arrow-back" size={24} color="#1C1B1F" />
           </TouchableOpacity>
         </View>
 
         {/* Bottom Content Card */}
-        <View style={styles.bottomCard}>
-          {renderContent()}
+        <View style={[styles.bottomCard, { paddingBottom: Math.max(insets.bottom + 16, 32) }]}>
+          <ScrollView 
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+            bounces={false}
+          >
+            {renderContent()}
+          </ScrollView>
 
-          {/* Cancel Button */}
+          {/* Cancel Button - Always Visible */}
           {rideState !== 'completed' && (
-            <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
-              <Text variant="labelLarge" style={styles.cancelButtonText}>
-                {rideState === 'searching' ? 'Cancel Search' : 'Cancel Ride'}
-              </Text>
-            </TouchableOpacity>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity 
+                accessible={true}
+                accessibilityLabel={rideState === 'searching' ? 'Cancel search' : 'Cancel ride'}
+                accessibilityRole="button"
+                style={styles.cancelButton} 
+                onPress={handleCancel}
+              >
+                <Text variant="labelLarge" style={styles.cancelButtonText}>
+                  {rideState === 'searching' ? 'Cancel Search' : 'Cancel Ride'}
+                </Text>
+              </TouchableOpacity>
+            </View>
           )}
         </View>
       </View>
@@ -438,13 +502,21 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 24,
     paddingTop: 24,
     paddingHorizontal: 20,
-    paddingBottom: 32,
-    minHeight: 280, // Slightly shorter for better proportions
+    minHeight: 280,
+    maxHeight: '65%', // Prevent card from taking full screen
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 10,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 16,
+  },
+  buttonContainer: {
+    paddingTop: 12,
+    paddingBottom: 8,
   },
   stateContainer: {
     alignItems: 'center',
@@ -726,16 +798,58 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
+  // Action Buttons
+  actionRow: {
+    flexDirection: 'row',
+    gap: 12,
+  },
+  iconButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    borderWidth: 1.5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  callButtonPrimary: {
+    flex: 1,
+    height: 56,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    borderRadius: 28,
+  },
+  callButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '600',
+  },
+  // Info Sections
+  infoSection: {
+    borderRadius: 12,
+    padding: 16,
+  },
+  sectionTitle: {
+    fontWeight: '600',
+  },
+  infoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  infoText: {
+    flex: 1,
+  },
+  paymentAmount: {
+    fontWeight: '700',
+  },
+  moreActionRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
   arrivedCard: {
     backgroundColor: '#E8F5E9',
-  },
-  etaTime: {
-    color: '#8020A2',
-    fontWeight: '700',
-    marginBottom: 4,
-  },
-  etaText: {
-    color: '#666',
   },
   arrivedText: {
     color: '#4CAF50',
@@ -745,27 +859,6 @@ const styles = StyleSheet.create({
   },
   arrivedSubtext: {
     color: '#666',
-  },
-  tripRoute: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    padding: 16,
-  },
-  routeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  routeLine: {
-    width: 2,
-    height: 20,
-    backgroundColor: '#E0E0E0',
-    marginLeft: 5,
-    marginVertical: 4,
-  },
-  routeText: {
-    flex: 1,
-    color: '#1C1B1F',
   },
   cancelButton: {
     marginTop: 16,
