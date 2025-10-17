@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 32,
-    marginBottom: -10,
+    marginBottom: -44,
   },
   illustration: {
     width: SCREEN_WIDTH * 1,
