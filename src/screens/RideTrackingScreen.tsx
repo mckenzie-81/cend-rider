@@ -148,48 +148,7 @@ export function RideTrackingScreen({
     switch (rideState) {
       case 'searching':
         return (
-          <View style={styles.searchingContainer}>
-            {/* Ripple Circles */}
-            <View style={styles.rippleContainer}>
-              <Animated.View
-                style={[
-                  styles.rippleCircle,
-                  styles.rippleOuter,
-                  {
-                    transform: [{
-                      scale: rippleAnim1.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [1, 1.8],
-                      }),
-                    }],
-                    opacity: rippleOpacity1,
-                  },
-                ]}
-              />
-              <Animated.View
-                style={[
-                  styles.rippleCircle,
-                  styles.rippleInner,
-                  {
-                    transform: [{
-                      scale: rippleAnim2.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [1, 1.5],
-                      }),
-                    }],
-                    opacity: rippleOpacity2,
-                  },
-                ]}
-              />
-              <View style={styles.carContainer}>
-                <Image
-                  source={require('../../assets/illustrations/car-on-map.png')}
-                  style={styles.carImage}
-                  resizeMode="contain"
-                />
-              </View>
-            </View>
-
+          <View style={styles.searchingContentContainer}>
             <Text variant="titleLarge" style={styles.searchingTitle}>
               Searching for a Driver...
             </Text>
@@ -324,6 +283,49 @@ export function RideTrackingScreen({
         <View style={styles.mapContainer}>
           <Text style={styles.mapPlaceholder}>Map View</Text>
           
+          {/* Animated Ripple (only during searching) */}
+          {rideState === 'searching' && (
+            <View style={styles.mapRippleContainer}>
+              <Animated.View
+                style={[
+                  styles.mapRippleCircle,
+                  styles.mapRippleOuter,
+                  {
+                    transform: [{
+                      scale: rippleAnim1.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [1, 1.8],
+                      }),
+                    }],
+                    opacity: rippleOpacity1,
+                  },
+                ]}
+              />
+              <Animated.View
+                style={[
+                  styles.mapRippleCircle,
+                  styles.mapRippleInner,
+                  {
+                    transform: [{
+                      scale: rippleAnim2.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [1, 1.5],
+                      }),
+                    }],
+                    opacity: rippleOpacity2,
+                  },
+                ]}
+              />
+              <View style={styles.mapCarContainer}>
+                <Image
+                  source={require('../../assets/illustrations/car-on-map.png')}
+                  style={styles.mapCarImage}
+                  resizeMode="contain"
+                />
+              </View>
+            </View>
+          )}
+          
           {/* Back Button */}
           <TouchableOpacity onPress={onBack} style={styles.floatingBackButton}>
             <Ionicons name="arrow-back" size={24} color="#1C1B1F" />
@@ -416,31 +418,47 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 32,
   },
-  rippleCircle: {
+  // Searching state styles (on map)
+  mapRippleContainer: {
     position: 'absolute',
-    borderRadius: 110,
+    width: 160,
+    height: 160,
+    justifyContent: 'center',
+    alignItems: 'center',
+    top: '40%',
+    left: '50%',
+    marginLeft: -80, // Half of width to center
+    marginTop: -80, // Half of height to center
+  },
+  mapRippleCircle: {
+    position: 'absolute',
+    borderRadius: 80,
     backgroundColor: '#B794C3',
   },
-  rippleOuter: {
-    width: 220,
-    height: 220,
+  mapRippleOuter: {
+    width: 160,
+    height: 160,
   },
-  rippleInner: {
-    width: 180,
-    height: 180,
+  mapRippleInner: {
+    width: 130,
+    height: 130,
   },
-  carContainer: {
-    width: 140,
-    height: 140,
-    borderRadius: 70,
+  mapCarContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     backgroundColor: '#8020A2',
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 10,
   },
-  carImage: {
-    width: 80,
-    height: 80,
+  mapCarImage: {
+    width: 60,
+    height: 60,
+  },
+  searchingContentContainer: {
+    alignItems: 'center',
+    paddingVertical: 20,
   },
   searchingTitle: {
     color: '#1C1B1F',
