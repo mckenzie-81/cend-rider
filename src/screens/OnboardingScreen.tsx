@@ -42,7 +42,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
   const currentScreenData = screens[currentScreen];
 
   return (
-    <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+    <SafeAreaView style={[styles.container, { backgroundColor: currentScreenData.gradient[0] }]} edges={['top', 'bottom']}>
       <LinearGradient
         colors={currentScreenData.gradient}
         style={styles.gradientBackground}
@@ -110,7 +110,7 @@ export default function OnboardingScreen({ onComplete }: OnboardingScreenProps) 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#8020A2',
   },
   gradientBackground: {
     flex: 1,
