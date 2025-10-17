@@ -176,15 +176,49 @@ export function RideTrackingScreen({
 
       case 'driver-found':
         return (
-          <View style={styles.stateContainer}>
-            <View style={styles.iconContainer}>
-              <Ionicons name="checkmark-circle" size={64} color="#4CAF50" />
+          <View style={styles.driverFoundContainer}>
+            {/* Header */}
+            <View style={styles.driverFoundHeader}>
+              <Text variant="titleLarge" style={styles.driverFoundTitle}>
+                Driver Found
+              </Text>
+              <View style={styles.etaBadge}>
+                <Ionicons name="time-outline" size={16} color="#666" />
+                <Text variant="bodyMedium" style={styles.etaBadgeText}>
+                  30Min Way
+                </Text>
+              </View>
             </View>
-            <Text variant="headlineSmall" style={styles.stateTitle}>
-              Driver Found!
+
+            <Text variant="bodySmall" style={styles.driverFoundSubtitle}>
+              Please wait while your driver confirms{'\n'}and heads your way.
             </Text>
-            <Text variant="bodyMedium" style={styles.stateSubtitle}>
-              {MOCK_DRIVER.name} is on the way
+
+            {/* Driver Card */}
+            <View style={styles.driverFoundCard}>
+              <View style={styles.driverFoundAvatar}>
+                <Ionicons name="person" size={24} color="#8020A2" />
+              </View>
+              <View style={styles.driverFoundInfo}>
+                <Text variant="titleMedium" style={styles.driverFoundName}>
+                  {MOCK_DRIVER.name}
+                </Text>
+                <Text variant="bodySmall" style={styles.driverFoundRole}>
+                  Driver
+                </Text>
+              </View>
+              <View style={styles.driverFoundVehicle}>
+                <Text variant="bodyMedium" style={styles.vehiclePlate}>
+                  {MOCK_DRIVER.vehiclePlate}
+                </Text>
+                <Text variant="bodySmall" style={styles.vehicleDetails}>
+                  {MOCK_DRIVER.vehicleColor}  {MOCK_DRIVER.vehicleModel}
+                </Text>
+              </View>
+            </View>
+
+            <Text variant="bodySmall" style={styles.contactNote}>
+              You can contact your driver soon
             </Text>
           </View>
         );
@@ -485,6 +519,86 @@ const styles = StyleSheet.create({
   searchingSubtitle: {
     color: '#666',
     textAlign: 'center',
+  },
+  // Driver Found state styles
+  driverFoundContainer: {
+    paddingVertical: 8,
+  },
+  driverFoundHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  driverFoundTitle: {
+    color: '#1C1B1F',
+    fontWeight: '700',
+  },
+  etaBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  etaBadgeText: {
+    color: '#666',
+    fontSize: 14,
+  },
+  driverFoundSubtitle: {
+    color: '#666',
+    fontSize: 13,
+    lineHeight: 18,
+    marginBottom: 20,
+  },
+  driverFoundCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+    borderRadius: 12,
+    padding: 12,
+    marginBottom: 16,
+    gap: 12,
+  },
+  driverFoundAvatar: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#E8D9F0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  driverFoundInfo: {
+    flex: 1,
+  },
+  driverFoundName: {
+    color: '#1C1B1F',
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  driverFoundRole: {
+    color: '#666',
+    fontSize: 13,
+  },
+  driverFoundVehicle: {
+    alignItems: 'flex-end',
+  },
+  vehiclePlate: {
+    color: '#1C1B1F',
+    fontWeight: '600',
+    backgroundColor: '#E0E0E0',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    fontSize: 13,
+    marginBottom: 4,
+  },
+  vehicleDetails: {
+    color: '#666',
+    fontSize: 12,
+  },
+  contactNote: {
+    color: '#666',
+    textAlign: 'center',
+    fontSize: 13,
   },
   // Other state styles
   stateTitle: {
