@@ -2,9 +2,10 @@ import { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, TouchableOpacity, Dimensions, Image, Animated } from 'react-native';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
+import { Asset } from 'expo-asset';
 import { ScreenContainer, PrimaryButton, LoadingSpinner } from '../components';
 
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 // Ride tracking states
 type RideState = 'searching' | 'driver-found' | 'driver-arriving' | 'driver-arrived' | 'in-transit' | 'completed';
@@ -40,6 +41,21 @@ export function RideTrackingScreen({
 }: RideTrackingScreenProps) {
   const [rideState, setRideState] = useState<RideState>('searching');
   const [driverETA, setDriverETA] = useState(5);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  
+  // Cache car illustration image
+  useEffect(() => {
+    const cacheImage = async () => {
+      try {
+        await Asset.fromModule(require('../../assets/illustrations/car-on-map.png')).downloadAsync();
+        setImageLoaded(true);
+      } catch (error) {
+        console.log('Error caching car image:', error);
+        setImageLoaded(true); // Continue anyway
+      }
+    };
+    cacheImage();
+  }, []);
   
   // Ripple animation for searching state
   const rippleAnim1 = useRef(new Animated.Value(0)).current;
@@ -96,18 +112,18 @@ export function RideTrackingScreen({
   useEffect(() => {
     const timers: ReturnType<typeof setTimeout>[] = [];
 
-    // Searching → Driver Found (7 seconds)
+    // Searching → Driver Found (15 seconds)
     if (rideState === 'searching') {
       timers.push(setTimeout(() => {
         setRideState('driver-found');
-      }, 7000));
+      }, 15000));
     }
 
-    // Driver Found → Driver Arriving (7 seconds to show driver info)
+    // Driver Found → Driver Arriving (15 seconds to show driver info)
     if (rideState === 'driver-found') {
       timers.push(setTimeout(() => {
         setRideState('driver-arriving');
-      }, 7000));
+      }, 15000));
     }
 
     // Driver Arriving → Update ETA countdown
@@ -280,11 +296,9 @@ export function RideTrackingScreen({
     <ScreenContainer safe={false} padding={0}>
       <View style={styles.container}>
         {/* Full Screen Map Placeholder */}
-        <View style={styles.mapContainer}>
-          <Text style={styles.mapPlaceholder}>Map View</Text>
-          
+        <View style={styles.mapContainer}>          
           {/* Animated Ripple (only during searching) */}
-          {rideState === 'searching' && (
+          {rideState === 'searching' && imageLoaded && (
             <View style={styles.mapRippleContainer}>
               <Animated.View
                 style={[
@@ -321,6 +335,7 @@ export function RideTrackingScreen({
                   source={require('../../assets/illustrations/car-on-map.png')}
                   style={styles.mapCarImage}
                   resizeMode="contain"
+                  fadeDuration={0}
                 />
               </View>
             </View>
@@ -360,6 +375,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#E8F5E9',
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: -24, // Extend 10% under bottom card (overlap for rounded corners)
   },
   mapPlaceholder: {
     fontSize: 18,
@@ -389,7 +405,7 @@ const styles = StyleSheet.create({
     paddingTop: 24,
     paddingHorizontal: 20,
     paddingBottom: 32,
-    minHeight: 300,
+    minHeight: 280, // Slightly shorter for better proportions
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -2 },
     shadowOpacity: 0.1,
@@ -425,7 +441,7 @@ const styles = StyleSheet.create({
     height: 160,
     justifyContent: 'center',
     alignItems: 'center',
-    top: '40%',
+    top: '55%', // Centered in available map area (considering bottom card)
     left: '50%',
     marginLeft: -80, // Half of width to center
     marginTop: -80, // Half of height to center
@@ -436,25 +452,25 @@ const styles = StyleSheet.create({
     backgroundColor: '#B794C3',
   },
   mapRippleOuter: {
-    width: 160,
-    height: 160,
+    width: 120,
+    height: 120,
   },
   mapRippleInner: {
-    width: 130,
-    height: 130,
+    width: 90, // Smaller inner circle
+    height: 90,
   },
   mapCarContainer: {
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: '#8020A2',
+    backgroundColor: '#A366B9',
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 10,
   },
   mapCarImage: {
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
   },
   searchingContentContainer: {
     alignItems: 'center',
@@ -642,10 +658,10 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     alignItems: 'center',
     borderRadius: 24,
-    backgroundColor: '#D9BFE8',
+    backgroundColor: '#F8383B',
   },
   cancelButtonText: {
-    color: '#1C1B1F',
+    color: '#ffff',
     fontWeight: '600',
     fontSize: 16,
   },
