@@ -6,6 +6,7 @@ import { ScreenContainer, PrimaryButton, RideOptionCard, RideOption, OkadaOption
 
 interface RideOptionsScreenProps {
   onBack: () => void;
+  onConfirm?: (vehicleType: string, price: string) => void;
   pickup: string;
   dropoff: string;
   mode: 'ride' | 'okada';
@@ -13,6 +14,7 @@ interface RideOptionsScreenProps {
 
 export function RideOptionsScreen({
   onBack,
+  onConfirm,
   pickup,
   dropoff,
   mode,
@@ -95,14 +97,14 @@ export function RideOptionsScreen({
   };
 
   const handleConfirm = () => {
-    if (selectedOption) {
-      console.log('Booking confirmed:', {
-        pickup,
-        dropoff,
-        mode,
-        option: selectedOption,
-      });
-      // TODO: Navigate to booking confirmation/tracking screen
+    if (selectedOption && onConfirm) {
+      const selectedOptionData = mode === 'ride' 
+        ? rideOptions.find((o) => o.id === selectedOption)
+        : okadaOptions.find((o) => o.id === selectedOption);
+      
+      if (selectedOptionData) {
+        onConfirm(selectedOptionData.name, selectedOptionData.price);
+      }
     }
   };
 

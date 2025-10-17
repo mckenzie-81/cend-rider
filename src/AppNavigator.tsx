@@ -5,6 +5,7 @@ import ActivitiesScreen from './screens/ActivitiesScreen';
 import AccountScreen from './screens/AccountScreen';
 import { TransportScreen } from './screens/TransportScreen';
 import { RideOptionsScreen } from './screens/RideOptionsScreen';
+import { RideTrackingScreen } from './screens/RideTrackingScreen';
 
 interface AppNavigatorProps {
   onRestartFlow?: () => void;
@@ -16,6 +17,8 @@ const AppNavigator = ({ onRestartFlow }: AppNavigatorProps) => {
   const [rideDetails, setRideDetails] = useState<{
     pickup: string;
     dropoff: string;
+    vehicleType?: string;
+    estimatedPrice?: string;
   } | null>(null);
 
   const handleNavigate = (screen: string, params?: { mode?: 'ride' | 'okada' }) => {
@@ -28,6 +31,15 @@ const AppNavigator = ({ onRestartFlow }: AppNavigatorProps) => {
   const handleRideOptionsNavigate = (pickup: string, dropoff: string) => {
     setRideDetails({ pickup, dropoff });
     setCurrentScreen('ride-options');
+  };
+
+  const handleRideConfirm = (vehicleType: string, price: string) => {
+    setRideDetails((prev) => ({
+      ...prev!,
+      vehicleType,
+      estimatedPrice: price,
+    }));
+    setCurrentScreen('ride-tracking');
   };
 
   const renderScreen = () => {
@@ -52,9 +64,21 @@ const AppNavigator = ({ onRestartFlow }: AppNavigatorProps) => {
         return (
           <RideOptionsScreen
             onBack={() => setCurrentScreen('transport')}
+            onConfirm={handleRideConfirm}
             pickup={rideDetails?.pickup || ''}
             dropoff={rideDetails?.dropoff || ''}
             mode={transportMode}
+          />
+        );
+      case 'ride-tracking':
+        return (
+          <RideTrackingScreen
+            onBack={() => setCurrentScreen('ride-options')}
+            onComplete={() => setCurrentScreen('home')}
+            pickup={rideDetails?.pickup || ''}
+            dropoff={rideDetails?.dropoff || ''}
+            vehicleType={rideDetails?.vehicleType || ''}
+            estimatedPrice={rideDetails?.estimatedPrice || ''}
           />
         );
       default:
