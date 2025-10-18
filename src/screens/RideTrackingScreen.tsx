@@ -4,6 +4,9 @@ import { Text, useTheme } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+// Import SVG icons
+import ActDriverIcon from '../../assets/icons/act-driver-icon.svg';
+
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const BOTTOM_SHEET_HEIGHT = SCREEN_HEIGHT * 0.34; // 34% of screen height
 
@@ -134,6 +137,46 @@ export function RideTrackingScreen({
           <Text variant="bodyMedium" style={styles.searchingSubtitle}>
             Finding the nearest driver for you...
           </Text>
+
+          {/* Action Buttons */}
+          <View style={styles.actionButtonsContainer}>
+            {/* Driver Placeholder */}
+            <View style={styles.actionButton}>
+              <View style={styles.actionButtonCircle}>
+                <ActDriverIcon width={28} height={28} />
+              </View>
+            </View>
+
+            {/* Edit Pickup */}
+            <TouchableOpacity 
+              style={styles.actionButton}
+              onPress={onBack}
+              accessibilityLabel="Edit pickup location"
+              accessibilityRole="button"
+            >
+              <View style={styles.actionButtonCircle}>
+                <Ionicons name="location" size={24} color="#000" />
+              </View>
+              <Text variant="labelSmall" style={styles.actionButtonLabel}>
+                Edit pickup
+              </Text>
+            </TouchableOpacity>
+
+            {/* Cancel Ride */}
+            <TouchableOpacity 
+              style={styles.actionButton}
+              onPress={onBack}
+              accessibilityLabel="Cancel ride"
+              accessibilityRole="button"
+            >
+              <View style={styles.actionButtonCircle}>
+                <Ionicons name="close-circle-outline" size={24} color="#F44336" />
+              </View>
+              <Text variant="labelSmall" style={styles.actionButtonLabel}>
+                Cancel ride
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </View>
@@ -247,6 +290,31 @@ const styles = StyleSheet.create({
   },
   searchingSubtitle: {
     color: '#666',
-    marginBottom: 12,
+    marginBottom: 20,
+  },
+  actionButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    gap: 20,
+    marginTop: 8,
+  },
+  actionButton: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  actionButtonCircle: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#F5F5F5',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#E0E0E0',
+  },
+  actionButtonLabel: {
+    fontSize: 11,
+    color: '#666',
+    textAlign: 'center',
   },
 });
