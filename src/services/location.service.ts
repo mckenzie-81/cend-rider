@@ -241,6 +241,27 @@ export const savePlace = async (place: Omit<Place, 'id' | 'type'>): Promise<Plac
 };
 
 /**
+ * Get saved and recent places combined
+ */
+export const getSavedAndRecentPlaces = async (): Promise<Place[]> => {
+  await simulateDelay(500);
+
+  // Combine saved (home, work) and recent places
+  return MOCK_PLACES.filter(
+    place => place.type === 'home' || place.type === 'work' || place.type === 'recent'
+  );
+
+  // TODO: Replace with actual API call
+  /*
+  const [saved, recent] = await Promise.all([
+    getSavedPlaces(),
+    getRecentPlaces()
+  ]);
+  return [...saved, ...recent];
+  */
+};
+
+/**
  * Calculate distance between two locations (in kilometers)
  */
 export const calculateDistance = (from: Location, to: Location): number => {
@@ -285,6 +306,7 @@ export const LocationService = {
   geocode,
   getSavedPlaces,
   getRecentPlaces,
+  getSavedAndRecentPlaces,
   savePlace,
   calculateDistance,
   calculateTravelTime,

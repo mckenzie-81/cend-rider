@@ -13,14 +13,9 @@ import {
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { PrimaryButton } from './PrimaryButton';
+import { LocationService, Place } from '../services/location.service';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
-
-interface Location {
-  id: string;
-  name: string;
-  address: string;
-}
 
 interface RideBookingModalProps {
   visible: boolean;
@@ -41,16 +36,29 @@ export function RideBookingModal({
   const [pickup, setPickup] = useState(initialPickup);
   const [dropoff, setDropoff] = useState('');
   const [focusedInput, setFocusedInput] = useState<'pickup' | 'dropoff' | null>(null);
+  const [recentLocations, setRecentLocations] = useState<Place[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   
   const slideAnim = useRef(new Animated.Value(SCREEN_HEIGHT)).current;
 
-  // Recent locations (mock data)
-  const recentLocations: Location[] = [
-    { id: '1', name: 'Home', address: 'East Legon, Accra' },
-    { id: '2', name: 'Work', address: 'Airport City, Accra' },
-    { id: '3', name: 'Accra Mall', address: 'Spintex Road, Accra' },
-    { id: '4', name: 'Kotoka Airport', address: 'Airport, Accra' },
-  ];
+  // Load recent and saved locations
+  useEffect(() => {
+    if (visible) {
+      loadLocations();
+    }
+  }, [visible]);
+
+  const loadLocations = async () => {
+    try {
+      setIsLoading(true);
+      const locations = await LocationService.getSavedAndRecentPlaces();
+      setRecentLocations(locations);
+    } catch (error) {
+      console.error('Error loading locations:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (visible) {
@@ -82,7 +90,7 @@ export function RideBookingModal({
     Keyboard.dismiss();
   };
 
-  const handleLocationSelect = (location: Location) => {
+  const handleLocationSelect = (location: Place) => {
     if (focusedInput === 'pickup') {
       setPickup(location.name);
       setFocusedInput('dropoff');
