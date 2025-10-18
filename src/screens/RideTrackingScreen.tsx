@@ -222,13 +222,11 @@ export function RideTrackingScreen({
                 },
               ]}
             >
-              <View style={styles.driverCarWrapper}>
-                <Image 
-                  source={require('../../assets/illustrations/car-on-map.png')}
-                  style={styles.driverCarImage}
-                  resizeMode="contain"
-                />
-              </View>
+              <Image 
+                source={require('../../assets/illustrations/car-on-map.png')}
+                style={styles.driverCarImage}
+                resizeMode="contain"
+              />
             </Animated.View>
 
             {/* User Location Pin */}
@@ -557,25 +555,12 @@ const styles = StyleSheet.create({
     top: '25%',
     left: '20%',
     alignItems: 'center',
-  },
-  driverCarWrapper: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 6,
-    borderWidth: 3,
-    borderColor: '#8020A2',
+    width: 56,
+    height: 56,
   },
   driverCarImage: {
-    width: 44,
-    height: 44,
+    width: 56,
+    height: 56,
   },
   userLocationDestination: {
     position: 'absolute',
