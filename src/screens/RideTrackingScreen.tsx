@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center', 
     alignItems: 'flex-start',
     gap: 72, 
-    marginTop: 12,
+    marginTop: 32,
     width: '100%',
   },
   actionButton: {
