@@ -1,8 +1,11 @@
 import { useEffect, useRef } from 'react';
-import { View, StyleSheet, TouchableOpacity, Animated, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Animated, Image, Dimensions } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const BOTTOM_SHEET_HEIGHT = SCREEN_HEIGHT * 0.34; // 34% of screen height
 
 interface RideTrackingScreenProps {
   onBack: () => void;
@@ -120,16 +123,18 @@ export function RideTrackingScreen({
       </View>
 
       {/* Bottom Sheet */}
-      <View style={[styles.bottomSheet, { paddingBottom: insets.bottom + 20 }]}>
+      <View style={styles.bottomSheet}>
         <View style={styles.dragHandle} />
         
-        <Text variant="titleLarge" style={styles.searchingTitle}>
-          Searching for driver
-        </Text>
-        
-        <Text variant="bodyMedium" style={styles.searchingSubtitle}>
-          Finding the nearest driver for you...
-        </Text>
+        <View style={styles.bottomSheetContent}>
+          <Text variant="titleLarge" style={styles.searchingTitle}>
+            Searching for driver
+          </Text>
+          
+          <Text variant="bodyMedium" style={styles.searchingSubtitle}>
+            Finding the nearest driver for you...
+          </Text>
+        </View>
       </View>
     </View>
   );
@@ -211,16 +216,21 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   bottomSheet: {
+    height: BOTTOM_SHEET_HEIGHT,
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 24,
-    paddingTop: 12,
+    paddingTop: 16,
+    paddingBottom: 24,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: -3 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 10,
+  },
+  bottomSheetContent: {
+    alignItems: 'center',
   },
   dragHandle: {
     width: 40,
@@ -228,14 +238,16 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     backgroundColor: '#E0E0E0',
     alignSelf: 'center',
-    marginBottom: 20,
+    marginBottom: 24,
   },
   searchingTitle: {
     fontWeight: '600',
-    marginBottom: 8,
+    marginBottom: 12,
+    textAlign: 'center',
   },
   searchingSubtitle: {
     color: '#666',
-    marginBottom: 4,
+    marginBottom: 16,
+    textAlign: 'center',
   },
 });
