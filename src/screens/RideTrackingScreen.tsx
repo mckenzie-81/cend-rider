@@ -143,7 +143,7 @@ export function RideTrackingScreen({
             {/* Driver Placeholder */}
             <View style={styles.actionButton}>
               <View style={styles.actionButtonCircle}>
-                <ActDriverIcon width={28} height={28} />
+                <ActDriverIcon width={60} height={60} />
               </View>
             </View>
 
@@ -155,7 +155,7 @@ export function RideTrackingScreen({
               accessibilityRole="button"
             >
               <View style={styles.actionButtonCircle}>
-                <Ionicons name="location" size={24} color="#000" />
+                <Ionicons name="location" size={30} color="#000" />
               </View>
               <Text variant="labelSmall" style={styles.actionButtonLabel}>
                 Edit pickup
@@ -170,7 +170,7 @@ export function RideTrackingScreen({
               accessibilityRole="button"
             >
               <View style={styles.actionButtonCircle}>
-                <Ionicons name="close-circle-outline" size={24} color="#F44336" />
+                <Ionicons name="close-circle-outline" size={40} color="#F44336" />
               </View>
               <Text variant="labelSmall" style={styles.actionButtonLabel}>
                 Cancel ride
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    paddingHorizontal: 24,
+    paddingHorizontal: 16, // Match project standard
     paddingTop: 16,
     paddingBottom: 24,
     shadowColor: '#000',
@@ -294,27 +294,31 @@ const styles = StyleSheet.create({
   },
   actionButtonsContainer: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
-    gap: 20,
-    marginTop: 8,
+    justifyContent: 'center', 
+    alignItems: 'flex-start',
+    gap: 72, 
+    marginTop: 12,
+    width: '100%',
   },
   actionButton: {
     alignItems: 'center',
     gap: 8,
+    flex: 1,
+    maxWidth: 140, // Limit button width for proper spacing
   },
   actionButtonCircle: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#F5F5F5',
+    width: 64,
+    height: 64,
+    borderRadius: 40,
+    backgroundColor: '#F8E5FF', // Match service card background
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
+    borderWidth: 0, // Remove border like service cards
   },
   actionButtonLabel: {
     fontSize: 11,
-    color: '#666',
+    color: '#1C1B1F', // Charcoal like service cards
     textAlign: 'center',
+    fontWeight: '600',
   },
 });
