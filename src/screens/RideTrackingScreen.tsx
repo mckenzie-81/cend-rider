@@ -294,50 +294,12 @@ export function RideTrackingScreen({
             </>
           )}
 
-          {/* Driver Arriving State */}
+          {/* Driver Arriving State - Blank sheet */}
           {rideState === 'driver-arriving' && (
             <>
               <Text variant="titleLarge" style={styles.searchingTitle}>
                 Arriving in 5 min
               </Text>
-              
-              <Text variant="bodyMedium" style={styles.searchingSubtitle}>
-                Driver is on the way to pick you up
-              </Text>
-
-              {/* Progress Line - Full */}
-              <View style={styles.progressLineContainer}>
-                <View style={styles.progressLineFill} />
-              </View>
-
-              {/* Driver Details Card */}
-              <View style={styles.driverDetailsCard}>
-                <View style={styles.driverInfo}>
-                  <View style={styles.driverAvatar}>
-                    <Ionicons name="person" size={32} color="#8020A2" />
-                  </View>
-                  <View style={styles.driverTextInfo}>
-                    <Text variant="titleMedium" style={styles.driverName}>
-                      John Doe
-                    </Text>
-                    <View style={styles.driverRating}>
-                      <Ionicons name="star" size={14} color="#FFC107" />
-                      <Text variant="bodySmall" style={styles.ratingText}>
-                        4.8 (120 rides)
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-                
-                <View style={styles.vehicleInfo}>
-                  <Text variant="bodySmall" style={styles.vehicleLabel}>
-                    Vehicle
-                  </Text>
-                  <Text variant="bodyMedium" style={styles.vehicleText}>
-                    Toyota Camry • ABC 1234
-                  </Text>
-                </View>
-              </View>
             </>
           )}
 
@@ -383,53 +345,7 @@ export function RideTrackingScreen({
             </View>
           )}
 
-          {/* Action Buttons for Driver Arriving State */}
-          {rideState === 'driver-arriving' && (
-            <View style={styles.actionButtonsContainer}>
-              {/* Call Driver */}
-              <TouchableOpacity 
-                style={styles.actionButton}
-                accessibilityLabel="Call driver"
-                accessibilityRole="button"
-              >
-                <View style={styles.actionButtonCircle}>
-                  <Ionicons name="call" size={30} color="#4CAF50" />
-                </View>
-                <Text variant="labelSmall" style={styles.actionButtonLabel}>
-                  Call
-                </Text>
-              </TouchableOpacity>
-
-              {/* Message Driver */}
-              <TouchableOpacity 
-                style={styles.actionButton}
-                accessibilityLabel="Message driver"
-                accessibilityRole="button"
-              >
-                <View style={styles.actionButtonCircle}>
-                  <Ionicons name="chatbubble" size={28} color="#2196F3" />
-                </View>
-                <Text variant="labelSmall" style={styles.actionButtonLabel}>
-                  Message
-                </Text>
-              </TouchableOpacity>
-
-              {/* Cancel Ride */}
-              <TouchableOpacity 
-                style={styles.actionButton}
-                onPress={onBack}
-                accessibilityLabel="Cancel ride"
-                accessibilityRole="button"
-              >
-                <View style={styles.actionButtonCircle}>
-                  <Ionicons name="close-circle-outline" size={40} color="#F44336" />
-                </View>
-                <Text variant="labelSmall" style={styles.actionButtonLabel}>
-                  Cancel
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
+          {/* Action Buttons for Driver Arriving State - Removed to keep sheet blank */}
         </View>
       </View>
     </View>
