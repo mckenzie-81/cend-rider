@@ -39,6 +39,9 @@ export function RideTrackingScreen({
   // Progress line animation
   const progressAnim = useRef(new Animated.Value(0)).current;
   
+  // Driver car movement animation
+  const driverCarAnim = useRef(new Animated.Value(0)).current;
+  
   // Start continuous ripple animation only when searching
   useEffect(() => {
     if (rideState !== 'searching') return;
@@ -93,6 +96,21 @@ export function RideTrackingScreen({
         // When animation completes, transition to driver-arriving state
         setRideState('driver-arriving');
       });
+    }
+  }, [rideState]);
+
+  // Animate driver car movement when arriving
+  useEffect(() => {
+    if (rideState === 'driver-arriving') {
+      // Reset car position
+      driverCarAnim.setValue(0);
+      
+      // Animate car moving towards user (simulating arrival)
+      Animated.timing(driverCarAnim, {
+        toValue: 1,
+        duration: 8000, // 8 seconds to simulate driver approaching
+        useNativeDriver: true,
+      }).start();
     }
   }, [rideState]);
 
@@ -172,6 +190,59 @@ export function RideTrackingScreen({
               </View>
             </View>
           </View>
+        )}
+
+        {/* Driver Arriving - Show route and driver car */}
+        {rideState === 'driver-arriving' && (
+          <>
+            {/* Route Path - Dotted line from driver to user */}
+            <View style={styles.routePath}>
+              <View style={styles.dottedLine} />
+            </View>
+
+            {/* Driver's Car - Animated position moving towards user */}
+            <Animated.View 
+              style={[
+                styles.driverCarContainer,
+                {
+                  transform: [
+                    {
+                      translateX: driverCarAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, 120], // Move 120px to the right
+                      }),
+                    },
+                    {
+                      translateY: driverCarAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, 120], // Move 120px down
+                      }),
+                    },
+                  ],
+                },
+              ]}
+            >
+              <View style={styles.driverCarWrapper}>
+                <Image 
+                  source={require('../../assets/illustrations/car-on-map.png')}
+                  style={styles.driverCarImage}
+                  resizeMode="contain"
+                />
+              </View>
+            </Animated.View>
+
+            {/* User Location Pin */}
+            <View style={styles.userLocationDestination}>
+              <View style={styles.locationPin}>
+                <Ionicons name="location" size={16} color="#8020A2" />
+              </View>
+              <View style={styles.locationLabelContainer}>
+                <Text variant="labelSmall" style={styles.locationLabel}>
+                  Your location
+                </Text>
+              </View>
+            </View>
+          </>
         )}
 
         {/* Back Button */}
@@ -443,18 +514,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
+    shadowOpacity: 0,
     shadowRadius: 4,
     elevation: 5,
   },
   locationLabelContainer: {
-    backgroundColor: '#FFFFFF',
+    // backgroundColor: '#FFFFFF',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
+    shadowOpacity: 0,
     shadowRadius: 3,
     elevation: 3,
   },
@@ -462,6 +533,56 @@ const styles = StyleSheet.create({
     color: '#1C1B1F',
     fontWeight: '600',
     fontSize: 12,
+  },
+  routePath: {
+    position: 'absolute',
+    top: '30%',
+    left: '25%',
+    width: '40%',
+    height: '35%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dottedLine: {
+    width: '100%',
+    height: 2,
+    borderStyle: 'dotted',
+    borderWidth: 2,
+    borderColor: '#8020A2',
+    borderRadius: 1,
+    transform: [{ rotate: '45deg' }],
+  },
+  driverCarContainer: {
+    position: 'absolute',
+    top: '25%',
+    left: '20%',
+    alignItems: 'center',
+  },
+  driverCarWrapper: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 6,
+    borderWidth: 3,
+    borderColor: '#8020A2',
+  },
+  driverCarImage: {
+    width: 44,
+    height: 44,
+  },
+  userLocationDestination: {
+    position: 'absolute',
+    top: '65%',
+    left: '60%',
+    alignItems: 'center',
+    gap: 8,
   },
   headerContainer: {
     position: 'absolute',
