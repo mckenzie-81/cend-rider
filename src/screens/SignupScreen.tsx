@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, Alert } from 'react-native';
 import {
   ScreenContainer,
   PrimaryButton,
@@ -9,9 +9,10 @@ import {
   Spacer24,
 } from '../components';
 import { Text } from 'react-native-paper';
+import { AuthService } from '../services/auth.service';
 
 interface SignupScreenProps {
-  onComplete: () => void;
+  onComplete: (phone: string) => void; // Pass phone to verification screen
   onBackToLogin: () => void;
 }
 
@@ -21,6 +22,41 @@ export default function SignupScreen({ onComplete, onBackToLogin }: SignupScreen
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSignup = async () => {
+    // Validation
+    if (!fullName.trim() || !email.trim() || !phoneNumber.trim() || !password.trim()) {
+      Alert.alert('Error', 'Please fill in all fields');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      // Split full name into first and last name
+      const nameParts = fullName.trim().split(' ');
+      const firstName = nameParts[0];
+      const lastName = nameParts.slice(1).join(' ') || '';
+
+      const response = await AuthService.signup({
+        email,
+        phone: phoneNumber,
+        password,
+        firstName,
+        lastName,
+      });
+
+      console.log('Signup successful:', response.user.email);
+      
+      // Navigate to verification screen with phone number
+      onComplete(phoneNumber);
+    } catch (error: any) {
+      Alert.alert('Signup Failed', error.message || 'Unable to create account. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <ScreenContainer scrollable>
@@ -88,8 +124,8 @@ export default function SignupScreen({ onComplete, onBackToLogin }: SignupScreen
 
         <Spacer24 />
 
-        <PrimaryButton onPress={onComplete}>
-          Sign Up
+        <PrimaryButton onPress={handleSignup} loading={loading} disabled={loading}>
+          {loading ? 'Creating Account...' : 'Sign Up'}
         </PrimaryButton>
 
         <Spacer16 />

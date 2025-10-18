@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, Alert } from 'react-native';
 import {
   ScreenContainer,
   PrimaryButton,
@@ -9,6 +9,7 @@ import {
   Spacer24,
 } from '../components';
 import { Text } from 'react-native-paper';
+import { AuthService } from '../services/auth.service';
 
 interface LoginScreenProps {
   onComplete: () => void;
@@ -18,6 +19,31 @@ interface LoginScreenProps {
 export default function LoginScreen({ onComplete, onSignup }: LoginScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleLogin = async () => {
+    // Validation
+    if (!email.trim() || !password.trim()) {
+      Alert.alert('Error', 'Please enter both email and password');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await AuthService.login({ email, password });
+      
+      // Store tokens (in real app, use secure storage)
+      console.log('Login successful:', response.user.email);
+      
+      // Navigate to main app
+      onComplete();
+    } catch (error: any) {
+      Alert.alert('Login Failed', error.message || 'Invalid credentials. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <ScreenContainer scrollable>
@@ -61,8 +87,8 @@ export default function LoginScreen({ onComplete, onSignup }: LoginScreenProps) 
 
         <Spacer24 />
 
-        <PrimaryButton onPress={onComplete}>
-          Log In
+        <PrimaryButton onPress={handleLogin} loading={loading} disabled={loading}>
+          {loading ? 'Logging in...' : 'Log In'}
         </PrimaryButton>
 
         <Spacer16 />

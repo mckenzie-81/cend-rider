@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { View, StyleSheet, TextInput as RNTextInput } from 'react-native';
+import { View, StyleSheet, TextInput as RNTextInput, Alert } from 'react-native';
 import {
   ScreenContainer,
   PrimaryButton,
@@ -8,10 +8,11 @@ import {
   Spacer24,
 } from '../components';
 import { Text, useTheme } from 'react-native-paper';
+import { AuthService } from '../services/auth.service';
 
 interface VerificationScreenProps {
   onComplete: () => void;
-  onResendCode: () => void;
+  onResendCode?: () => void;
   phoneNumber?: string;
 }
 
@@ -22,6 +23,8 @@ export default function VerificationScreen({
 }: VerificationScreenProps) {
   const theme = useTheme();
   const [code, setCode] = useState(['', '', '', '', '', '']);
+  const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
   const inputRefs = useRef<(RNTextInput | null)[]>([]);
 
   const handleCodeChange = (text: string, index: number) => {
@@ -46,6 +49,48 @@ export default function VerificationScreen({
   };
 
   const isCodeComplete = code.every((digit) => digit !== '');
+
+  const handleVerify = async () => {
+    const verificationCode = code.join('');
+    
+    setLoading(true);
+
+    try {
+      await AuthService.verifyPhone({
+        code: verificationCode,
+        phone: phoneNumber,
+      });
+      
+      Alert.alert('Success', 'Phone number verified successfully!', [
+        { text: 'OK', onPress: onComplete }
+      ]);
+    } catch (error: any) {
+      Alert.alert('Verification Failed', error.message || 'Invalid code. Please try again.');
+      // Reset code on error
+      setCode(['', '', '', '', '', '']);
+      inputRefs.current[0]?.focus();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendCode = async () => {
+    setResendLoading(true);
+
+    try {
+      await AuthService.resendVerificationCode(phoneNumber);
+      
+      Alert.alert('Code Sent', 'A new verification code has been sent to your phone.');
+      
+      if (onResendCode) {
+        onResendCode();
+      }
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Failed to resend code. Please try again.');
+    } finally {
+      setResendLoading(false);
+    }
+  };
 
   return (
     <ScreenContainer scrollable>
@@ -93,10 +138,11 @@ export default function VerificationScreen({
         <Spacer24 />
 
         <PrimaryButton
-          onPress={onComplete}
-          disabled={!isCodeComplete}
+          onPress={handleVerify}
+          disabled={!isCodeComplete || loading}
+          loading={loading}
         >
-          Verify
+          {loading ? 'Verifying...' : 'Verify'}
         </PrimaryButton>
 
         <Spacer16 />
@@ -106,11 +152,12 @@ export default function VerificationScreen({
             Didn't receive the code?
           </Text>
           <SecondaryButton
-            onPress={onResendCode}
+            onPress={handleResendCode}
             variant="ghost"
             style={styles.resendButton}
+            disabled={resendLoading}
           >
-            Resend Code
+            {resendLoading ? 'Sending...' : 'Resend Code'}
           </SecondaryButton>
         </View>
       </View>
