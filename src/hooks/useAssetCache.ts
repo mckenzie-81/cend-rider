@@ -21,9 +21,11 @@ export function useAssetCache() {
           require('../../assets/icon.png'),
           require('../../assets/splash-icon.png'),
           require('../../assets/woman-in-car.png'),
+          require('../../assets/driver-profile.png'),
           require('../../assets/illustrations/transport-head.png'),
           require('../../assets/illustrations/onboarding1.png'),
           require('../../assets/illustrations/onboarding2.png'),
+          require('../../assets/illustrations/car-on-map.png'),
         ];
 
         const cacheImages = imageAssets.map((image) => {
