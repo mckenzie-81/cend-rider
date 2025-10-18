@@ -294,12 +294,44 @@ export function RideTrackingScreen({
             </>
           )}
 
-          {/* Driver Arriving State - Blank sheet */}
+          {/* Driver Arriving State */}
           {rideState === 'driver-arriving' && (
             <>
               <Text variant="titleLarge" style={styles.searchingTitle}>
                 Arriving in 5 min
               </Text>
+
+              {/* Faint line separator */}
+              <View style={styles.titleSeparator} />
+
+              {/* Driver Info Card */}
+              <View style={styles.driverDetailsCard}>
+                <View style={styles.driverInfo}>
+                  <View style={styles.driverAvatar}>
+                    <Ionicons name="person" size={32} color="#8020A2" />
+                  </View>
+                  <View style={styles.driverTextInfo}>
+                    <Text variant="titleMedium" style={styles.driverName}>
+                      John Doe
+                    </Text>
+                    <View style={styles.driverRating}>
+                      <Ionicons name="star" size={14} color="#FFC107" />
+                      <Text variant="bodySmall" style={styles.ratingText}>
+                        4.8 (120 rides)
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+                
+                <View style={styles.vehicleInfo}>
+                  <Text variant="bodySmall" style={styles.vehicleLabel}>
+                    Vehicle
+                  </Text>
+                  <Text variant="bodyMedium" style={styles.vehicleText}>
+                    Toyota Camry • ABC 1234
+                  </Text>
+                </View>
+              </View>
             </>
           )}
 
@@ -534,6 +566,12 @@ const styles = StyleSheet.create({
   searchingTitle: {
     fontWeight: '600',
     marginBottom: 8,
+  },
+  titleSeparator: {
+    width: '100%',
+    height: 1,
+    backgroundColor: '#E8E8E8', // Faint line
+    marginVertical: 16,
   },
   searchingSubtitle: {
     color: '#666',
