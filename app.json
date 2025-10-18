@@ -21,10 +21,24 @@
           "image": "./assets/cend-logo.png",
           "imageWidth": 200
         }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow Cend to access your location to provide ride services and track your trips.",
+          "locationAlwaysPermission": "Allow Cend to access your location to provide ride services and track your trips.",
+          "locationWhenInUsePermission": "Allow Cend to access your location to provide ride services and track your trips.",
+          "isAndroidBackgroundLocationEnabled": true,
+          "isAndroidForegroundServiceEnabled": true
+        }
       ]
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Cend needs your location to show nearby drivers and provide accurate pickup services.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "Cend needs your location to track your rides and provide accurate navigation."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -32,7 +46,13 @@
         "backgroundColor": "#8020A2"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": true
+      "predictiveBackGestureEnabled": true,
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "FOREGROUND_SERVICE",
+        "ACCESS_BACKGROUND_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"

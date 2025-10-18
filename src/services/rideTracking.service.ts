@@ -117,7 +117,7 @@ export const getDriverLocation = async (driverId: string): Promise<Location> => 
   await simulateDelay(500);
 
   // Mock location update (simulate movement)
-  const baseLocation = MOCK_DRIVER.currentLocation || { latitude: 6.5200, longitude: 3.3750 };
+  const baseLocation = MOCK_DRIVER.currentLocation || { latitude: 5.6037, longitude: -0.1870 };
   
   return {
     latitude: baseLocation.latitude + (Math.random() * 0.001 - 0.0005),
@@ -128,6 +128,62 @@ export const getDriverLocation = async (driverId: string): Promise<Location> => 
   /*
   const response = await api.get(`/drivers/${driverId}/location`);
   return response.data;
+  */
+};
+
+/**
+ * Watch driver location in real-time
+ * Uses polling or WebSocket to get continuous location updates
+ * @param driverId - Driver ID to track
+ * @param onLocationUpdate - Callback when location updates
+ * @param interval - Update interval in milliseconds (default: 5000ms)
+ * @returns Cleanup function to stop watching
+ */
+export const watchDriverLocation = (
+  driverId: string,
+  onLocationUpdate: (location: Location) => void,
+  interval: number = 5000
+): (() => void) => {
+  let isWatching = true;
+
+  const pollLocation = async () => {
+    while (isWatching) {
+      try {
+        const location = await getDriverLocation(driverId);
+        if (isWatching) {
+          onLocationUpdate(location);
+        }
+      } catch (error) {
+        console.error('Error getting driver location:', error);
+      }
+      
+      // Wait for the specified interval
+      await new Promise(resolve => setTimeout(resolve, interval));
+    }
+  };
+
+  // Start polling
+  pollLocation();
+
+  // Return cleanup function
+  return () => {
+    isWatching = false;
+  };
+
+  // TODO: Replace with WebSocket connection for real-time updates
+  /*
+  const socket = io(`${API_URL}/tracking`);
+  
+  socket.emit('track-driver', { driverId });
+  
+  socket.on('driver-location-update', (location: Location) => {
+    onLocationUpdate(location);
+  });
+
+  return () => {
+    socket.emit('stop-tracking', { driverId });
+    socket.disconnect();
+  };
   */
 };
 
@@ -304,6 +360,7 @@ export const RideTrackingService = {
   findDriver,
   confirmDriver,
   getDriverLocation,
+  watchDriverLocation,
   getDriverDetails,
   getRideStatus,
   cancelRide,

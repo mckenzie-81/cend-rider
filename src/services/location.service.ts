@@ -4,6 +4,8 @@
  * Used by: TransportScreen, HomeScreen, RideTrackingScreen
  */
 
+import * as ExpoLocation from 'expo-location';
+
 // ==================== TYPES ====================
 
 export interface Location {
@@ -119,24 +121,104 @@ export const searchPlaces = async (query: string): Promise<Place[]> => {
  * Get user's current location
  */
 export const getCurrentLocation = async (): Promise<Location> => {
-  await simulateDelay(500);
+  try {
+    // Request location permissions
+    const { status } = await ExpoLocation.requestForegroundPermissionsAsync();
+    
+    if (status !== 'granted') {
+      console.warn('Location permission not granted, using fallback location');
+      // Fallback to mock location if permission denied
+      return {
+        latitude: 5.6037,
+        longitude: -0.1870,
+      };
+    }
 
-  // Mock current location (Accra, Ghana)
-  return {
-    latitude: 5.6037,
-    longitude: -0.1870,
-  };
+    // Get current position with high accuracy
+    const location = await ExpoLocation.getCurrentPositionAsync({
+      accuracy: ExpoLocation.Accuracy.High,
+    });
 
-  // TODO: Replace with actual device location
-  /*
-  const location = await Location.getCurrentPositionAsync({
-    accuracy: Location.Accuracy.High,
-  });
-  return {
-    latitude: location.coords.latitude,
-    longitude: location.coords.longitude,
-  };
-  */
+    return {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    };
+  } catch (error) {
+    console.error('Error getting current location:', error);
+    // Fallback to mock location (Accra, Ghana)
+    return {
+      latitude: 5.6037,
+      longitude: -0.1870,
+    };
+  }
+};
+
+/**
+ * Watch location changes in real-time
+ * Returns a subscription that can be used to stop watching
+ */
+export const watchLocation = async (
+  onLocationUpdate: (location: Location) => void,
+  options?: {
+    accuracy?: ExpoLocation.Accuracy;
+    distanceInterval?: number; // Minimum distance (in meters) between updates
+    timeInterval?: number; // Minimum time (in ms) between updates
+  }
+): Promise<{ remove: () => void } | null> => {
+  try {
+    // Request location permissions
+    const { status } = await ExpoLocation.requestForegroundPermissionsAsync();
+    
+    if (status !== 'granted') {
+      console.warn('Location permission not granted for watching');
+      return null;
+    }
+
+    // Start watching location with specified options
+    const subscription = await ExpoLocation.watchPositionAsync(
+      {
+        accuracy: options?.accuracy || ExpoLocation.Accuracy.High,
+        distanceInterval: options?.distanceInterval || 10, // Update every 10 meters
+        timeInterval: options?.timeInterval || 5000, // Update every 5 seconds
+      },
+      (locationUpdate) => {
+        onLocationUpdate({
+          latitude: locationUpdate.coords.latitude,
+          longitude: locationUpdate.coords.longitude,
+        });
+      }
+    );
+
+    return subscription;
+  } catch (error) {
+    console.error('Error watching location:', error);
+    return null;
+  }
+};
+
+/**
+ * Check if location services are enabled
+ */
+export const isLocationEnabled = async (): Promise<boolean> => {
+  try {
+    return await ExpoLocation.hasServicesEnabledAsync();
+  } catch (error) {
+    console.error('Error checking location services:', error);
+    return false;
+  }
+};
+
+/**
+ * Request location permissions
+ */
+export const requestLocationPermission = async (): Promise<boolean> => {
+  try {
+    const { status } = await ExpoLocation.requestForegroundPermissionsAsync();
+    return status === 'granted';
+  } catch (error) {
+    console.error('Error requesting location permission:', error);
+    return false;
+  }
 };
 
 /**
@@ -302,6 +384,9 @@ export const calculateTravelTime = (distanceKm: number, mode: 'car' | 'bike' | '
 export const LocationService = {
   searchPlaces,
   getCurrentLocation,
+  watchLocation,
+  isLocationEnabled,
+  requestLocationPermission,
   reverseGeocode,
   geocode,
   getSavedPlaces,
