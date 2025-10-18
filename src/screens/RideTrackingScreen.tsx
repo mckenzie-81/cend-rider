@@ -1,8 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, TouchableOpacity, Animated, Image, Dimensions } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Animated, Image, Dimensions, Alert } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { LocationService, Location } from '../services/location.service';
+import { RideTrackingService } from '../services/rideTracking.service';
 
 // Import SVG icons
 import ActDriverIcon from '../../assets/icons/act-driver-icon.svg';
@@ -29,6 +31,10 @@ export function RideTrackingScreen({
   
   // State management
   const [rideState, setRideState] = useState<RideState>('searching');
+  const [userLocation, setUserLocation] = useState<Location | null>(null);
+  const [driverLocation, setDriverLocation] = useState<Location | null>(null);
+  const [distance, setDistance] = useState<number | null>(null);
+  const [driverId, setDriverId] = useState<string | null>(null);
   
   // Ripple animation values
   const rippleAnim1 = useRef(new Animated.Value(0)).current;
@@ -41,6 +47,90 @@ export function RideTrackingScreen({
   
   // Driver car movement animation
   const driverCarAnim = useRef(new Animated.Value(0)).current;
+  
+  // Get user location on mount
+  useEffect(() => {
+    initializeLocation();
+  }, []);
+
+  const initializeLocation = async () => {
+    try {
+      // Request permission
+      const hasPermission = await LocationService.requestLocationPermission();
+      
+      if (!hasPermission) {
+        Alert.alert(
+          'Location Permission Required',
+          'We need your location to track your ride and show driver position.',
+          [{ text: 'OK', onPress: () => onBack() }]
+        );
+        return;
+      }
+
+      // Get initial location
+      const location = await LocationService.getCurrentLocation();
+      setUserLocation(location);
+      console.log('User location:', location);
+    } catch (error) {
+      console.error('Error getting location:', error);
+      Alert.alert('Location Error', 'Unable to get your location. Please try again.');
+    }
+  };
+
+  // Watch user location in real-time
+  useEffect(() => {
+    if (!userLocation) return;
+
+    let subscription: { remove: () => void } | null = null;
+
+    const startTracking = async () => {
+      subscription = await LocationService.watchLocation(
+        (location) => {
+          setUserLocation(location);
+          console.log('User location updated:', location);
+        },
+        {
+          distanceInterval: 10, // Update every 10 meters
+          timeInterval: 5000, // Or every 5 seconds
+        }
+      );
+    };
+
+    startTracking();
+
+    return () => {
+      if (subscription) {
+        subscription.remove();
+      }
+    };
+  }, [userLocation]);
+
+  // Watch driver location when driver is found
+  useEffect(() => {
+    if (!driverId || rideState === 'searching' || rideState === 'completed') return;
+
+    const stopWatching = RideTrackingService.watchDriverLocation(
+      driverId,
+      (location) => {
+        setDriverLocation(location);
+        console.log('Driver location updated:', location);
+      },
+      5000 // Update every 5 seconds
+    );
+
+    return () => {
+      stopWatching();
+    };
+  }, [driverId, rideState]);
+
+  // Calculate distance between user and driver
+  useEffect(() => {
+    if (userLocation && driverLocation) {
+      const dist = LocationService.calculateDistance(userLocation, driverLocation);
+      setDistance(dist);
+      console.log('Distance to driver:', dist, 'km');
+    }
+  }, [userLocation, driverLocation]);
   
   // Start continuous ripple animation only when searching
   useEffect(() => {
@@ -117,13 +207,25 @@ export function RideTrackingScreen({
   // Simulate finding driver after 5 seconds (for testing)
   useEffect(() => {
     if (rideState === 'searching') {
-      const timer = setTimeout(() => {
-        setRideState('driver-found');
+      const timer = setTimeout(async () => {
+        try {
+          // Simulate finding a driver
+          const driver = await RideTrackingService.findDriver(
+            userLocation || { latitude: 5.6037, longitude: -0.1870 },
+            { latitude: 5.6486, longitude: -0.1746 },
+            'car'
+          );
+          setDriverId(driver.id);
+          setDriverLocation(driver.currentLocation || null);
+          setRideState('driver-found');
+        } catch (error) {
+          console.error('Error finding driver:', error);
+        }
       }, 5000);
 
       return () => clearTimeout(timer);
     }
-  }, [rideState]);
+  }, [rideState, userLocation]);
 
   const rippleScale1 = rippleAnim1.interpolate({
     inputRange: [0, 1],
@@ -298,7 +400,9 @@ export function RideTrackingScreen({
           {rideState === 'driver-arriving' && (
             <>
               <Text variant="titleLarge" style={styles.searchingTitle}>
-                Arriving in 5 min
+                {distance 
+                  ? `${distance.toFixed(1)} km away • ${Math.ceil(LocationService.calculateTravelTime(distance, 'car'))} min`
+                  : 'Arriving soon'}
               </Text>
 
               {/* Faint line separator */}

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, TextInput, Keyboard, ScrollView, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, TextInput, Keyboard, ScrollView, ActivityIndicator, Alert } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { ScreenContainer, AppHeader, TransportModeCard, RecentTripCard, RideBookingModal } from '../components';
 import { RideService } from '../services/ride.service';
+import { LocationService, Location } from '../services/location.service';
 import type { Ride } from '../services/ride.service';
 
 // Transport mode options
@@ -25,10 +26,48 @@ export function TransportScreen({ onBack, initialMode = 'ride', onConfirmLocatio
   const [showBookingModal, setShowBookingModal] = useState(false);
   const [recentTrips, setRecentTrips] = useState<Ride[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentLocation, setCurrentLocation] = useState<Location | null>(null);
+  const [locationPermissionGranted, setLocationPermissionGranted] = useState(false);
   
   useEffect(() => {
     loadRecentTrips();
+    requestLocationAndGetCurrent();
   }, []);
+
+  const requestLocationAndGetCurrent = async () => {
+    try {
+      // Check if location services are enabled
+      const isEnabled = await LocationService.isLocationEnabled();
+      if (!isEnabled) {
+        Alert.alert(
+          'Location Services Disabled',
+          'Please enable location services to see your current location and get accurate ride estimates.',
+          [{ text: 'OK' }]
+        );
+        return;
+      }
+
+      // Request permission
+      const hasPermission = await LocationService.requestLocationPermission();
+      setLocationPermissionGranted(hasPermission);
+
+      if (!hasPermission) {
+        Alert.alert(
+          'Location Permission Required',
+          'Cend needs your location to provide accurate pickup services and show nearby drivers.',
+          [{ text: 'OK' }]
+        );
+        return;
+      }
+
+      // Get current location
+      const location = await LocationService.getCurrentLocation();
+      setCurrentLocation(location);
+      console.log('Current location:', location);
+    } catch (error) {
+      console.error('Error getting location:', error);
+    }
+  };
 
   const loadRecentTrips = async () => {
     try {
@@ -125,6 +164,16 @@ export function TransportScreen({ onBack, initialMode = 'ride', onConfirmLocatio
               <Ionicons name="search-outline" size={20} color="#666" style={styles.searchIcon} />
               <Text style={styles.searchPlaceholder}>where to?</Text>
             </TouchableOpacity>
+            
+            {/* Current Location Indicator */}
+            {currentLocation && locationPermissionGranted && (
+              <View style={styles.locationIndicator}>
+                <Ionicons name="location" size={14} color="#8020A2" />
+                <Text style={styles.locationText}>
+                  Using current location: {currentLocation.latitude.toFixed(4)}, {currentLocation.longitude.toFixed(4)}
+                </Text>
+              </View>
+            )}
           </View>
 
           <ScrollView 
@@ -255,6 +304,21 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 16,
     color: '#999',
+  },
+  locationIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    backgroundColor: '#F5F5F5',
+    borderRadius: 8,
+    gap: 6,
+  },
+  locationText: {
+    fontSize: 12,
+    color: '#666',
+    flex: 1,
   },
   mapButton: {
     flexDirection: 'row',
