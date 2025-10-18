@@ -1,875 +1,241 @@
-import { useState, useEffect, useRef } from 'react';
-import { View, StyleSheet, TouchableOpacity, Dimensions, Image, Animated, Linking, Alert, ScrollView } from 'react-native';
+import { useEffect, useRef } from 'react';
+import { View, StyleSheet, TouchableOpacity, Animated, Image } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
-import { Asset } from 'expo-asset';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ScreenContainer, PrimaryButton, LoadingSpinner, Spacer16, Spacer12, DriverInfoCard } from '../components';
-
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
-
-// Ride tracking states
-type RideState = 'searching' | 'driver-found' | 'driver-arriving' | 'driver-arrived' | 'in-transit' | 'completed';
-
-// Mock driver data
-const MOCK_DRIVER = {
-  name: 'Kwame Mensah',
-  rating: 4.8,
-  totalTrips: 342,
-  vehicleModel: 'Toyota Corolla',
-  vehiclePlate: 'GN 2341-23',
-  vehicleColor: 'Silver',
-  phone: '+233 24 123 4567',
-  photo: undefined, // Can add driver photo later
-};
 
 interface RideTrackingScreenProps {
   onBack: () => void;
-  onComplete?: () => void;
   pickup: string;
   dropoff: string;
-  vehicleType: string;
-  estimatedPrice: string;
 }
 
 export function RideTrackingScreen({
   onBack,
-  onComplete,
   pickup,
   dropoff,
-  vehicleType,
-  estimatedPrice,
 }: RideTrackingScreenProps) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
-  const [rideState, setRideState] = useState<RideState>('searching');
-  const [driverETA, setDriverETA] = useState(5);
-  const [imageLoaded, setImageLoaded] = useState(false);
   
-  // Cache car illustration image
-  useEffect(() => {
-    const cacheImage = async () => {
-      try {
-        await Asset.fromModule(require('../../assets/illustrations/car-on-map.png')).downloadAsync();
-        setImageLoaded(true);
-      } catch (error) {
-        console.log('Error caching car image:', error);
-        setImageLoaded(true); // Continue anyway
-      }
-    };
-    cacheImage();
-  }, []);
-  
-  // Ripple animation for searching state
+  // Ripple animation values
   const rippleAnim1 = useRef(new Animated.Value(0)).current;
   const rippleAnim2 = useRef(new Animated.Value(0)).current;
   const rippleOpacity1 = useRef(new Animated.Value(1)).current;
   const rippleOpacity2 = useRef(new Animated.Value(1)).current;
-
-  // Start ripple animation when in searching state
+  
+  // Start continuous ripple animation
   useEffect(() => {
-    if (rideState === 'searching') {
-      const ripple1 = Animated.loop(
+    const createRipple = (scaleAnim: Animated.Value, opacityAnim: Animated.Value, delay: number) => {
+      return Animated.loop(
         Animated.parallel([
-          Animated.timing(rippleAnim1, {
+          Animated.timing(scaleAnim, {
             toValue: 1,
             duration: 2000,
+            delay,
             useNativeDriver: true,
           }),
-          Animated.timing(rippleOpacity1, {
+          Animated.timing(opacityAnim, {
             toValue: 0,
             duration: 2000,
+            delay,
             useNativeDriver: true,
           }),
         ])
       );
+    };
 
-      const ripple2 = Animated.loop(
-        Animated.parallel([
-          Animated.timing(rippleAnim2, {
-            toValue: 1,
-            duration: 2000,
-            delay: 1000,
-            useNativeDriver: true,
-          }),
-          Animated.timing(rippleOpacity2, {
-            toValue: 0,
-            duration: 2000,
-            delay: 1000,
-            useNativeDriver: true,
-          }),
-        ])
-      );
+    const ripple1 = createRipple(rippleAnim1, rippleOpacity1, 0);
+    const ripple2 = createRipple(rippleAnim2, rippleOpacity2, 1000);
 
-      ripple1.start();
-      ripple2.start();
+    ripple1.start();
+    ripple2.start();
 
-      return () => {
-        ripple1.stop();
-        ripple2.stop();
-      };
-    }
-  }, [rideState]);
+    return () => {
+      ripple1.stop();
+      ripple2.stop();
+    };
+  }, []);
 
-  // Simulate ride state progression
-  useEffect(() => {
-    const timers: ReturnType<typeof setTimeout>[] = [];
+  const rippleScale1 = rippleAnim1.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 2.5],
+  });
 
-    // Searching → Driver Found (10 seconds)
-    if (rideState === 'searching') {
-      timers.push(setTimeout(() => {
-        setRideState('driver-found');
-      }, 10000));
-    }
-
-    // Driver Found → Driver Arriving (10 seconds to show driver info)
-    if (rideState === 'driver-found') {
-      timers.push(setTimeout(() => {
-        setRideState('driver-arriving');
-      }, 10000));
-    }
-
-    // Driver Arriving → Update ETA countdown
-    if (rideState === 'driver-arriving') {
-      const interval = setInterval(() => {
-        setDriverETA((prev) => {
-          if (prev <= 1) {
-            clearInterval(interval);
-            setRideState('driver-arrived');
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000); // Update every second for demo (use 60000 for real minutes)
-      timers.push(interval);
-    }
-
-    return () => timers.forEach((timer) => clearTimeout(timer));
-  }, [rideState]);
-
-  const handleCancel = () => {
-    // TODO: Show cancellation confirmation
-    console.log('Cancelling ride...');
-    onBack();
-  };
-
-  const handleCall = async () => {
-    const phoneNumber = MOCK_DRIVER.phone;
-    const phoneUrl = `tel:${phoneNumber}`;
-    
-    try {
-      const supported = await Linking.canOpenURL(phoneUrl);
-      if (supported) {
-        await Linking.openURL(phoneUrl);
-      } else {
-        Alert.alert('Error', 'Phone calling is not available on this device');
-      }
-    } catch (error) {
-      console.error('Error making phone call:', error);
-      Alert.alert('Error', 'Could not initiate phone call');
-    }
-  };
-
-  const handleMessage = () => {
-    // Chat feature not implemented yet
-    Alert.alert('Coming Soon', 'In-app messaging will be available soon');
-  };
-
-  const renderContent = () => {
-    switch (rideState) {
-      case 'searching':
-        return (
-          <View style={styles.searchingContentContainer}>
-            <Text variant="titleLarge" style={styles.searchingTitle}>
-              Searching for a Driver...
-            </Text>
-            <Text variant="bodyMedium" style={styles.searchingSubtitle}>
-              This may takes a few seconds
-            </Text>
-          </View>
-        );
-
-      case 'driver-found':
-        return (
-          <View style={styles.driverFoundContainer}>
-            {/* Header */}
-            <View style={styles.driverFoundHeader}>
-              <Text variant="titleLarge" style={styles.driverFoundTitle}>
-                Driver Found
-              </Text>
-              <View style={styles.etaBadge}>
-                <Ionicons name="time-outline" size={16} color="#666" />
-                <Text variant="bodyMedium" style={styles.etaBadgeText}>
-                  30Min Way
-                </Text>
-              </View>
-            </View>
-
-            <Text variant="bodySmall" style={styles.driverFoundSubtitle}>
-              Please wait while your driver confirms{'\n'}and heads your way.
-            </Text>
-
-            {/* Driver Card */}
-            <View style={styles.driverFoundCard}>
-              <View style={styles.driverFoundAvatar}>
-                <Ionicons name="person" size={24} color="#8020A2" />
-              </View>
-              <View style={styles.driverFoundInfo}>
-                <Text variant="titleMedium" style={styles.driverFoundName}>
-                  {MOCK_DRIVER.name}
-                </Text>
-                <Text variant="bodySmall" style={styles.driverFoundRole}>
-                  Driver
-                </Text>
-              </View>
-              <View style={styles.driverFoundVehicle}>
-                <Text variant="bodyMedium" style={styles.vehiclePlate}>
-                  {MOCK_DRIVER.vehiclePlate}
-                </Text>
-                <Text variant="bodySmall" style={styles.vehicleDetails}>
-                  {MOCK_DRIVER.vehicleColor}  {MOCK_DRIVER.vehicleModel}
-                </Text>
-              </View>
-            </View>
-
-            <Text variant="bodySmall" style={styles.contactNote}>
-              You can contact your driver soon
-            </Text>
-          </View>
-        );
-
-      case 'driver-arriving':
-      case 'driver-arrived':
-        const isArrived = rideState === 'driver-arrived';
-        return (
-          <View style={styles.contentFull}>
-            {/* ETA Header */}
-            <Text variant="titleLarge" style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>
-              {isArrived ? 'Driver has arrived!' : `Arriving in ${driverETA} min`}
-            </Text>
-
-            <Spacer12 />
-
-            {/* Driver Info Card - Using Project Component */}
-            <DriverInfoCard
-              name={MOCK_DRIVER.name}
-              photo={MOCK_DRIVER.photo}
-              rating={MOCK_DRIVER.rating}
-              vehicle={MOCK_DRIVER.vehicleModel}
-              vehicleColor={MOCK_DRIVER.vehicleColor}
-              licensePlate={MOCK_DRIVER.vehiclePlate}
-              tripCount={MOCK_DRIVER.totalTrips}
-            />
-
-            <Spacer16 />
-
-            {/* Action Buttons - Call is Primary */}
-            <View style={styles.actionRow}>
-              {/* Icon-only chat button - Secondary */}
-              <TouchableOpacity 
-                accessible={true}
-                accessibilityLabel="Chat with driver"
-                accessibilityHint="Opens chat to message your driver"
-                accessibilityRole="button"
-                style={[styles.iconButton, { 
-                  backgroundColor: theme.colors.surfaceVariant,
-                  borderColor: theme.colors.outline 
-                }]}
-                onPress={handleMessage}
-              >
-                <Ionicons name="chatbubble-outline" size={22} color={theme.colors.onSurfaceVariant} />
-              </TouchableOpacity>
-              
-              {/* Full-width call button - Primary */}
-              <TouchableOpacity 
-                accessible={true}
-                accessibilityLabel="Call driver"
-                accessibilityHint="Opens phone dialer to call your driver"
-                accessibilityRole="button"
-                style={[styles.callButtonPrimary, { backgroundColor: theme.colors.primary }]}
-                onPress={handleCall}
-              >
-                <Ionicons name="call" size={20} color="#FFFFFF" />
-                <Text variant="labelLarge" style={styles.callButtonText}>
-                  Call Driver
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            <Spacer16 />
-
-            {/* Trip Information Section */}
-            <View style={[styles.infoSection, { backgroundColor: theme.colors.surfaceVariant }]}>
-              <Text variant="titleMedium" style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>
-                Trip Information
-              </Text>
-              
-              <Spacer12 />
-              
-              <View style={styles.infoRow}>
-                <Ionicons name="location" size={20} color={theme.colors.primary} />
-                <Text variant="bodyMedium" style={[styles.infoText, { color: theme.colors.onSurface }]} numberOfLines={1}>
-                  {pickup}
-                </Text>
-              </View>
-
-              <Spacer12 />
-
-              <View style={styles.infoRow}>
-                <Ionicons name="navigate" size={20} color={theme.colors.onSurfaceVariant} />
-                <Text variant="bodyMedium" style={[styles.infoText, { color: theme.colors.onSurface }]} numberOfLines={1}>
-                  {dropoff}
-                </Text>
-              </View>
-            </View>
-
-            <Spacer16 />
-
-            {/* Payment Method Section */}
-            <View style={[styles.infoSection, { backgroundColor: theme.colors.surfaceVariant }]}>
-              <Text variant="titleMedium" style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>
-                Payment Method
-              </Text>
-              
-              <Spacer12 />
-              
-              <View style={styles.infoRow}>
-                <Ionicons name="cash-outline" size={20} color="#4CAF50" />
-                <Text variant="bodyMedium" style={[styles.infoText, { color: theme.colors.onSurface }]}>
-                  Cash
-                </Text>
-                <Text variant="bodyMedium" style={[styles.paymentAmount, { color: theme.colors.onSurface }]}>
-                  {estimatedPrice}
-                </Text>
-              </View>
-            </View>
-
-            <Spacer16 />
-
-            {/* More Actions Section */}
-            <View style={[styles.infoSection, { backgroundColor: theme.colors.surfaceVariant }]}>
-              <Text variant="titleMedium" style={[styles.sectionTitle, { color: theme.colors.onSurface }]}>
-                More Actions
-              </Text>
-              
-              <Spacer12 />
-              
-              <TouchableOpacity style={styles.moreActionRow}>
-                <Ionicons name="share-social-outline" size={20} color={theme.colors.onSurfaceVariant} />
-                <Text variant="bodyMedium" style={[styles.infoText, { color: theme.colors.onSurface }]}>
-                  Share my ride details
-                </Text>
-                <Ionicons name="chevron-forward" size={20} color={theme.colors.onSurfaceVariant} />
-              </TouchableOpacity>
-            </View>
-          </View>
-        );
-
-      default:
-        return null;
-    }
-  };
+  const rippleScale2 = rippleAnim2.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 2.5],
+  });
 
   return (
-    <ScreenContainer safe={false} padding={0}>
-      <View style={styles.container}>
-        {/* Full Screen Map Placeholder */}
-        <View style={styles.mapContainer}>          
-          {/* Animated Ripple (only during searching) */}
-          {rideState === 'searching' && imageLoaded && (
-            <View style={styles.mapRippleContainer}>
-              <Animated.View
-                style={[
-                  styles.mapRippleCircle,
-                  styles.mapRippleOuter,
-                  {
-                    transform: [{
-                      scale: rippleAnim1.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [1, 1.8],
-                      }),
-                    }],
-                    opacity: rippleOpacity1,
-                  },
-                ]}
-              />
-              <Animated.View
-                style={[
-                  styles.mapRippleCircle,
-                  styles.mapRippleInner,
-                  {
-                    transform: [{
-                      scale: rippleAnim2.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: [1, 1.5],
-                      }),
-                    }],
-                    opacity: rippleOpacity2,
-                  },
-                ]}
-              />
-              <View style={styles.mapCarContainer}>
-                <Image
-                  source={require('../../assets/illustrations/car-on-map.png')}
-                  style={styles.mapCarImage}
-                  resizeMode="contain"
-                  fadeDuration={0}
-                />
-              </View>
-            </View>
-          )}
+    <View style={styles.container}>
+      {/* Full Screen Map */}
+      <View style={styles.mapContainer}>
+
+        {/* Search Animation on Map */}
+        <View style={styles.searchAnimationContainer}>
+          {/* Ripple 1 */}
+          <Animated.View
+            style={[
+              styles.ripple,
+              {
+                transform: [{ scale: rippleScale1 }],
+                opacity: rippleOpacity1,
+              },
+            ]}
+          />
           
-          {/* Back Button */}
-          <TouchableOpacity 
-            accessible={true}
+          {/* Ripple 2 */}
+          <Animated.View
+            style={[
+              styles.ripple,
+              {
+                transform: [{ scale: rippleScale2 }],
+                opacity: rippleOpacity2,
+              },
+            ]}
+          />
+          
+          {/* Center Car Icon */}
+          <View style={styles.carIconContainer}>
+            <Image 
+              source={require('../../assets/illustrations/car-on-map.png')}
+              style={styles.carImage}
+              resizeMode="contain"
+            />
+          </View>
+        </View>
+
+        {/* Back Button */}
+        <View style={[styles.headerContainer, { paddingTop: insets.top + 8 }]}>
+          <TouchableOpacity
+            onPress={onBack}
+            style={styles.backButton}
             accessibilityLabel="Go back"
             accessibilityRole="button"
-            onPress={onBack} 
-            style={styles.floatingBackButton}
           >
-            <Ionicons name="arrow-back" size={24} color="#1C1B1F" />
+            <Ionicons name="arrow-back" size={24} color="#000" />
           </TouchableOpacity>
         </View>
-
-        {/* Bottom Content Card */}
-        <View style={[styles.bottomCard, { paddingBottom: Math.max(insets.bottom + 16, 32) }]}>
-          <ScrollView 
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={styles.scrollContent}
-            bounces={false}
-          >
-            {renderContent()}
-          </ScrollView>
-
-          {/* Cancel Button - Always Visible */}
-          {rideState !== 'completed' && (
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity 
-                accessible={true}
-                accessibilityLabel={rideState === 'searching' ? 'Cancel search' : 'Cancel ride'}
-                accessibilityRole="button"
-                style={styles.cancelButton} 
-                onPress={handleCancel}
-              >
-                <Text variant="labelLarge" style={styles.cancelButtonText}>
-                  {rideState === 'searching' ? 'Cancel Search' : 'Cancel Ride'}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
       </View>
-    </ScreenContainer>
+
+      {/* Bottom Sheet */}
+      <View style={[styles.bottomSheet, { paddingBottom: insets.bottom + 20 }]}>
+        <View style={styles.dragHandle} />
+        
+        <Text variant="titleLarge" style={styles.searchingTitle}>
+          Searching for driver
+        </Text>
+        
+        <Text variant="bodyMedium" style={styles.searchingSubtitle}>
+          Finding the nearest driver for you...
+        </Text>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#E8E8E8',
   },
   mapContainer: {
     flex: 1,
-    backgroundColor: '#E8F5E9',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: -24, // Extend 10% under bottom card (overlap for rounded corners)
+    position: 'relative',
   },
   mapPlaceholder: {
-    fontSize: 18,
-    color: '#999',
-    fontWeight: '600',
-  },
-  floatingBackButton: {
-    position: 'absolute',
-    top: 60,
-    left: 16,
-    width: 44,
-    height: 44,
-    justifyContent: 'center',
+    flex: 1,
     alignItems: 'center',
-    borderRadius: 22,
+    justifyContent: 'center',
+    backgroundColor: '#E8E8E8',
+  },
+  mapPlaceholderText: {
+    marginTop: 12,
+    fontSize: 16,
+    color: '#999',
+  },
+  searchAnimationContainer: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    width: 120,
+    height: 120,
+    marginLeft: -60,
+    marginTop: -60,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ripple: {
+    position: 'absolute',
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    backgroundColor: '#6200EE',
+  },
+  carIconContainer: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
     backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
-  bottomCard: {
+  carImage: {
+    width: 40,
+    height: 40,
+  },
+  headerContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 16,
+  },
+  backButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  bottomSheet: {
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    paddingTop: 24,
-    paddingHorizontal: 20,
-    minHeight: 280,
-    maxHeight: '65%', // Prevent card from taking full screen
+    paddingHorizontal: 24,
+    paddingTop: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
+    shadowOffset: { width: 0, height: -3 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
     elevation: 10,
   },
-  scrollContent: {
-    flexGrow: 1,
-    paddingBottom: 16,
-  },
-  buttonContainer: {
-    paddingTop: 12,
-    paddingBottom: 8,
-  },
-  stateContainer: {
-    alignItems: 'center',
-    paddingVertical: 20,
-  },
-  contentFull: {
-    flex: 1,
-  },
-  iconContainer: {
-    marginBottom: 16,
-  },
-  // Searching state styles
-  searchingContainer: {
-    alignItems: 'center',
-    paddingVertical: 40,
-  },
-  rippleContainer: {
-    width: 220,
-    height: 220,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 32,
-  },
-  // Searching state styles (on map)
-  mapRippleContainer: {
-    position: 'absolute',
-    width: 160,
-    height: 160,
-    justifyContent: 'center',
-    alignItems: 'center',
-    top: '55%', // Centered in available map area (considering bottom card)
-    left: '50%',
-    marginLeft: -80, // Half of width to center
-    marginTop: -80, // Half of height to center
-  },
-  mapRippleCircle: {
-    position: 'absolute',
-    borderRadius: 80,
-    backgroundColor: '#B794C3',
-  },
-  mapRippleOuter: {
-    width: 120,
-    height: 120,
-  },
-  mapRippleInner: {
-    width: 90, // Smaller inner circle
-    height: 90,
-  },
-  mapCarContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: '#A366B9',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
-  },
-  mapCarImage: {
-    width: 50,
-    height: 50,
-  },
-  searchingContentContainer: {
-    alignItems: 'center',
-    paddingVertical: 20,
+  dragHandle: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#E0E0E0',
+    alignSelf: 'center',
+    marginBottom: 20,
   },
   searchingTitle: {
-    color: '#1C1B1F',
-    fontWeight: '700',
+    fontWeight: '600',
     marginBottom: 8,
-    textAlign: 'center',
   },
   searchingSubtitle: {
     color: '#666',
-    textAlign: 'center',
-  },
-  // Driver Found state styles
-  driverFoundContainer: {
-    paddingVertical: 8,
-  },
-  driverFoundHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  driverFoundTitle: {
-    color: '#1C1B1F',
-    fontWeight: '700',
-  },
-  etaBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  etaBadgeText: {
-    color: '#666',
-    fontSize: 14,
-  },
-  driverFoundSubtitle: {
-    color: '#666',
-    fontSize: 13,
-    lineHeight: 18,
-    marginBottom: 20,
-  },
-  driverFoundCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 16,
-    gap: 12,
-  },
-  driverFoundAvatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#E8D9F0',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  driverFoundInfo: {
-    flex: 1,
-  },
-  driverFoundName: {
-    color: '#1C1B1F',
-    fontWeight: '600',
-    marginBottom: 2,
-  },
-  driverFoundRole: {
-    color: '#666',
-    fontSize: 13,
-  },
-  driverFoundVehicle: {
-    alignItems: 'flex-end',
-  },
-  vehiclePlate: {
-    color: '#1C1B1F',
-    fontWeight: '600',
-    backgroundColor: '#E0E0E0',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 4,
-    fontSize: 13,
     marginBottom: 4,
-  },
-  vehicleDetails: {
-    color: '#666',
-    fontSize: 12,
-  },
-  contactNote: {
-    color: '#666',
-    textAlign: 'center',
-    fontSize: 13,
-  },
-  // Other state styles
-  stateTitle: {
-    color: '#1C1B1F',
-    fontWeight: '700',
-    marginBottom: 8,
-    textAlign: 'center',
-  },
-  stateSubtitle: {
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 24,
-  },
-  tripDetailsCard: {
-    width: '100%',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 16,
-    padding: 16,
-    marginTop: 16,
-  },
-  tripDetailRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-    marginBottom: 12,
-  },
-  tripDetailText: {
-    flex: 1,
-    color: '#1C1B1F',
-  },
-  divider: {
-    height: 1,
-    backgroundColor: '#E0E0E0',
-    marginVertical: 12,
-  },
-  tripMetaRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  tripMetaText: {
-    color: '#666',
-  },
-  tripMetaPrice: {
-    color: '#8020A2',
-    fontWeight: '700',
-  },
-  driverCard: {
-    backgroundColor: '#F5F5F5',
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-  },
-  driverHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  driverAvatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#E8D9F0',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  driverInfo: {
-    flex: 1,
-  },
-  driverName: {
-    color: '#1C1B1F',
-    fontWeight: '700',
-    marginBottom: 4,
-  },
-  driverMeta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-  },
-  driverRating: {
-    color: '#666',
-  },
-  driverActions: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  actionButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  vehicleInfo: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 16,
-  },
-  vehicleDetail: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  vehicleText: {
-    color: '#666',
-  },
-  colorDot: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#E0E0E0',
-  },
-  etaCard: {
-    backgroundColor: '#E8D9F0',
-    borderRadius: 16,
-    padding: 20,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  // Action Buttons
-  actionRow: {
-    flexDirection: 'row',
-    gap: 12,
-  },
-  iconButton: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    borderWidth: 1.5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  callButtonPrimary: {
-    flex: 1,
-    height: 56,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    borderRadius: 28,
-  },
-  callButtonText: {
-    color: '#FFFFFF',
-    fontWeight: '600',
-  },
-  // Info Sections
-  infoSection: {
-    borderRadius: 12,
-    padding: 16,
-  },
-  sectionTitle: {
-    fontWeight: '600',
-  },
-  infoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  infoText: {
-    flex: 1,
-  },
-  paymentAmount: {
-    fontWeight: '700',
-  },
-  moreActionRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 12,
-  },
-  arrivedCard: {
-    backgroundColor: '#E8F5E9',
-  },
-  arrivedText: {
-    color: '#4CAF50',
-    fontWeight: '700',
-    marginTop: 8,
-    marginBottom: 4,
-  },
-  arrivedSubtext: {
-    color: '#666',
-  },
-  cancelButton: {
-    marginTop: 16,
-    paddingVertical: 16,
-    alignItems: 'center',
-    borderRadius: 24,
-    backgroundColor: '#F8383B',
-  },
-  cancelButtonText: {
-    color: '#ffff',
-    fontWeight: '600',
-    fontSize: 16,
   },
 });
