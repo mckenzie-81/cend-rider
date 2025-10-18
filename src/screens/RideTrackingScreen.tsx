@@ -138,6 +138,11 @@ export function RideTrackingScreen({
             Finding the nearest driver for you...
           </Text>
 
+          {/* Progress Line - will animate in next state */}
+          <View style={styles.progressLineContainer}>
+            <View style={styles.progressLine} />
+          </View>
+
           {/* Action Buttons */}
           <View style={styles.actionButtonsContainer}>
             {/* Driver Placeholder */}
@@ -291,6 +296,18 @@ const styles = StyleSheet.create({
   searchingSubtitle: {
     color: '#666',
     marginBottom: 20,
+  },
+  progressLineContainer: {
+    width: '100%',
+    height: 2,
+    backgroundColor: 'transparent',
+    marginBottom: 8,
+  },
+  progressLine: {
+    width: '100%',
+    height: 3,
+    backgroundColor: '#E8E8E8', // Lightest color - very faint
+    borderRadius: 1,
   },
   actionButtonsContainer: {
     flexDirection: 'row',
