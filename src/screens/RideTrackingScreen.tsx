@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, TouchableOpacity, Animated, Image, Dimensions } from 'react-native';
 import { Text, useTheme } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,6 +9,9 @@ import ActDriverIcon from '../../assets/icons/act-driver-icon.svg';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 const BOTTOM_SHEET_HEIGHT = SCREEN_HEIGHT * 0.34; // 34% of screen height
+
+// Ride tracking states
+type RideState = 'searching' | 'driver-found' | 'driver-arriving' | 'driver-arrived' | 'in-transit' | 'completed';
 
 interface RideTrackingScreenProps {
   onBack: () => void;
@@ -24,14 +27,19 @@ export function RideTrackingScreen({
   const theme = useTheme();
   const insets = useSafeAreaInsets();
   
+  // State management
+  const [rideState, setRideState] = useState<RideState>('searching');
+  
   // Ripple animation values
   const rippleAnim1 = useRef(new Animated.Value(0)).current;
   const rippleAnim2 = useRef(new Animated.Value(0)).current;
   const rippleOpacity1 = useRef(new Animated.Value(1)).current;
   const rippleOpacity2 = useRef(new Animated.Value(1)).current;
   
-  // Start continuous ripple animation
+  // Start continuous ripple animation only when searching
   useEffect(() => {
+    if (rideState !== 'searching') return;
+    
     const createRipple = (scaleAnim: Animated.Value, opacityAnim: Animated.Value, delay: number) => {
       return Animated.loop(
         Animated.parallel([
@@ -60,8 +68,23 @@ export function RideTrackingScreen({
     return () => {
       ripple1.stop();
       ripple2.stop();
+      rippleAnim1.setValue(0);
+      rippleAnim2.setValue(0);
+      rippleOpacity1.setValue(1);
+      rippleOpacity2.setValue(1);
     };
-  }, []);
+  }, [rideState]);
+
+  // Simulate finding driver after 5 seconds (for testing)
+  useEffect(() => {
+    if (rideState === 'searching') {
+      const timer = setTimeout(() => {
+        setRideState('driver-found');
+      }, 5000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [rideState]);
 
   const rippleScale1 = rippleAnim1.interpolate({
     inputRange: [0, 1],
@@ -78,39 +101,57 @@ export function RideTrackingScreen({
       {/* Full Screen Map */}
       <View style={styles.mapContainer}>
 
-        {/* Search Animation on Map */}
-        <View style={styles.searchAnimationContainer}>
-          {/* Ripple 1 */}
-          <Animated.View
-            style={[
-              styles.ripple,
-              {
-                transform: [{ scale: rippleScale1 }],
-                opacity: rippleOpacity1,
-              },
-            ]}
-          />
-          
-          {/* Ripple 2 */}
-          <Animated.View
-            style={[
-              styles.ripple,
-              {
-                transform: [{ scale: rippleScale2 }],
-                opacity: rippleOpacity2,
-              },
-            ]}
-          />
-          
-          {/* Center Car Icon */}
-          <View style={styles.carIconContainer}>
-            <Image 
-              source={require('../../assets/illustrations/car-on-map.png')}
-              style={styles.carImage}
-              resizeMode="contain"
+        {/* Search Animation on Map - Only show when searching */}
+        {rideState === 'searching' && (
+          <View style={styles.searchAnimationContainer}>
+            {/* Ripple 1 */}
+            <Animated.View
+              style={[
+                styles.ripple,
+                {
+                  transform: [{ scale: rippleScale1 }],
+                  opacity: rippleOpacity1,
+                },
+              ]}
             />
+            
+            {/* Ripple 2 */}
+            <Animated.View
+              style={[
+                styles.ripple,
+                {
+                  transform: [{ scale: rippleScale2 }],
+                  opacity: rippleOpacity2,
+                },
+              ]}
+            />
+            
+            {/* Center Car Icon */}
+            <View style={styles.carIconContainer}>
+              <Image 
+                source={require('../../assets/illustrations/car-on-map.png')}
+                style={styles.carImage}
+                resizeMode="contain"
+              />
+            </View>
           </View>
-        </View>
+        )}
+
+        {/* User Location Pin - Show when driver found */}
+        {rideState === 'driver-found' && (
+          <View style={styles.userLocationContainer}>
+            <View style={styles.locationPinWrapper}>
+              <View style={styles.locationPin}>
+                <Ionicons name="location" size={32} color="#8020A2" />
+              </View>
+              <View style={styles.locationLabelContainer}>
+                <Text variant="labelSmall" style={styles.locationLabel}>
+                  Your location
+                </Text>
+              </View>
+            </View>
+          </View>
+        )}
 
         {/* Back Button */}
         <View style={[styles.headerContainer, { paddingTop: insets.top + 8 }]}>
@@ -131,11 +172,13 @@ export function RideTrackingScreen({
         
         <View style={styles.bottomSheetContent}>
           <Text variant="titleLarge" style={styles.searchingTitle}>
-            Searching for driver
+            {rideState === 'searching' ? 'Searching for driver' : 'Driver Found'}
           </Text>
           
           <Text variant="bodyMedium" style={styles.searchingSubtitle}>
-            Finding the nearest driver for you...
+            {rideState === 'searching' 
+              ? 'Finding the nearest driver for you...'
+              : 'Waiting for driver to confirm order'}
           </Text>
 
           {/* Progress Line - will animate in next state */}
@@ -242,6 +285,47 @@ const styles = StyleSheet.create({
   carImage: {
     width: 40,
     height: 40,
+  },
+  userLocationContainer: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    marginLeft: -20, // Half of pin width
+    marginTop: -60, // Offset to account for pin height
+    alignItems: 'center',
+  },
+  locationPinWrapper: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  locationPin: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  locationLabelContainer: {
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+    elevation: 3,
+  },
+  locationLabel: {
+    color: '#1C1B1F',
+    fontWeight: '600',
+    fontSize: 12,
   },
   headerContainer: {
     position: 'absolute',
