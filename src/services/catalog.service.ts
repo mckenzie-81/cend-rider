@@ -179,16 +179,16 @@ const MOCK_BOOKINGS: ServiceBooking[] = [
     serviceName: 'Package Delivery',
     category: 'delivery',
     pickupLocation: {
-      address: '123 Victoria Island, Lagos',
-      coordinates: { latitude: 6.4281, longitude: 3.4219 },
+      address: 'Osu Oxford Street, Accra',
+      coordinates: { latitude: 5.5558, longitude: -0.1828 },
     },
     dropoffLocation: {
-      address: '456 Lekki Phase 1, Lagos',
-      coordinates: { latitude: 6.4474, longitude: 3.4647 },
+      address: 'Legon Campus, Accra',
+      coordinates: { latitude: 5.6519, longitude: -0.1873 },
     },
     notes: 'Please handle with care - fragile items',
-    estimatedPrice: 1200,
-    finalPrice: 1200,
+    estimatedPrice: 25,
+    finalPrice: 25,
     status: 'completed',
     createdAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago
     updatedAt: new Date(Date.now() - 82800000).toISOString(),
@@ -199,12 +199,12 @@ const MOCK_BOOKINGS: ServiceBooking[] = [
     serviceName: 'Grocery Shopping',
     category: 'shopping',
     pickupLocation: {
-      address: 'Shoprite, Lekki',
-      coordinates: { latitude: 6.4474, longitude: 3.4647 },
+      address: 'Accra Mall, Tetteh Quarshie',
+      coordinates: { latitude: 5.6486, longitude: -0.1746 },
     },
     dropoffLocation: {
-      address: '789 Ikeja, Lagos',
-      coordinates: { latitude: 6.5964, longitude: 3.3397 },
+      address: 'Ridge, Accra',
+      coordinates: { latitude: 5.5560, longitude: -0.1969 },
     },
     items: ['Rice - 5kg', 'Tomatoes', 'Onions', 'Chicken', 'Milk'],
     notes: 'Please call when you arrive',
@@ -344,7 +344,7 @@ export const getServicePriceEstimate = async (
         Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     distance = R * c;
-    distanceFee = distance * 100; // ₦100 per km
+    distanceFee = distance * 100; // GH¢100 per km
   }
 
   const serviceFee = basePrice * 0.1; // 10% service fee
@@ -361,7 +361,7 @@ export const getServicePriceEstimate = async (
       serviceFee: Math.round(serviceFee),
       tax: Math.round(tax),
     },
-    currency: 'NGN',
+    currency: 'GHS',
   };
 
   // TODO: Replace with actual API call

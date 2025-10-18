@@ -1,41 +1,15 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, TextInput, Keyboard, ScrollView } from 'react-native';
-import { Text } from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, Image, TouchableOpacity, TextInput, Keyboard, ScrollView, ActivityIndicator } from 'react-native';
+import { Text, useTheme } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { ScreenContainer, AppHeader, TransportModeCard, RecentTripCard, RideBookingModal } from '../components';
+import { RideService } from '../services/ride.service';
+import type { Ride } from '../services/ride.service';
 
 // Transport mode options
 const TRANSPORT_MODES = [
   { id: 'ride', label: 'Ride', icon: 'car' as const },
   { id: 'okada', label: 'Okada', icon: 'okada' as const },
-];
-
-// Mock recent trips data
-const RECENT_TRIPS = [
-  {
-    id: '1',
-    pickup: 'Legon Campus, University of Ghana',
-    dropoff: 'Accra Mall, Spintex Road',
-    date: 'Oct 15',
-    time: '2:30 PM',
-    price: 'GH₵ 45.00',
-  },
-  {
-    id: '2',
-    pickup: 'Kotoka International Airport',
-    dropoff: 'East Legon, Accra',
-    date: 'Oct 14',
-    time: '9:15 AM',
-    price: 'GH₵ 65.00',
-  },
-  {
-    id: '3',
-    pickup: 'Circle, Accra',
-    dropoff: 'Osu Oxford Street',
-    date: 'Oct 13',
-    time: '6:45 PM',
-    price: 'GH₵ 28.00',
-  },
 ];
 
 interface TransportScreenProps {
@@ -45,9 +19,28 @@ interface TransportScreenProps {
 }
 
 export function TransportScreen({ onBack, initialMode = 'ride', onConfirmLocations }: TransportScreenProps) {
+  const theme = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMode, setSelectedMode] = useState<'ride' | 'okada'>(initialMode);
   const [showBookingModal, setShowBookingModal] = useState(false);
+  const [recentTrips, setRecentTrips] = useState<Ride[]>([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    loadRecentTrips();
+  }, []);
+
+  const loadRecentTrips = async () => {
+    try {
+      setLoading(true);
+      const history = await RideService.getRideHistory(3); // Get last 3 trips
+      setRecentTrips(history);
+    } catch (error) {
+      console.error('Failed to load recent trips:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
   
   const handleMapPress = () => {
     console.log('Map pressed');
@@ -62,13 +55,33 @@ export function TransportScreen({ onBack, initialMode = 'ride', onConfirmLocatio
     console.log('Trip pressed:', tripId);
   };
 
-  const handleRideAgain = (tripId: string) => {
-    console.log('Ride again:', tripId);
-    // TODO: Pre-fill search with this trip's locations
+  const handleRideAgain = (trip: Ride) => {
+    console.log('Ride again:', trip.id);
+    // Pre-fill search with this trip's locations
+    if (onConfirmLocations) {
+      onConfirmLocations(trip.pickupLocation.address, trip.dropoffLocation.address);
+    }
   };
 
   const handleSearchPress = () => {
     setShowBookingModal(true);
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - date.getTime());
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 0) return 'Today';
+    if (diffDays === 1) return 'Yesterday';
+    
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
   };
 
   return (
@@ -140,18 +153,30 @@ export function TransportScreen({ onBack, initialMode = 'ride', onConfirmLocatio
                 Recent Trips
               </Text>
               
-              {RECENT_TRIPS.map((trip) => (
-                <RecentTripCard
-                  key={trip.id}
-                  pickup={trip.pickup}
-                  dropoff={trip.dropoff}
-                  date={trip.date}
-                  time={trip.time}
-                  price={trip.price}
-                  onPress={() => handleTripPress(trip.id)}
-                  onRideAgain={() => handleRideAgain(trip.id)}
-                />
-              ))}
+              {loading ? (
+                <View style={styles.loadingContainer}>
+                  <ActivityIndicator size="small" color={theme.colors.primary} />
+                </View>
+              ) : recentTrips.length === 0 ? (
+                <View style={styles.emptyContainer}>
+                  <Text variant="bodyMedium" style={styles.emptyText}>
+                    No recent trips yet
+                  </Text>
+                </View>
+              ) : (
+                recentTrips.map((trip) => (
+                  <RecentTripCard
+                    key={trip.id}
+                    pickup={trip.pickupLocation.address}
+                    dropoff={trip.dropoffLocation.address}
+                    date={formatDate(trip.createdAt)}
+                    time={formatTime(trip.createdAt)}
+                    price={`GH¢${trip.price.toLocaleString()}`}
+                    onPress={() => handleTripPress(trip.id)}
+                    onRideAgain={() => handleRideAgain(trip)}
+                  />
+                ))
+              )}
             </View>
           </ScrollView>
       </View>
@@ -191,6 +216,17 @@ const styles = StyleSheet.create({
     color: '#1C1B1F',
     fontWeight: '600',
     marginBottom: 16,
+  },
+  loadingContainer: {
+    paddingVertical: 32,
+    alignItems: 'center',
+  },
+  emptyContainer: {
+    paddingVertical: 32,
+    alignItems: 'center',
+  },
+  emptyText: {
+    color: '#999',
   },
   searchContainer: {
     position: 'absolute',

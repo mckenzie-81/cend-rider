@@ -68,19 +68,19 @@ export interface PaymentMethod {
 
 const MOCK_USER: UserProfile = {
   id: 'user_123456',
-  email: 'john.doe@example.com',
-  phone: '+2341234567890',
-  firstName: 'John',
-  lastName: 'Doe',
+  email: 'kwame.mensah@example.com',
+  phone: '+233244567890',
+  firstName: 'Kwame',
+  lastName: 'Mensah',
   profileImage: undefined,
   dateOfBirth: '1990-01-15',
   gender: 'male',
   address: {
-    street: '123 Main Street',
-    city: 'Lagos',
-    state: 'Lagos State',
-    country: 'Nigeria',
-    postalCode: '100001',
+    street: 'Ring Road Central',
+    city: 'Accra',
+    state: 'Greater Accra',
+    country: 'Ghana',
+    postalCode: 'GA-039-5028',
   },
   createdAt: new Date(Date.now() - 31536000000).toISOString(), // 1 year ago
   updatedAt: new Date().toISOString(),
@@ -100,15 +100,15 @@ const MOCK_SETTINGS: UserSettings = {
   },
   preferences: {
     language: 'en',
-    currency: 'NGN',
+    currency: 'GH¢',
     theme: 'auto',
   },
 };
 
 const MOCK_STATS: UserStats = {
   totalRides: 45,
-  totalSpent: 125000,
-  currency: 'NGN',
+  totalSpent: 850,
+  currency: 'GH¢',
   favoriteVehicle: 'car',
   memberSince: MOCK_USER.createdAt,
 };

@@ -41,8 +41,8 @@ export interface RideStatus {
 
 const MOCK_DRIVER: Driver = {
   id: 'driver_12345',
-  name: 'John Doe',
-  phone: '+2341234567890',
+  name: 'Yaw Boateng',
+  phone: '+233244789012',
   rating: 4.8,
   totalRides: 120,
   profileImage: undefined,
@@ -50,12 +50,12 @@ const MOCK_DRIVER: Driver = {
     make: 'Toyota',
     model: 'Camry',
     color: 'Silver',
-    plate: 'ABC 1234',
+    plate: 'GR 4567-21',
     year: 2020,
   },
   currentLocation: {
-    latitude: 6.5200,
-    longitude: 3.3750,
+    latitude: 5.6037,
+    longitude: -0.1870,
   },
 };
 

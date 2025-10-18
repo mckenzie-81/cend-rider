@@ -34,36 +34,36 @@ const MOCK_PLACES: Place[] = [
   {
     id: 'place_1',
     name: 'Home',
-    address: '123 Main Street, Lagos',
-    location: { latitude: 6.5244, longitude: 3.3792 },
+    address: 'Ring Road Central, Accra',
+    location: { latitude: 5.6037, longitude: -0.1870 },
     type: 'home',
   },
   {
     id: 'place_2',
     name: 'Office',
-    address: '456 Business Avenue, Victoria Island',
-    location: { latitude: 6.4281, longitude: 3.4219 },
+    address: 'Independence Avenue, Ridge, Accra',
+    location: { latitude: 5.5560, longitude: -0.1969 },
     type: 'work',
   },
   {
     id: 'place_3',
-    name: 'The Palms Shopping Mall',
-    address: 'Lekki-Epe Expressway, Lekki',
-    location: { latitude: 6.4507, longitude: 3.4730 },
+    name: 'Accra Mall',
+    address: 'Tetteh Quarshie Interchange, Accra',
+    location: { latitude: 5.6486, longitude: -0.1746 },
     type: 'recent',
   },
   {
     id: 'place_4',
-    name: 'Murtala Muhammed Airport',
-    address: 'Airport Road, Ikeja',
-    location: { latitude: 6.5774, longitude: 3.3213 },
+    name: 'Kotoka International Airport',
+    address: 'Airport Road, Accra',
+    location: { latitude: 5.6052, longitude: -0.1668 },
     type: 'recent',
   },
   {
     id: 'place_5',
-    name: 'Eko Atlantic City',
-    address: 'Victoria Island, Lagos',
-    location: { latitude: 6.4167, longitude: 3.4000 },
+    name: 'Osu Oxford Street',
+    address: 'Oxford Street, Osu, Accra',
+    location: { latitude: 5.5558, longitude: -0.1828 },
     type: 'search',
   },
 ];
@@ -97,9 +97,9 @@ export const searchPlaces = async (query: string): Promise<Place[]> => {
   if (query.toLowerCase().includes('restaurant')) {
     results.push({
       id: 'dynamic_1',
-      name: 'Golden Dragon Restaurant',
-      address: '789 Restaurant Street, Ikeja',
-      location: { latitude: 6.6018, longitude: 3.3515 },
+      name: 'Azmera Restaurant',
+      address: 'Labone, Accra',
+      location: { latitude: 5.5679, longitude: -0.1781 },
       type: 'search',
     });
   }
@@ -121,10 +121,10 @@ export const searchPlaces = async (query: string): Promise<Place[]> => {
 export const getCurrentLocation = async (): Promise<Location> => {
   await simulateDelay(500);
 
-  // Mock current location (Lagos, Nigeria)
+  // Mock current location (Accra, Ghana)
   return {
-    latitude: 6.5244,
-    longitude: 3.3792,
+    latitude: 5.6037,
+    longitude: -0.1870,
   };
 
   // TODO: Replace with actual device location

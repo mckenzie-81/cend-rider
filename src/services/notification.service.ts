@@ -82,8 +82,8 @@ const MOCK_NOTIFICATIONS: Notification[] = [
     id: 'notif_1',
     type: 'ride_completed',
     title: 'Ride Completed',
-    body: 'Your ride to Lekki Phase 1 has been completed. Thank you for riding with Cend!',
-    data: { rideId: 'ride_123', fare: 2500 },
+    body: 'Your ride to Accra Mall has been completed. Thank you for riding with Cend!',
+    data: { rideId: 'ride_123', fare: 45 },
     priority: 'normal',
     isRead: false,
     createdAt: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
@@ -105,8 +105,8 @@ const MOCK_NOTIFICATIONS: Notification[] = [
     id: 'notif_3',
     type: 'payment_successful',
     title: 'Payment Successful',
-    body: '₦2,500 has been charged to your Visa card ending in 4242.',
-    data: { amount: 2500, paymentMethodId: 'pm_1' },
+    body: 'GH₵45 has been charged to your Visa card ending in 4242.',
+    data: { amount: 45, paymentMethodId: 'pm_1' },
     priority: 'normal',
     isRead: true,
     createdAt: new Date(Date.now() - 86400000).toISOString(), // 1 day ago

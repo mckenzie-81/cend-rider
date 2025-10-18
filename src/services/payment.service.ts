@@ -128,8 +128,8 @@ const MOCK_PAYMENT_METHODS: PaymentMethod[] = [
 
 const MOCK_WALLET: Wallet = {
   id: 'wallet_123',
-  balance: 15000,
-  currency: 'NGN',
+  balance: 125,
+  currency: 'GH¢',
   userId: 'user_123456',
   lastUpdated: new Date().toISOString(),
 };
@@ -138,10 +138,10 @@ const MOCK_TRANSACTIONS: Transaction[] = [
   {
     id: 'txn_1',
     type: 'ride',
-    amount: -2500,
-    currency: 'NGN',
+    amount: -45,
+    currency: 'GH¢',
     status: 'completed',
-    description: 'Ride to Lekki Phase 1',
+    description: 'Ride to Accra Mall',
     paymentMethodId: 'pm_card_1',
     paymentMethod: 'Visa •••• 4242',
     rideId: 'ride_123',
@@ -151,8 +151,8 @@ const MOCK_TRANSACTIONS: Transaction[] = [
   {
     id: 'txn_2',
     type: 'topup',
-    amount: 10000,
-    currency: 'NGN',
+    amount: 100,
+    currency: 'GH¢',
     status: 'completed',
     description: 'Wallet top-up',
     paymentMethodId: 'pm_card_1',
@@ -163,10 +163,10 @@ const MOCK_TRANSACTIONS: Transaction[] = [
   {
     id: 'txn_3',
     type: 'ride',
-    amount: -1800,
-    currency: 'NGN',
+    amount: -28,
+    currency: 'GH¢',
     status: 'completed',
-    description: 'Ride to Victoria Island',
+    description: 'Ride to Osu Oxford Street',
     paymentMethodId: 'pm_wallet_1',
     paymentMethod: 'Cend Wallet',
     rideId: 'ride_122',
@@ -176,8 +176,8 @@ const MOCK_TRANSACTIONS: Transaction[] = [
   {
     id: 'txn_4',
     type: 'refund',
-    amount: 2500,
-    currency: 'NGN',
+    amount: 35,
+    currency: 'GH¢',
     status: 'completed',
     description: 'Refund for cancelled ride',
     rideId: 'ride_121',
@@ -287,19 +287,19 @@ export const getWalletBalance = async (): Promise<Wallet> => {
 export const topUpWallet = async (request: TopUpRequest): Promise<Transaction> => {
   await simulateDelay(2000);
 
-  if (request.amount < 100) {
-    throw new Error('Minimum top-up amount is ₦100');
+  if (request.amount < 5) {
+    throw new Error('Minimum top-up amount is GH₵5');
   }
 
-  if (request.amount > 500000) {
-    throw new Error('Maximum top-up amount is ₦500,000');
+  if (request.amount > 5000) {
+    throw new Error('Maximum top-up amount is GH₵5,000');
   }
 
   const transaction: Transaction = {
     id: `txn_${Date.now()}`,
     type: 'topup',
     amount: request.amount,
-    currency: 'NGN',
+    currency: 'GH¢',
     status: 'completed',
     description: 'Wallet top-up',
     paymentMethodId: request.paymentMethodId,
@@ -323,8 +323,8 @@ export const topUpWallet = async (request: TopUpRequest): Promise<Transaction> =
 export const withdrawFromWallet = async (request: WithdrawalRequest): Promise<Transaction> => {
   await simulateDelay(2000);
 
-  if (request.amount < 1000) {
-    throw new Error('Minimum withdrawal amount is ₦1,000');
+  if (request.amount < 10) {
+    throw new Error('Minimum withdrawal amount is GH₵10');
   }
 
   if (request.amount > MOCK_WALLET.balance) {
@@ -335,7 +335,7 @@ export const withdrawFromWallet = async (request: WithdrawalRequest): Promise<Tr
     id: `txn_${Date.now()}`,
     type: 'withdrawal',
     amount: -request.amount,
-    currency: 'NGN',
+    currency: 'GH¢',
     status: 'processing',
     description: 'Wallet withdrawal',
     createdAt: new Date().toISOString(),
@@ -419,7 +419,7 @@ export const processRidePayment = async (
     id: `txn_${Date.now()}`,
     type: 'ride',
     amount: -amount,
-    currency: 'NGN',
+    currency: 'GH¢',
     status: 'completed',
     description: 'Ride payment',
     paymentMethodId,
@@ -446,7 +446,7 @@ export const processRidePayment = async (
  */
 export const createPaymentIntent = async (
   amount: number,
-  currency: string = 'NGN'
+  currency: string = 'GH¢'
 ): Promise<PaymentIntent> => {
   await simulateDelay(1000);
 
@@ -499,8 +499,8 @@ export const requestRefund = async (
   const refund: Transaction = {
     id: `txn_refund_${Date.now()}`,
     type: 'refund',
-    amount: 2500, // Mock amount
-    currency: 'NGN',
+    amount: 35, // Mock amount
+    currency: 'GH¢',
     status: 'processing',
     description: `Refund for transaction ${transactionId}`,
     metadata: { originalTransactionId: transactionId, reason },
