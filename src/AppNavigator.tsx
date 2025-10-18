@@ -73,12 +73,9 @@ const AppNavigator = ({ onRestartFlow }: AppNavigatorProps) => {
       case 'ride-tracking':
         return (
           <RideTrackingScreen
-            onBack={() => setCurrentScreen('ride-options')}
-            onComplete={() => setCurrentScreen('home')}
+            onBack={() => setCurrentScreen('home')}
             pickup={rideDetails?.pickup || ''}
             dropoff={rideDetails?.dropoff || ''}
-            vehicleType={rideDetails?.vehicleType || ''}
-            estimatedPrice={rideDetails?.estimatedPrice || ''}
           />
         );
       default:
