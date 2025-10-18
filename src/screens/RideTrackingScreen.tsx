@@ -36,6 +36,9 @@ export function RideTrackingScreen({
   const rippleOpacity1 = useRef(new Animated.Value(1)).current;
   const rippleOpacity2 = useRef(new Animated.Value(1)).current;
   
+  // Progress line animation
+  const progressAnim = useRef(new Animated.Value(0)).current;
+  
   // Start continuous ripple animation only when searching
   useEffect(() => {
     if (rideState !== 'searching') return;
@@ -73,6 +76,24 @@ export function RideTrackingScreen({
       rippleOpacity1.setValue(1);
       rippleOpacity2.setValue(1);
     };
+  }, [rideState]);
+
+  // Animate progress line when driver is found
+  useEffect(() => {
+    if (rideState === 'driver-found') {
+      // Reset progress to 0
+      progressAnim.setValue(0);
+      
+      // Animate progress from 0 to 1 over 3 seconds
+      Animated.timing(progressAnim, {
+        toValue: 1,
+        duration: 3000,
+        useNativeDriver: false, // We need to animate width, can't use native driver
+      }).start(() => {
+        // When animation completes, transition to driver-arriving state
+        setRideState('driver-arriving');
+      });
+    }
   }, [rideState]);
 
   // Simulate finding driver after 5 seconds (for testing)
@@ -171,60 +192,175 @@ export function RideTrackingScreen({
         <View style={styles.dragHandle} />
         
         <View style={styles.bottomSheetContent}>
-          <Text variant="titleLarge" style={styles.searchingTitle}>
-            {rideState === 'searching' ? 'Searching for driver' : 'Driver Found'}
-          </Text>
-          
-          <Text variant="bodyMedium" style={styles.searchingSubtitle}>
-            {rideState === 'searching' 
-              ? 'Finding the nearest driver for you...'
-              : 'Waiting for driver to confirm order'}
-          </Text>
+          {/* Render content based on state */}
+          {(rideState === 'searching' || rideState === 'driver-found') && (
+            <>
+              <Text variant="titleLarge" style={styles.searchingTitle}>
+                {rideState === 'searching' ? 'Searching for driver' : 'Driver Found'}
+              </Text>
+              
+              <Text variant="bodyMedium" style={styles.searchingSubtitle}>
+                {rideState === 'searching' 
+                  ? 'Finding the nearest driver for you...'
+                  : 'Waiting for driver to confirm order'}
+              </Text>
 
-          {/* Progress Line - will animate in next state */}
-          <View style={styles.progressLineContainer}>
-            <View style={styles.progressLine} />
-          </View>
-
-          {/* Action Buttons */}
-          <View style={styles.actionButtonsContainer}>
-            {/* Driver Placeholder */}
-            <View style={styles.actionButton}>
-              <View style={styles.actionButtonCircle}>
-                <ActDriverIcon width={60} height={60} />
+              {/* Progress Line - animates when driver is found */}
+              <View style={styles.progressLineContainer}>
+                <View style={styles.progressLineBackground} />
+                {rideState === 'driver-found' && (
+                  <Animated.View 
+                    style={[
+                      styles.progressLineFill,
+                      {
+                        width: progressAnim.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: ['0%', '100%'],
+                        }),
+                      },
+                    ]} 
+                  />
+                )}
               </View>
+            </>
+          )}
+
+          {/* Driver Arriving State */}
+          {rideState === 'driver-arriving' && (
+            <>
+              <Text variant="titleLarge" style={styles.searchingTitle}>
+                Arriving in 5 min
+              </Text>
+              
+              <Text variant="bodyMedium" style={styles.searchingSubtitle}>
+                Driver is on the way to pick you up
+              </Text>
+
+              {/* Progress Line - Full */}
+              <View style={styles.progressLineContainer}>
+                <View style={styles.progressLineFill} />
+              </View>
+
+              {/* Driver Details Card */}
+              <View style={styles.driverDetailsCard}>
+                <View style={styles.driverInfo}>
+                  <View style={styles.driverAvatar}>
+                    <Ionicons name="person" size={32} color="#8020A2" />
+                  </View>
+                  <View style={styles.driverTextInfo}>
+                    <Text variant="titleMedium" style={styles.driverName}>
+                      John Doe
+                    </Text>
+                    <View style={styles.driverRating}>
+                      <Ionicons name="star" size={14} color="#FFC107" />
+                      <Text variant="bodySmall" style={styles.ratingText}>
+                        4.8 (120 rides)
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+                
+                <View style={styles.vehicleInfo}>
+                  <Text variant="bodySmall" style={styles.vehicleLabel}>
+                    Vehicle
+                  </Text>
+                  <Text variant="bodyMedium" style={styles.vehicleText}>
+                    Toyota Camry • ABC 1234
+                  </Text>
+                </View>
+              </View>
+            </>
+          )}
+
+          {/* Action Buttons - Show for searching and driver-found states */}
+          {(rideState === 'searching' || rideState === 'driver-found') && (
+            <View style={styles.actionButtonsContainer}>
+              {/* Driver Placeholder */}
+              <View style={styles.actionButton}>
+                <View style={styles.actionButtonCircle}>
+                  <ActDriverIcon width={60} height={60} />
+                </View>
+              </View>
+
+              {/* Edit Pickup */}
+              <TouchableOpacity 
+                style={styles.actionButton}
+                onPress={onBack}
+                accessibilityLabel="Edit pickup location"
+                accessibilityRole="button"
+              >
+                <View style={styles.actionButtonCircle}>
+                  <Ionicons name="location" size={30} color="#000" />
+                </View>
+                <Text variant="labelSmall" style={styles.actionButtonLabel}>
+                  Edit pickup
+                </Text>
+              </TouchableOpacity>
+
+              {/* Cancel Ride */}
+              <TouchableOpacity 
+                style={styles.actionButton}
+                onPress={onBack}
+                accessibilityLabel="Cancel ride"
+                accessibilityRole="button"
+              >
+                <View style={styles.actionButtonCircle}>
+                  <Ionicons name="close-circle-outline" size={40} color="#F44336" />
+                </View>
+                <Text variant="labelSmall" style={styles.actionButtonLabel}>
+                  Cancel ride
+                </Text>
+              </TouchableOpacity>
             </View>
+          )}
 
-            {/* Edit Pickup */}
-            <TouchableOpacity 
-              style={styles.actionButton}
-              onPress={onBack}
-              accessibilityLabel="Edit pickup location"
-              accessibilityRole="button"
-            >
-              <View style={styles.actionButtonCircle}>
-                <Ionicons name="location" size={30} color="#000" />
-              </View>
-              <Text variant="labelSmall" style={styles.actionButtonLabel}>
-                Edit pickup
-              </Text>
-            </TouchableOpacity>
+          {/* Action Buttons for Driver Arriving State */}
+          {rideState === 'driver-arriving' && (
+            <View style={styles.actionButtonsContainer}>
+              {/* Call Driver */}
+              <TouchableOpacity 
+                style={styles.actionButton}
+                accessibilityLabel="Call driver"
+                accessibilityRole="button"
+              >
+                <View style={styles.actionButtonCircle}>
+                  <Ionicons name="call" size={30} color="#4CAF50" />
+                </View>
+                <Text variant="labelSmall" style={styles.actionButtonLabel}>
+                  Call
+                </Text>
+              </TouchableOpacity>
 
-            {/* Cancel Ride */}
-            <TouchableOpacity 
-              style={styles.actionButton}
-              onPress={onBack}
-              accessibilityLabel="Cancel ride"
-              accessibilityRole="button"
-            >
-              <View style={styles.actionButtonCircle}>
-                <Ionicons name="close-circle-outline" size={40} color="#F44336" />
-              </View>
-              <Text variant="labelSmall" style={styles.actionButtonLabel}>
-                Cancel ride
-              </Text>
-            </TouchableOpacity>
-          </View>
+              {/* Message Driver */}
+              <TouchableOpacity 
+                style={styles.actionButton}
+                accessibilityLabel="Message driver"
+                accessibilityRole="button"
+              >
+                <View style={styles.actionButtonCircle}>
+                  <Ionicons name="chatbubble" size={28} color="#2196F3" />
+                </View>
+                <Text variant="labelSmall" style={styles.actionButtonLabel}>
+                  Message
+                </Text>
+              </TouchableOpacity>
+
+              {/* Cancel Ride */}
+              <TouchableOpacity 
+                style={styles.actionButton}
+                onPress={onBack}
+                accessibilityLabel="Cancel ride"
+                accessibilityRole="button"
+              >
+                <View style={styles.actionButtonCircle}>
+                  <Ionicons name="close-circle-outline" size={40} color="#F44336" />
+                </View>
+                <Text variant="labelSmall" style={styles.actionButtonLabel}>
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </View>
     </View>
@@ -383,15 +519,73 @@ const styles = StyleSheet.create({
   },
   progressLineContainer: {
     width: '100%',
-    height: 2,
+    height: 3,
     backgroundColor: 'transparent',
     marginBottom: 8,
+    position: 'relative',
   },
-  progressLine: {
+  progressLineBackground: {
+    position: 'absolute',
     width: '100%',
     height: 3,
     backgroundColor: '#E8E8E8', // Lightest color - very faint
-    borderRadius: 1,
+    borderRadius: 1.5,
+  },
+  progressLineFill: {
+    position: 'absolute',
+    height: 3,
+    backgroundColor: '#8020A2', // Primary purple - deeper color
+    borderRadius: 1.5,
+  },
+  driverDetailsCard: {
+    width: '100%',
+    backgroundColor: '#F8E5FF',
+    borderRadius: 16,
+    padding: 16,
+    marginTop: 8,
+    marginBottom: 16,
+    gap: 12,
+  },
+  driverInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  driverAvatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#FFFFFF',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  driverTextInfo: {
+    flex: 1,
+    gap: 4,
+  },
+  driverName: {
+    fontWeight: '600',
+    color: '#1C1B1F',
+  },
+  driverRating: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  ratingText: {
+    color: '#666',
+    fontSize: 12,
+  },
+  vehicleInfo: {
+    gap: 4,
+  },
+  vehicleLabel: {
+    color: '#666',
+    fontSize: 12,
+  },
+  vehicleText: {
+    fontWeight: '600',
+    color: '#1C1B1F',
   },
   actionButtonsContainer: {
     flexDirection: 'row',
