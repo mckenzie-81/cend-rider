@@ -230,7 +230,8 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   bottomSheetContent: {
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    width: '100%',
   },
   dragHandle: {
     width: 40,
@@ -238,16 +239,14 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     backgroundColor: '#E0E0E0',
     alignSelf: 'center',
-    marginBottom: 24,
+    marginBottom: 20,
   },
   searchingTitle: {
     fontWeight: '600',
-    marginBottom: 12,
-    textAlign: 'center',
+    marginBottom: 8,
   },
   searchingSubtitle: {
     color: '#666',
-    marginBottom: 16,
-    textAlign: 'center',
+    marginBottom: 12,
   },
 });
