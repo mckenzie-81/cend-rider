@@ -307,9 +307,11 @@ export function RideTrackingScreen({
               {/* Driver Info Card */}
               <View style={styles.driverDetailsCard}>
                 <View style={styles.driverInfo}>
-                  <View style={styles.driverAvatar}>
-                    <Ionicons name="person" size={32} color="#8020A2" />
-                  </View>
+                  <Image 
+                    source={require('../../assets/driver-profile.png')}
+                    style={styles.driverAvatar}
+                    resizeMode="cover"
+                  />
                   <View style={styles.driverTextInfo}>
                     <Text variant="titleMedium" style={styles.driverName}>
                       John Doe
@@ -599,7 +601,7 @@ const styles = StyleSheet.create({
   },
   driverDetailsCard: {
     width: '100%',
-    backgroundColor: '#F8E5FF',
+    backgroundColor: 'transparent', // Remove background color
     borderRadius: 16,
     padding: 16,
     marginTop: 8,
@@ -615,9 +617,6 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 28,
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   driverTextInfo: {
     flex: 1,
