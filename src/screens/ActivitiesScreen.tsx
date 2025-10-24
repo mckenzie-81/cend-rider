@@ -31,7 +31,7 @@ const ActivitiesScreen = ({ onTabChange }: ActivitiesScreenProps) => {
       />
       <View style={styles.content}>
         <Text variant="displaySmall" style={styles.text}>
-          This is the Activities page
+          Activities page - all user activities .ie rides and service requests are gonna be logged hear
         </Text>
       </View>
       <TabBar 
