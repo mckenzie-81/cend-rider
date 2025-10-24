@@ -33,7 +33,7 @@ const ActivitiesScreen = ({ onTabChange }: ActivitiesScreenProps) => {
         <Text variant="displaySmall" style={styles.text}>
           This is the Activities page
         </Text>
-        <table>
+        {/* <table>
           <tr>
             <th>Activity</th>
             <th>Date</th>
@@ -49,7 +49,7 @@ const ActivitiesScreen = ({ onTabChange }: ActivitiesScreenProps) => {
             <td>2024-06-05</td>
             <td>Pending</td>
           </tr>
-        </table>
+        </table> */}
       </View>
       <TabBar 
         tabs={tabs}
