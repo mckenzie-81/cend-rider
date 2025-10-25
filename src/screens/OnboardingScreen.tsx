@@ -128,8 +128,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 20,
     minWidth: 80,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: 20,
   },
   skipButtonText: {
     color: '#FFFFFF',
