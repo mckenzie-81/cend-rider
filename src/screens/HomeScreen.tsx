@@ -4,6 +4,7 @@ import { ScreenContainer, AppHeader, Spacer16, TabBar, ServiceCard, QuickActionC
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { ServicesCatalogService, ServiceItem } from '../services/catalog.service';
+import { PromosService, PromoItem } from '../services/promos.service';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -16,22 +17,33 @@ const HomeScreen = ({ onTabChange, onNavigate }: HomeScreenProps) => {
   const [activeTab, setActiveTab] = useState('home');
   const [searchQuery, setSearchQuery] = useState('');
   const [services, setServices] = useState<ServiceItem[]>([]);
+  const [promos, setPromos] = useState<PromoItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    loadServices();
+    loadHomeData();
   }, []);
 
-  const loadServices = async () => {
+  const loadHomeData = async () => {
     try {
       setLoading(true);
       
-      // Load available services from catalog
-      const catalogServices = await ServicesCatalogService.getAllServices();
+      // Load services and promos in parallel
+      const [catalogServices, homePromos] = await Promise.all([
+        ServicesCatalogService.getAllServices(),
+        PromosService.getPromosForPage('home', 3), // Get up to 3 promos for home page
+      ]);
+      
       setServices(catalogServices);
+      setPromos(homePromos);
+
+      // Track impressions for loaded promos
+      homePromos.forEach(promo => {
+        PromosService.trackPromoImpression(promo.id, 'home');
+      });
     } catch (error) {
-      console.error('Error loading services:', error);
-      // Services will remain empty on error
+      console.error('Error loading home data:', error);
+      // Services and promos will remain empty on error
     } finally {
       setLoading(false);
     }
@@ -66,12 +78,6 @@ const HomeScreen = ({ onTabChange, onNavigate }: HomeScreenProps) => {
     { key: 'support', icon: 'help-circle-outline', title: 'Support' },
   ];
 
-  const promos = [
-    { key: 'promo1', title: 'Get 20% off your next ride', buttonLabel: 'Claim Now' },
-    { key: 'promo2', title: 'Free delivery on orders above GHc5000', buttonLabel: 'Order Now' },
-    { key: 'promo3', title: 'Invite friends and earn rewards', buttonLabel: 'Share Now' },
-  ];
-
   const handleServicePress = (service: ServiceItem) => {
     // Simply call the service's onPress handler, passing the navigation function
     service.onPress(onNavigate);
@@ -82,9 +88,9 @@ const HomeScreen = ({ onTabChange, onNavigate }: HomeScreenProps) => {
     console.log('Quick action:', actionKey);
   };
 
-  const handlePromoPress = (promoKey: string) => {
-    // Handle promo card press - for now just log it
-    console.log('Promo pressed:', promoKey);
+  const handlePromoPress = (promo: PromoItem) => {
+    // Handle promo action using the service
+    PromosService.handlePromoAction(promo, 'home', onNavigate);
   };
 
   return (
@@ -176,10 +182,12 @@ const HomeScreen = ({ onTabChange, onNavigate }: HomeScreenProps) => {
           >
             {promos.map((promo) => (
               <PromoCard
-                key={promo.key}
+                key={promo.id}
                 title={promo.title}
                 buttonLabel={promo.buttonLabel}
-                onPress={() => handlePromoPress(promo.key)}
+                imageSource={promo.imageUrl ? { uri: promo.imageUrl } : undefined}
+                backgroundColor={promo.backgroundColor}
+                onPress={() => handlePromoPress(promo)}
                 style={styles.promoCard}
               />
             ))}

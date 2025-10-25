@@ -6,13 +6,14 @@ interface PromoCardProps {
   title: string;
   buttonLabel: string;
   imageSource?: any; // For now, we'll use placeholder
+  backgroundColor?: string; // Custom background color
   onPress: () => void;
   style?: ViewStyle;
 }
 
-const PromoCard = ({ title, buttonLabel, imageSource, onPress, style }: PromoCardProps) => {
+const PromoCard = ({ title, buttonLabel, imageSource, backgroundColor, onPress, style }: PromoCardProps) => {
   return (
-    <View style={[styles.container, style]}>
+    <View style={[styles.container, backgroundColor ? { backgroundColor } : null, style]}>
       {/* Content section - Takes 2/3 of card width */}
       <View style={styles.content}>
         <Text variant="titleMedium" style={styles.title} numberOfLines={2}>
