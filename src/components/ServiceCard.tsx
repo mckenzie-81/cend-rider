@@ -44,7 +44,7 @@ export function ServiceCard({
       style={[
         styles.container,
         {
-          backgroundColor: '#F8E5FF', // Light lavender - always this color
+          backgroundColor: '#F5F5F5', // Light ash background
         },
         style,
       ]}

@@ -47,7 +47,7 @@ const AppNavigator = ({ onRestartFlow }: AppNavigatorProps) => {
       case 'home':
         return <HomeScreen onTabChange={setCurrentScreen} onNavigate={handleNavigate} />;
       case 'services':
-        return <ServicesScreen onTabChange={setCurrentScreen} />;
+        return <ServicesScreen onTabChange={setCurrentScreen} onNavigate={handleNavigate} />;
       case 'activity':
         return <ActivitiesScreen onTabChange={setCurrentScreen} />;
       case 'account':

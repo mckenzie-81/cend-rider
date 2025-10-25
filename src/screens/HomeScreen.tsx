@@ -1,8 +1,9 @@
-import { useState } from 'react';
-import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity, Dimensions, Image } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity, Dimensions, Image, ActivityIndicator } from 'react-native';
 import { ScreenContainer, AppHeader, Spacer16, TabBar, ServiceCard, QuickActionCard, PromoCard, IconName } from '../components';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
+import { ServicesCatalogService, ServiceItem } from '../services/catalog.service';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -14,6 +15,37 @@ interface HomeScreenProps {
 const HomeScreen = ({ onTabChange, onNavigate }: HomeScreenProps) => {
   const [activeTab, setActiveTab] = useState('home');
   const [searchQuery, setSearchQuery] = useState('');
+  const [services, setServices] = useState<ServiceItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadServices();
+  }, []);
+
+  const loadServices = async () => {
+    try {
+      setLoading(true);
+      
+      // Load available services from catalog
+      const catalogServices = await ServicesCatalogService.getAllServices();
+      setServices(catalogServices);
+    } catch (error) {
+      console.error('Error loading services:', error);
+      // Services will remain empty on error
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getServiceIconByName = (name: string): IconName => {
+    const nameMap: Record<string, IconName> = {
+      'Ride': 'car',
+      'Dispatch': 'dispatch',
+      'Okada': 'okada',
+      'Reserve': 'reserve',
+    };
+    return nameMap[name] || 'car';
+  };
 
   const handleTabPress = (tab: string) => {
     setActiveTab(tab);
@@ -25,13 +57,6 @@ const HomeScreen = ({ onTabChange, onNavigate }: HomeScreenProps) => {
     { key: 'services', label: 'Services', icon: 'grid-outline' },
     { key: 'activity', label: 'Activity', icon: 'receipt-outline' },
     { key: 'account', label: 'Account', icon: 'person-outline' },
-  ];
-
-  const services: Array<{ key: string; icon: IconName; title: string }> = [
-    { key: 'ride', icon: 'car', title: 'Ride' },
-    { key: 'dispatch', icon: 'dispatch', title: 'Dispatch' },
-    { key: 'okada', icon: 'okada', title: 'Okada' },
-    { key: 'reserve', icon: 'reserve', title: 'Reserve' }, // Using Ionicons until we get the SVG
   ];
 
   const quickActions: Array<{ key: string; icon: IconName; title: string }> = [
@@ -47,16 +72,9 @@ const HomeScreen = ({ onTabChange, onNavigate }: HomeScreenProps) => {
     { key: 'promo3', title: 'Invite friends and earn rewards', buttonLabel: 'Share Now' },
   ];
 
-  const handleServicePress = (serviceKey: string) => {
-    // Navigate to transport screen for ride and okada
-    if (serviceKey === 'ride') {
-      onNavigate('transport', { mode: 'ride' });
-    } else if (serviceKey === 'okada') {
-      onNavigate('transport', { mode: 'okada' });
-    } else {
-      // Handle other services - for now just log it
-      console.log('Service selected:', serviceKey);
-    }
+  const handleServicePress = (service: ServiceItem) => {
+    // Simply call the service's onPress handler, passing the navigation function
+    service.onPress(onNavigate);
   };
 
   const handleQuickAction = (actionKey: string) => {
@@ -106,15 +124,19 @@ const HomeScreen = ({ onTabChange, onNavigate }: HomeScreenProps) => {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.servicesContainer}
           >
-            {services.map((service) => (
-              <ServiceCard
-                key={service.key}
-                icon={service.icon}
-                title={service.title}
-                onPress={() => handleServicePress(service.key)}
-                style={styles.serviceCard}
-              />
-            ))}
+            {loading ? (
+              <ActivityIndicator size="small" color="#8020A2" style={{ marginLeft: 20 }} />
+            ) : (
+              services.map((service) => (
+                <ServiceCard
+                  key={service.id}
+                  icon={getServiceIconByName(service.name)}
+                  title={service.name}
+                  onPress={() => handleServicePress(service)}
+                  style={styles.serviceCard}
+                />
+              ))
+            )}
           </ScrollView>
         </View>
 

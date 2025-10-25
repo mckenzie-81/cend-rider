@@ -31,6 +31,7 @@ export interface ServiceItem {
   features?: string[];
   isPopular?: boolean;
   comingSoonDate?: string; // When service will be available
+  onPress: (navigate: (screen: string, params?: any) => void) => void; // The handler function
 }
 
 export interface ServiceBooking {
@@ -88,8 +89,25 @@ export interface PriceEstimate {
 
 const MOCK_SERVICES: ServiceItem[] = [
   {
-    id: 'service_delivery_1',
-    name: 'Package Delivery',
+    id: 'service_ride_1',
+    name: 'Ride',
+    description: 'Book a comfortable car ride to your destination',
+    category: 'other',
+    status: 'active',
+    icon: 'car-outline',
+    basePrice: 1000,
+    priceUnit: 'per ride',
+    estimatedDuration: '15-30 mins',
+    features: ['Comfortable cars', 'Professional drivers', 'Real-time tracking'],
+    isPopular: true,
+    onPress: (navigate) => {
+      console.log('Service selected: Ride');
+      navigate('transport', { mode: 'ride' });
+    },
+  },
+  {
+    id: 'service_dispatch_1',
+    name: 'Dispatch',
     description: 'Send packages, documents, and parcels across the city',
     category: 'delivery',
     status: 'active',
@@ -99,84 +117,52 @@ const MOCK_SERVICES: ServiceItem[] = [
     estimatedDuration: '30-60 mins',
     features: ['Same-day delivery', 'Real-time tracking', 'Proof of delivery'],
     isPopular: true,
+    onPress: () => {
+      console.log('Service selected: Dispatch - Coming Soon');
+      // TODO: Navigate to dispatch booking screen when ready
+    },
   },
   {
-    id: 'service_delivery_2',
-    name: 'Food Delivery',
-    description: 'Get your favorite meals delivered from restaurants',
-    category: 'delivery',
+    id: 'service_okada_1',
+    name: 'Okada',
+    description: 'Quick and affordable motorcycle rides',
+    category: 'other',
     status: 'active',
-    icon: 'restaurant-outline',
-    basePrice: 300,
-    priceUnit: 'per order',
-    estimatedDuration: '20-40 mins',
-    features: ['Hot meals', 'Multiple restaurants', 'Order tracking'],
-    isPopular: true,
-  },
-  {
-    id: 'service_errands_1',
-    name: 'Personal Errands',
-    description: 'We run errands so you don\'t have to',
-    category: 'errands',
-    status: 'active',
-    icon: 'checkmark-done-outline',
-    basePrice: 1000,
-    priceUnit: 'per hour',
-    estimatedDuration: 'Varies',
-    features: ['Bank visits', 'Bill payments', 'Document submission', 'Shopping'],
-  },
-  {
-    id: 'service_shopping_1',
-    name: 'Grocery Shopping',
-    description: 'We shop for your groceries and deliver to your door',
-    category: 'shopping',
-    status: 'active',
-    icon: 'cart-outline',
+    icon: 'bicycle-outline',
     basePrice: 500,
-    priceUnit: 'per trip',
-    estimatedDuration: '1-2 hours',
-    features: ['Fresh produce', 'Shopping list support', 'Quality guarantee'],
+    priceUnit: 'per ride',
+    estimatedDuration: '10-20 mins',
+    features: ['Fast & affordable', 'Beat traffic', 'Verified riders'],
+    isPopular: true,
+    onPress: (navigate) => {
+      console.log('Service selected: Okada');
+      navigate('transport', { mode: 'okada' });
+    },
   },
   {
-    id: 'service_courier_1',
-    name: 'Express Courier',
-    description: 'Urgent same-day delivery for important items',
-    category: 'courier',
+    id: 'service_reserve_1',
+    name: 'Reserve',
+    description: 'Schedule rides in advance for peace of mind',
+    category: 'other',
     status: 'active',
-    icon: 'flash-outline',
-    basePrice: 1500,
-    priceUnit: 'per delivery',
-    estimatedDuration: '15-30 mins',
-    features: ['Priority handling', 'Direct delivery', 'Live tracking', 'Insurance'],
+    icon: 'calendar-outline',
+    basePrice: 1200,
+    priceUnit: 'per ride',
+    estimatedDuration: 'As scheduled',
+    features: ['Schedule ahead', 'Guaranteed pickup', 'Premium service'],
     isPopular: false,
-  },
-  {
-    id: 'service_moving_1',
-    name: 'Home Moving',
-    description: 'Professional moving services for your relocation needs',
-    category: 'moving',
-    status: 'coming_soon',
-    icon: 'home-outline',
-    comingSoonDate: '2025-11-01',
-    features: ['Professional movers', 'Packing materials', 'Insurance coverage'],
-  },
-  {
-    id: 'service_logistics_1',
-    name: 'Business Logistics',
-    description: 'Bulk delivery and logistics solutions for businesses',
-    category: 'logistics',
-    status: 'coming_soon',
-    icon: 'business-outline',
-    comingSoonDate: '2025-12-01',
-    features: ['Bulk deliveries', 'Scheduled pickups', 'Business accounts'],
+    onPress: () => {
+      console.log('Service selected: Reserve - Coming Soon');
+      // TODO: Navigate to reserve/schedule screen when ready
+    },
   },
 ];
 
 const MOCK_BOOKINGS: ServiceBooking[] = [
   {
     id: 'booking_1',
-    serviceId: 'service_delivery_1',
-    serviceName: 'Package Delivery',
+    serviceId: 'service_dispatch_1',
+    serviceName: 'Dispatch',
     category: 'delivery',
     pickupLocation: {
       address: 'Osu Oxford Street, Accra',
@@ -195,9 +181,9 @@ const MOCK_BOOKINGS: ServiceBooking[] = [
   },
   {
     id: 'booking_2',
-    serviceId: 'service_shopping_1',
-    serviceName: 'Grocery Shopping',
-    category: 'shopping',
+    serviceId: 'service_ride_1',
+    serviceName: 'Ride',
+    category: 'other',
     pickupLocation: {
       address: 'Accra Mall, Tetteh Quarshie',
       coordinates: { latitude: 5.6486, longitude: -0.1746 },
@@ -206,9 +192,8 @@ const MOCK_BOOKINGS: ServiceBooking[] = [
       address: 'Ridge, Accra',
       coordinates: { latitude: 5.5560, longitude: -0.1969 },
     },
-    items: ['Rice - 5kg', 'Tomatoes', 'Onions', 'Chicken', 'Milk'],
     notes: 'Please call when you arrive',
-    estimatedPrice: 2500,
+    estimatedPrice: 35,
     status: 'in_progress',
     createdAt: new Date(Date.now() - 3600000).toISOString(), // 1 hour ago
     updatedAt: new Date(Date.now() - 1800000).toISOString(),
