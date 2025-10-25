@@ -16,6 +16,7 @@ import LoginScreen from './src/screens/LoginScreen';
 import SignupScreen from './src/screens/SignupScreen';
 import VerificationScreen from './src/screens/VerificationScreen';
 import { useAssetCache } from './src/hooks/useAssetCache';
+import { CacheService } from './src/services/cache.service';
 import './src/theme/nativewind';
 
 export default function App() {
@@ -25,9 +26,19 @@ export default function App() {
   const [showSignup, setShowSignup] = useState(false);
   const [needsVerification, setNeedsVerification] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
+  const [dataLoading, setDataLoading] = useState(false);
   const scheme = useColorScheme();
   const theme = scheme === 'dark' ? darkTheme : lightTheme;
   const assetsLoaded = useAssetCache();
+
+  // Preload data after authentication
+  const handleLoginComplete = async () => {
+    setDataLoading(true);
+    console.log('🔐 User authenticated, preloading data...');
+    await CacheService.preloadAppData();
+    setDataLoading(false);
+    setIsAuthenticated(true);
+  };
 
   // Handle restart flow for demo purposes
   const handleRestartFlow = () => {
@@ -47,9 +58,14 @@ export default function App() {
     );
   }
 
-  // Show splash screen
+  // Show splash screen (with data preloading if authenticated)
   if (showSplash) {
-    return <CustomSplashScreen onFinish={() => setShowSplash(false)} />;
+    return (
+      <CustomSplashScreen 
+        onFinish={() => setShowSplash(false)} 
+        preloadData={false} 
+      />
+    );
   }
 
   // All screens wrapped in providers after fonts are loaded
@@ -81,7 +97,7 @@ export default function App() {
             >
               <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
               <VerificationScreen 
-                onComplete={() => setIsAuthenticated(true)}
+                onComplete={handleLoginComplete}
                 onResendCode={() => console.log('Resend code')}
               />
             </PaperProvider>
@@ -123,12 +139,21 @@ export default function App() {
           >
             <StatusBar style={scheme === 'dark' ? 'light' : 'dark'} />
             <LoginScreen 
-              onComplete={() => setIsAuthenticated(true)} 
+              onComplete={handleLoginComplete} 
               onSignup={() => setShowSignup(true)}
             />
           </PaperProvider>
         </SafeAreaProvider>
       </GestureHandlerRootView>
+    );
+  }
+
+  // Show loading while preloading data after authentication
+  if (dataLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#8020A2' }}>
+        <ActivityIndicator size="large" color="#FFFFFF" />
+      </View>
     );
   }
 

@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { ScreenContainer, AppHeader, TabBar } from '../components';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { RideService } from '../services/ride.service';
 import { ServicesCatalogService } from '../services/catalog.service';
+import { CacheService } from '../services/cache.service';
 
 interface ActivitiesScreenProps {
   onTabChange: (tab: string) => void;
@@ -29,21 +30,31 @@ const ActivitiesScreen = ({ onTabChange }: ActivitiesScreenProps) => {
   const [activeTab, setActiveTab] = useState('activity');
   const [filter, setFilter] = useState<ActivityFilter>('all');
   const [activities, setActivities] = useState<Activity[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     loadActivities();
   }, [filter]);
 
-  const loadActivities = async () => {
+  const loadActivities = async (forceRefresh = false) => {
     try {
-      setLoading(true);
+      if (forceRefresh) {
+        setRefreshing(true);
+      } else {
+        setLoading(true);
+      }
       
       // Load rides and services based on filter
       let allActivities: Activity[] = [];
 
       if (filter === 'all' || filter === 'rides') {
-        const rides = await RideService.getRideHistory(10);
+        const rides = forceRefresh 
+          ? await RideService.getRideHistory(10)
+          : CacheService.getCachedRecentRides(10).length > 0
+            ? CacheService.getCachedRecentRides(10)
+            : await RideService.getRideHistory(10);
+            
         const rideActivities: Activity[] = rides.map(ride => ({
           id: ride.id,
           type: 'ride',
@@ -86,7 +97,13 @@ const ActivitiesScreen = ({ onTabChange }: ActivitiesScreenProps) => {
       console.error('Error loading activities:', error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
+  };
+
+  const handleRefresh = async () => {
+    await CacheService.refreshCache();
+    await loadActivities(true);
   };
 
   const formatDate = (dateString: string) => {
@@ -168,6 +185,14 @@ const ActivitiesScreen = ({ onTabChange }: ActivitiesScreenProps) => {
         style={styles.scrollView}
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor="#8020A2"
+            colors={['#8020A2']}
+          />
+        }
       >
         {loading ? (
           <View style={styles.loadingContainer}>

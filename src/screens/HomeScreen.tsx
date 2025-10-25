@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity, Dimensions, Image, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity, Dimensions, Image, ActivityIndicator, RefreshControl } from 'react-native';
 import { ScreenContainer, AppHeader, Spacer16, TabBar, ServiceCard, QuickActionCard, PromoCard, IconName } from '../components';
 import { Text } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { ServicesCatalogService, ServiceItem } from '../services/catalog.service';
 import { PromosService, PromoItem } from '../services/promos.service';
+import { CacheService } from '../services/cache.service';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -18,35 +19,46 @@ const HomeScreen = ({ onTabChange, onNavigate }: HomeScreenProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [promos, setPromos] = useState<PromoItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     loadHomeData();
   }, []);
 
-  const loadHomeData = async () => {
+  const loadHomeData = async (forceRefresh = false) => {
     try {
-      setLoading(true);
+      if (forceRefresh) {
+        setRefreshing(true);
+        await CacheService.refreshCache();
+      }
       
-      // Load services and promos in parallel
-      const [catalogServices, homePromos] = await Promise.all([
-        ServicesCatalogService.getAllServices(),
-        PromosService.getPromosForPage('home', 3), // Get up to 3 promos for home page
-      ]);
+      // Use cached data - instant load!
+      const cachedServices = CacheService.getCachedServices();
+      const cachedPromos = CacheService.getCachedPromos('home', 3);
       
-      setServices(catalogServices);
-      setPromos(homePromos);
+      console.log('📊 HomeScreen loading data:');
+      console.log('   - Services:', cachedServices.length);
+      console.log('   - Promos:', cachedPromos.length);
+      console.log('   - Cache ready:', CacheService.isCacheReady());
+      
+      setServices(cachedServices);
+      setPromos(cachedPromos);
 
       // Track impressions for loaded promos
-      homePromos.forEach(promo => {
+      cachedPromos.forEach(promo => {
         PromosService.trackPromoImpression(promo.id, 'home');
       });
     } catch (error) {
       console.error('Error loading home data:', error);
-      // Services and promos will remain empty on error
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
+  };
+
+  const handleRefresh = async () => {
+    await loadHomeData(true);
   };
 
   const getServiceIconByName = (name: string): IconName => {
@@ -121,6 +133,14 @@ const HomeScreen = ({ onTabChange, onNavigate }: HomeScreenProps) => {
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor="#8020A2"
+            colors={['#8020A2']}
+          />
+        }
       >
         <View style={styles.cardsWrapper}>
           {/* Service Cards - Horizontal Row */}
