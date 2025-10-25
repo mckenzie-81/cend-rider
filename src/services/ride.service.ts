@@ -51,6 +51,14 @@ export interface RideBooking {
 export interface Ride {
   id: string;
   status: 'searching' | 'confirmed' | 'arriving' | 'in-progress' | 'completed' | 'cancelled';
+  pickup: {
+    address: string;
+    coordinates: Location;
+  };
+  dropoff: {
+    address: string;
+    coordinates: Location;
+  };
   pickupLocation: {
     address: string;
     coordinates: Location;
@@ -61,6 +69,7 @@ export interface Ride {
   };
   vehicleType: VehicleType;
   price: number;
+  fare: number;
   currency: string;
   driver?: {
     id: string;
@@ -226,10 +235,13 @@ export const bookRide = async (booking: RideBooking): Promise<Ride> => {
   const ride: Ride = {
     id: `ride_${Date.now()}`,
     status: 'searching',
+    pickup: booking.pickupLocation,
+    dropoff: booking.dropoffLocation,
     pickupLocation: booking.pickupLocation,
     dropoffLocation: booking.dropoffLocation,
     vehicleType: booking.vehicleType,
     price: estimate.total,
+    fare: estimate.total,
     currency: estimate.currency,
     createdAt: new Date().toISOString(),
   };
@@ -254,6 +266,14 @@ export const getRideHistory = async (limit: number = 20): Promise<Ride[]> => {
     {
       id: 'ride_1',
       status: 'completed',
+      pickup: {
+        address: 'Legon Campus, University of Ghana',
+        coordinates: { latitude: 5.6519, longitude: -0.1873 },
+      },
+      dropoff: {
+        address: 'Accra Mall, Tetteh Quarshie',
+        coordinates: { latitude: 5.6486, longitude: -0.1746 },
+      },
       pickupLocation: {
         address: 'Legon Campus, University of Ghana',
         coordinates: { latitude: 5.6519, longitude: -0.1873 },
@@ -264,6 +284,7 @@ export const getRideHistory = async (limit: number = 20): Promise<Ride[]> => {
       },
       vehicleType: 'car',
       price: 45,
+      fare: 45,
       currency: 'GH¢',
       driver: {
         id: 'driver_1',
@@ -285,6 +306,14 @@ export const getRideHistory = async (limit: number = 20): Promise<Ride[]> => {
     {
       id: 'ride_2',
       status: 'completed',
+      pickup: {
+        address: 'Kotoka International Airport',
+        coordinates: { latitude: 5.6052, longitude: -0.1668 },
+      },
+      dropoff: {
+        address: 'Osu Oxford Street',
+        coordinates: { latitude: 5.5558, longitude: -0.1828 },
+      },
       pickupLocation: {
         address: 'Kotoka International Airport',
         coordinates: { latitude: 5.6052, longitude: -0.1668 },
@@ -295,6 +324,7 @@ export const getRideHistory = async (limit: number = 20): Promise<Ride[]> => {
       },
       vehicleType: 'okada',
       price: 28,
+      fare: 28,
       currency: 'GH¢',
       driver: {
         id: 'driver_2',
